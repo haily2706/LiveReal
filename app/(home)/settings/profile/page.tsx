@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 
-export const ProfilePage = () => {
+export default function ProfilePage() {
     const supabase = createClient();
     const { user, setUser } = useAuthStore();
     const [fullName, setFullName] = useState("");
@@ -292,3 +292,5 @@ export const ProfilePage = () => {
         </motion.form>
     );
 };
+
+

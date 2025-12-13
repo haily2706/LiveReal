@@ -52,14 +52,13 @@ export default async function HomePage({
                 <LiveSection lives={filteredLives} title={sectionTitle} />
 
                 {/* Upcoming Events Section */}
-                <UpcomingSection events={upcomingEvents} />
-
-                {/* Ads Banner */}
-                <AdsBanner />
+                {/* <UpcomingSection events={upcomingEvents} /> */}
 
                 {/* Just Finished Section */}
                 <FinishedSection events={finishedEvents} />
 
+                {/* Ads Banner */}
+                <AdsBanner />
                 {/* Famous People Section */}
                 <FamousSection people={famousPeople} />
             </div>
