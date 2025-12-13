@@ -55,13 +55,66 @@ export default function InvestorPage() {
                     </motion.div>
                 </section>
 
-                {/* Stats / Traction Ticker */}
+                {/* Platform Showcase */}
                 <section className="mb-32">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 p-8 rounded-3xl bg-secondary/30 dark:bg-white/5 border border-border/50 dark:border-white/10 backdrop-blur-sm">
-                        <StatItem value="MVP" label="Status" />
-                        <StatItem value="100%" label="Uptime" />
-                        <StatItem value="Web" label="Platform" />
-                        <StatItem value="Global" label="Target" />
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">Available Everywhere</h2>
+                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                            Whether on desktop or on the go, iReal delivers a seamless, high-fidelity experience.
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {/* Web */}
+                        <div className="group relative p-8 rounded-3xl bg-secondary/30 dark:bg-white/5 border border-border/50 dark:border-white/10 overflow-hidden hover:border-pink-500/30 transition-all duration-500 hover:-translate-y-1">
+                            <div className="absolute inset-0 bg-linear-to-b from-pink-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                            <div className="relative z-10 flex flex-col h-full">
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="p-3 rounded-2xl bg-pink-500/10 text-pink-500">
+                                        <Globe className="h-6 w-6" />
+                                    </div>
+                                    <div className="text-2xl font-bold">Web Platform</div>
+                                </div>
+                                <p className="text-muted-foreground mb-8">Full-featured dashboard for power users, creators, and agency managers.</p>
+                                <div className="mt-auto">
+                                    <BrowserMockup />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* iOS */}
+                        <div className="group relative p-8 rounded-3xl bg-secondary/30 dark:bg-white/5 border border-border/50 dark:border-white/10 overflow-hidden hover:border-blue-500/30 transition-all duration-500 hover:-translate-y-1">
+                            <div className="absolute inset-0 bg-linear-to-b from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                            <div className="relative z-10 flex flex-col h-full">
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-500">
+                                        <Smartphone className="h-6 w-6" />
+                                    </div>
+                                    <div className="text-2xl font-bold">iOS App</div>
+                                </div>
+                                <p className="text-muted-foreground mb-8">Optimized for iPhone & iPad with ProMotion support and dynamic island integration.</p>
+                                <div className="mt-auto flex justify-center">
+                                    <PhoneMockup platform="ios" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Android */}
+                        <div className="group relative p-8 rounded-3xl bg-secondary/30 dark:bg-white/5 border border-border/50 dark:border-white/10 overflow-hidden hover:border-green-500/30 transition-all duration-500 hover:-translate-y-1">
+                            <div className="absolute inset-0 bg-linear-to-b from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                            <div className="relative z-10 flex flex-col h-full">
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="p-3 rounded-2xl bg-green-500/10 text-green-500">
+                                        <Smartphone className="h-6 w-6" />
+                                    </div>
+                                    <div className="text-2xl font-bold">Android App</div>
+                                </div>
+                                <p className="text-muted-foreground mb-8">Material You design language that adapts to your device's unique style.</p>
+                                <div className="mt-auto flex justify-center">
+                                    <PhoneMockup platform="android" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -166,15 +219,15 @@ export default function InvestorPage() {
                             <RoadmapItem
                                 quarter="Q1"
                                 year="2026"
-                                title="Mobile Development"
-                                items={["Hire iOS/Android Teams", "Beta Launch Testflight", "Core API Optimization"]}
+                                title="Scale API"
+                                items={["Infrastructure Scaling", "Latency Reduction", "Core API Optimization"]}
                                 align="left"
                             />
                             <RoadmapItem
                                 quarter="Q2"
                                 year="2026"
                                 title="Global Infrastructure"
-                                items={["Edge Network Deployment", "Multi-region DB Sharding", "Localization (5 Languages)"]}
+                                items={["Edge Network Deployment", "Multi-region DB Sharding", "On-Premises Streaming"]}
                                 align="right"
                             />
                             <RoadmapItem
@@ -217,11 +270,51 @@ export default function InvestorPage() {
     );
 }
 
-function StatItem({ value, label }: { value: string, label: string }) {
+function BrowserMockup() {
     return (
-        <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-linear-to-b from-gray-900 to-gray-600 dark:from-white dark:to-white/80 mb-2">{value}</div>
-            <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{label}</div>
+        <div className="w-full aspect-video bg-background rounded-lg border border-border overflow-hidden shadow-2xl relative select-none">
+            <div className="h-6 bg-secondary/50 border-b border-border flex items-center gap-1.5 px-3">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50" />
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500/50" />
+            </div>
+            <div className="p-4 relative w-full h-full group-hover:scale-[1.02] transition-transform duration-500 origin-top">
+                <div className="absolute inset-0 bg-linear-to-br from-pink-500/5 via-purple-500/5 to-indigo-500/5" />
+                <div className="flex gap-4 h-full">
+                    <div className="w-1/4 h-3/4 bg-foreground/5 rounded-md mt-2 ml-2 backdrop-blur-sm" />
+                    <div className="flex-1 h-full bg-foreground/5 rounded-t-lg mt-2 mr-2 backdrop-blur-sm relative overflow-hidden">
+                        <div className="absolute inset-0 bg-linear-to-t from-background/20 to-transparent" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function PhoneMockup({ platform }: { platform: 'ios' | 'android' }) {
+    return (
+        <div className="w-[180px] aspect-[9/19] bg-background border-[6px] border-foreground/10 rounded-[2.5rem] overflow-hidden shadow-2xl relative select-none group-hover:scale-[1.02] transition-transform duration-500">
+            {platform === 'ios' && (
+                <div className="absolute top-0 inset-x-0 h-5 bg-foreground/10 mx-auto w-1/2 rounded-b-xl z-20" />
+            )}
+            {platform === 'android' && (
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-3 h-3 bg-foreground/10 rounded-full z-20" />
+            )}
+
+            <div className="absolute inset-0 bg-secondary/20" />
+            <div className="absolute inset-0 bg-linear-to-br from-pink-500/10 via-purple-500/10 to-indigo-500/10" />
+
+            <div className="relative p-3 pt-8 h-full flex flex-col gap-3">
+                <div className="w-full aspect-square rounded-xl bg-foreground/5 backdrop-blur-sm" />
+                <div className="flex gap-2">
+                    <div className="w-8 h-8 rounded-full bg-foreground/5" />
+                    <div className="flex-1 space-y-1 py-1">
+                        <div className="w-full h-2 rounded-full bg-foreground/5" />
+                        <div className="w-2/3 h-2 rounded-full bg-foreground/5" />
+                    </div>
+                </div>
+                <div className="flex-1 rounded-xl bg-foreground/5 backdrop-blur-sm mt-2" />
+            </div>
         </div>
     )
 }
