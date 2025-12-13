@@ -44,14 +44,14 @@ export function StreamCard({ stream, type, index, rank, showRemindMe = false, is
                     <div className={`absolute inset-0 transition-opacity duration-300 ${isVertical ? 'bg-linear-to-t from-black/90 via-black/20 to-black/20 opacity-100' : 'bg-linear-to-t from-black/60 via-transparent to-black/20 opacity-60 group-hover:opacity-40'}`} />
 
                     {/* Status Badge */}
-                    <div className="absolute bottom-4 right-4 flex gap-2 z-10">
+                    <div className="absolute top-3 left-3 flex gap-2 z-10">
                         {type === 'live' ? (
                             <div className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm flex items-center gap-1.5 animate-pulse">
                                 <Signal className="h-3 w-3" />
                                 LIVE
                             </div>
                         ) : (
-                            <div className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm flex items-center gap-1.5 shadow-lg">
+                            <div className="bg-blue-600/1 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm flex items-center gap-1.5 shadow-lg">
                                 <Calendar className="h-3 w-3" />
                                 UPCOMING
                             </div>
