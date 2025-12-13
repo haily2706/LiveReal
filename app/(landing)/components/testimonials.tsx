@@ -42,12 +42,12 @@ export function Testimonials() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <span className="inline-block px-4 py-1.5 rounded-full glass text-sm font-medium text-pink-400 mb-4">
+                    <span className="inline-block px-4 py-1.5 rounded-full glass text-sm font-medium text-pink-600 dark:text-pink-400 mb-4">
                         Success Stories
                     </span>
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
                         Loved by{" "}
-                        <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+                        <span className="bg-linear-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                             Creators Worldwide
                         </span>
                     </h2>
@@ -68,7 +68,7 @@ export function Testimonials() {
                         >
                             <div className="glass rounded-2xl p-6 h-full flex flex-col hover:scale-[1.02] transition-transform duration-300">
                                 {/* Quote Icon */}
-                                <Quote className="w-8 h-8 text-pink-400/30 mb-4" />
+                                <Quote className="w-8 h-8 text-pink-600/30 dark:text-pink-400/30 mb-4" />
 
                                 {/* Quote */}
                                 <p className="text-muted-foreground flex-1 mb-6 leading-relaxed">
@@ -78,7 +78,7 @@ export function Testimonials() {
                                 {/* Author */}
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${testimonial.gradient} flex items-center justify-center text-2xl`}>
+                                        <div className={`w-12 h-12 rounded-full bg-linear-to-br ${testimonial.gradient} flex items-center justify-center text-2xl`}>
                                             {testimonial.avatar}
                                         </div>
                                         <div>
@@ -90,14 +90,14 @@ export function Testimonials() {
                                     {/* Earnings Badge */}
                                     <div className="text-right">
                                         <p className="text-xs text-muted-foreground">Earned</p>
-                                        <p className="font-bold text-green-400">{testimonial.earnings}</p>
+                                        <p className="font-bold text-green-600 dark:text-green-400">{testimonial.earnings}</p>
                                     </div>
                                 </div>
 
                                 {/* Stars */}
                                 <div className="flex gap-1 mt-4 pt-4 border-t border-border/50">
                                     {[...Array(5)].map((_, i) => (
-                                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                                        <Star key={i} className="w-4 h-4 fill-yellow-500 text-yellow-500 dark:fill-yellow-400 dark:text-yellow-400" />
                                     ))}
                                 </div>
                             </div>

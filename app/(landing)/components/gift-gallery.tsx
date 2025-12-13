@@ -61,7 +61,7 @@ export function GiftGallery() {
     return (
         <section id="gifts" className="py-24 px-4 relative overflow-hidden">
             {/* Background effect */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-pink-500/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-b from-transparent via-pink-500/5 to-transparent pointer-events-none" />
 
             <div className="container mx-auto max-w-6xl relative z-10">
                 {/* Section Header */}
@@ -72,12 +72,12 @@ export function GiftGallery() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <span className="inline-block px-4 py-1.5 rounded-full glass text-sm font-medium text-yellow-400 mb-4">
+                    <span className="inline-block px-4 py-1.5 rounded-full glass text-sm font-medium text-yellow-600 dark:text-yellow-400 mb-4">
                         Virtual Gifts
                     </span>
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
                         Send & Receive{" "}
-                        <span className="bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">
+                        <span className="bg-linear-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">
                             Amazing Gifts
                         </span>
                     </h2>
@@ -116,7 +116,7 @@ export function GiftGallery() {
                                 <h3 className="font-semibold text-sm md:text-base mb-2">{gift.name}</h3>
 
                                 {/* Value */}
-                                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r ${gift.color}`}>
+                                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-linear-to-r ${gift.color}`}>
                                     <span className="text-xs font-medium">{gift.coins}</span>
                                     <div className="relative w-3.5 h-3.5">
                                         <Image

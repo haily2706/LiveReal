@@ -3,12 +3,13 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Cake, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export function CTASection() {
     return (
         <section className="py-24 px-4 relative overflow-hidden">
             {/* Background Elements */}
-            <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-cyan-500/10" />
+            <div className="absolute inset-0 bg-linear-to-r from-pink-500/10 via-purple-500/10 to-cyan-500/10" />
 
             {/* Floating emojis */}
             <motion.div
@@ -52,7 +53,7 @@ export function CTASection() {
                     <motion.div
                         animate={{ rotate: [0, -5, 5, 0] }}
                         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                        className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-500 mb-8"
+                        className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-linear-to-br from-pink-500 to-purple-500 mb-8"
                     >
                         <Cake className="w-10 h-10 text-white" />
                     </motion.div>
@@ -60,7 +61,7 @@ export function CTASection() {
                     {/* Headline */}
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
                         Ready to Make Your Birthday{" "}
-                        <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent">
+                        <span className="bg-linear-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent">
                             Unforgettable?
                         </span>
                     </h2>
@@ -74,10 +75,13 @@ export function CTASection() {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button
                             size="lg"
-                            className="h-14 px-8 text-lg bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 animate-pulse-glow"
+                            className="h-14 px-8 text-lg bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 animate-pulse-glow"
+                            asChild
                         >
-                            Create Free Account
-                            <ArrowRight className="ml-2 h-5 w-5" />
+                            <Link href="/home">
+                                Create Free Account
+                                <ArrowRight className="ml-2 h-5 w-5" />
+                            </Link>
                         </Button>
                     </div>
 

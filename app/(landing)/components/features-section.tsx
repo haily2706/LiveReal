@@ -15,42 +15,42 @@ const features = [
         icon: Timer,
         title: "Birthday Countdown",
         description: "Automated countdown timer builds excitement before your stream goes live",
-        color: "text-pink-400",
+        color: "text-pink-600 dark:text-pink-400",
         gradient: "from-pink-500/20 to-rose-500/20",
     },
     {
         icon: Gift,
         title: "Virtual Gifts",
         description: "Receive beautiful animated gift effects from your audience during streams",
-        color: "text-purple-400",
+        color: "text-purple-600 dark:text-purple-400",
         gradient: "from-purple-500/20 to-violet-500/20",
     },
     {
         icon: Wallet,
         title: "Instant Cashout",
         description: "Convert your virtual gifts to real money and withdraw instantly",
-        color: "text-yellow-400",
+        color: "text-yellow-600 dark:text-yellow-400",
         gradient: "from-yellow-500/20 to-orange-500/20",
     },
     {
         icon: Globe,
         title: "Global Reach",
         description: "Stream to audiences worldwide with low-latency live broadcasting",
-        color: "text-cyan-400",
+        color: "text-cyan-600 dark:text-cyan-400",
         gradient: "from-cyan-500/20 to-blue-500/20",
     },
     {
         icon: Palette,
         title: "Custom Themes",
         description: "Choose from dozens of birthday-themed overlays, effects, and filters",
-        color: "text-green-400",
+        color: "text-green-600 dark:text-green-400",
         gradient: "from-green-500/20 to-emerald-500/20",
     },
     {
         icon: Smartphone,
         title: "Mobile Ready",
         description: "Stream from any device - phone, tablet, or desktop with full features",
-        color: "text-blue-400",
+        color: "text-blue-600 dark:text-blue-400",
         gradient: "from-blue-500/20 to-indigo-500/20",
     },
 ];
@@ -59,7 +59,7 @@ export function FeaturesSection() {
     return (
         <section id="features" className="py-24 px-4 relative">
             {/* Background gradient */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-b from-transparent via-purple-500/5 to-transparent pointer-events-none" />
 
             <div className="container mx-auto max-w-6xl relative z-10">
                 {/* Section Header */}
@@ -70,12 +70,12 @@ export function FeaturesSection() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <span className="inline-block px-4 py-1.5 rounded-full glass text-sm font-medium text-cyan-400 mb-4">
+                    <span className="inline-block px-4 py-1.5 rounded-full glass text-sm font-medium text-cyan-600 dark:text-cyan-400 mb-4">
                         Powerful Features
                     </span>
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
                         Everything You Need to{" "}
-                        <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                        <span className="bg-linear-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
                             Celebrate & Earn
                         </span>
                     </h2>
@@ -96,7 +96,7 @@ export function FeaturesSection() {
                         >
                             <div className="group glass rounded-2xl p-6 h-full hover:scale-[1.02] transition-all duration-300 hover:border-pink-500/30 cursor-pointer">
                                 {/* Icon */}
-                                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}>
+                                <div className={`w-14 h-14 rounded-xl bg-linear-to-br ${feature.gradient} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}>
                                     <feature.icon className={`w-7 h-7 ${feature.color}`} />
                                 </div>
 

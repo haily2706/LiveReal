@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Cake, Gift, Sparkles, Play, Users, DollarSign, Globe } from "lucide-react";
+import Link from "next/link";
 
 export function HeroSection() {
     return (
@@ -61,7 +62,7 @@ export function HeroSection() {
                     transition={{ duration: 0.6 }}
                     className="mb-6"
                 >
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm font-medium text-pink-400">
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm font-medium text-pink-600 dark:text-pink-400">
                         <Sparkles className="w-4 h-4" />
                         The Future of Birthday Celebrations
                     </span>
@@ -76,7 +77,7 @@ export function HeroSection() {
                 >
                     Turn Your Birthday Into
                     <br />
-                    <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
+                    <span className="bg-linear-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
                         a Live Experience
                     </span>
                 </motion.h1>
@@ -101,18 +102,24 @@ export function HeroSection() {
                 >
                     <Button
                         size="lg"
-                        className="h-14 px-8 text-lg bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 animate-pulse-glow"
+                        className="h-14 px-8 text-lg bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 animate-pulse-glow rounded-2xl"
+                        asChild
                     >
-                        <Cake className="mr-2 h-5 w-5" />
-                        Start Streaming Free
+                        <Link href="/home">
+                            <Cake className="mr-2 h-5 w-5" />
+                            Start Streaming Free
+                        </Link>
                     </Button>
                     <Button
                         size="lg"
                         variant="outline"
-                        className="h-14 px-8 text-lg border-pink-500/50 hover:bg-pink-500/10"
+                        className="h-14 px-8 text-lg border-pink-500/50 hover:bg-pink-500/10 rounded-2xl"
+                        asChild
                     >
-                        <Play className="mr-2 h-5 w-5" />
-                        Watch Demo
+                        <Link href="/home">
+                            <Play className="mr-2 h-5 w-5" />
+                            Watch Demo
+                        </Link>
                     </Button>
                 </motion.div>
 
@@ -123,29 +130,29 @@ export function HeroSection() {
                     transition={{ duration: 0.7, delay: 0.4 }}
                     className="flex flex-wrap justify-center gap-8 md:gap-12"
                 >
-                    <div className="flex items-center gap-3 glass px-5 py-3 rounded-xl">
-                        <Users className="w-6 h-6 text-pink-400" />
+                    <div className="flex items-center gap-3 glass px-5 py-3 rounded-2xl">
+                        <Users className="w-6 h-6 text-pink-600 dark:text-pink-400" />
                         <div className="text-left">
                             <p className="text-2xl font-bold">100K+</p>
                             <p className="text-sm text-muted-foreground">Streamers</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3 glass px-5 py-3 rounded-xl">
-                        <Gift className="w-6 h-6 text-purple-400" />
+                    <div className="flex items-center gap-3 glass px-5 py-3 rounded-2xl">
+                        <Gift className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                         <div className="text-left">
                             <p className="text-2xl font-bold">1M+</p>
                             <p className="text-sm text-muted-foreground">Gifts Sent</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3 glass px-5 py-3 rounded-xl">
-                        <DollarSign className="w-6 h-6 text-yellow-400" />
+                    <div className="flex items-center gap-3 glass px-5 py-3 rounded-2xl">
+                        <DollarSign className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
                         <div className="text-left">
                             <p className="text-2xl font-bold">$5M+</p>
                             <p className="text-sm text-muted-foreground">Earned</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3 glass px-5 py-3 rounded-xl">
-                        <Globe className="w-6 h-6 text-cyan-400" />
+                    <div className="flex items-center gap-3 glass px-5 py-3 rounded-2xl">
+                        <Globe className="w-6 h-6 text-cyan-600 dark:text-cyan-400" />
                         <div className="text-left">
                             <p className="text-2xl font-bold">50+</p>
                             <p className="text-sm text-muted-foreground">Countries</p>

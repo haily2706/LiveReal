@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/app/components/navbar";
+import { Navbar } from "./components/navbar";
 import "../globals.css";
+import { ThemeProvider } from "@/app/components/theme-provider";
+import { Inter } from "next/font/google";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ireal.live"),
@@ -36,9 +38,7 @@ export const metadata: Metadata = {
   },
 };
 
-import { Outfit } from "next/font/google";
-
-const outfit = Outfit({ subsets: ["latin"] });
+const outfit = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -46,12 +46,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`min-h-screen bg-background text-foreground ${outfit.className} antialiased selection:bg-[hsl(44_94%_49%)] selection:text-black`}>
-        <Navbar mode="landing" />
-        <main className="flex w-full flex-1 flex-col">
-          {children}
-        </main>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`min-h-screen bg-background text-foreground ${outfit.className} antialiased selection:bg-brand-gold selection:text-black`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar />
+          <main className="flex w-full flex-1 flex-col">
+            {children}
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   );

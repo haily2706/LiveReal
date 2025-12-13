@@ -73,7 +73,7 @@ export function PricingSection() {
     return (
         <section id="pricing" className="py-24 px-4 relative">
             {/* Background */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-b from-transparent via-purple-500/5 to-transparent pointer-events-none" />
 
             <div className="container mx-auto max-w-6xl relative z-10">
                 {/* Section Header */}
@@ -84,12 +84,12 @@ export function PricingSection() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <span className="inline-block px-4 py-1.5 rounded-full glass text-sm font-medium text-green-400 mb-4">
+                    <span className="inline-block px-4 py-1.5 rounded-full glass text-sm font-medium text-green-600 dark:text-green-400 mb-4">
                         Simple Pricing
                     </span>
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
                         Choose Your{" "}
-                        <span className="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
+                        <span className="bg-linear-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
                             Streaming Plan
                         </span>
                     </h2>
@@ -112,7 +112,7 @@ export function PricingSection() {
                             {/* Popular Badge */}
                             {tier.popular && (
                                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                                    <span className="px-4 py-1 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-sm font-semibold">
+                                    <span className="px-4 py-1 rounded-full bg-linear-to-r from-pink-500 to-purple-500 text-sm font-semibold">
                                         Most Popular
                                     </span>
                                 </div>
@@ -121,7 +121,7 @@ export function PricingSection() {
                             <div className={`glass rounded-2xl p-8 h-full flex flex-col ${tier.popular ? 'border-pink-500/50 ring-1 ring-pink-500/20' : ''}`}>
                                 {/* Header */}
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${tier.gradient} flex items-center justify-center`}>
+                                    <div className={`w-10 h-10 rounded-xl bg-linear-to-br ${tier.gradient} flex items-center justify-center`}>
                                         <tier.icon className="w-5 h-5 text-white" />
                                     </div>
                                     <h3 className="text-xl font-bold">{tier.name}</h3>
@@ -141,7 +141,7 @@ export function PricingSection() {
                                 <div className="mb-6 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                                     <p className="text-sm">
                                         <span className="text-muted-foreground">Platform fee:</span>{" "}
-                                        <span className="font-bold text-green-400">{tier.platformFee}</span>
+                                        <span className="font-bold text-green-600 dark:text-green-400">{tier.platformFee}</span>
                                     </p>
                                 </div>
 
@@ -149,7 +149,7 @@ export function PricingSection() {
                                 <ul className="space-y-3 flex-1 mb-8">
                                     {tier.features.map((feature, i) => (
                                         <li key={i} className="flex items-start gap-3">
-                                            <Check className="w-5 h-5 text-green-400 shrink-0 mt-0.5" />
+                                            <Check className="w-5 h-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
                                             <span className="text-sm text-muted-foreground">{feature}</span>
                                         </li>
                                     ))}
@@ -157,7 +157,7 @@ export function PricingSection() {
 
                                 {/* CTA */}
                                 <Button
-                                    className={`w-full h-12 ${tier.popular ? 'bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600' : ''}`}
+                                    className={`w-full h-12 ${tier.popular ? 'bg-linear-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600' : ''}`}
                                     variant={tier.buttonVariant}
                                 >
                                     {tier.cta}
