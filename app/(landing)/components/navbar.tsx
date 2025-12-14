@@ -272,7 +272,7 @@ export function Navbar() {
                             ) : (
                                 <>
                                     <Button
-                                        className="w-full h-12 text-lg hover:text-pink-500 hover:bg-pink-500/10"
+                                        className="mb-4 w-full h-12 text-lg hover:text-pink-500 hover:bg-pink-500/10"
                                         variant="outline"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);

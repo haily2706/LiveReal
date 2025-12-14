@@ -77,7 +77,9 @@ export function Navbar() {
                         </SheetContent>
                     </Sheet>
 
-                    <TextLogo />
+                    <Link href="/">
+                        <TextLogo />
+                    </Link>
                 </div>
 
                 {/* Right Section: Actions */}

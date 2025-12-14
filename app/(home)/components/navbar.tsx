@@ -9,6 +9,7 @@ import {
     X,
     Search,
     Mic,
+    Menu,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -78,9 +79,21 @@ export function Navbar({ }: NavbarProps) {
                 className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-backdrop-filter:bg-background/80"
             >
                 <div className="flex h-14 items-center justify-between px-6 relative z-10 gap-4">
-                    <Link href="/">
-                        <TextLogo />
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <div className="md:hidden">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setIsMobileMenuOpen(true)}
+                                className="-ml-2"
+                            >
+                                <Menu className="h-6 w-6" />
+                            </Button>
+                        </div>
+                        <Link href="/">
+                            <TextLogo />
+                        </Link>
+                    </div>
 
                     {/* Center Section - Toggle between Pills and Search */}
                     <div className="hidden md:flex flex-1 max-w-[850px] items-center justify-center bg-transparent relative">
@@ -201,7 +214,7 @@ export function Navbar({ }: NavbarProps) {
                         ) : user ? (
                             <UserMenu email={user.email} />
                         ) : (
-                            <>
+                            <div className="hidden md:flex items-center gap-2">
                                 <Button
                                     variant="ghost"
                                     className="hover:text-pink-500 hover:bg-pink-500/10 active:scale-95 transition-all"
@@ -215,7 +228,7 @@ export function Navbar({ }: NavbarProps) {
                                 >
                                     Sign Up
                                 </Button>
-                            </>
+                            </div>
                         )}
 
                     </div>
@@ -288,6 +301,32 @@ export function Navbar({ }: NavbarProps) {
                                     </Link>
                                 ))}
                             </nav>
+
+                            <div className="mt-auto pb-4">
+                                {!user && (
+                                    <>
+                                        <Button
+                                            className="mb-4 w-full h-12 text-lg hover:text-pink-500 hover:bg-pink-500/10"
+                                            variant="outline"
+                                            onClick={() => {
+                                                setIsMobileMenuOpen(false);
+                                                onOpen("sign_in");
+                                            }}
+                                        >
+                                            Sign In
+                                        </Button>
+                                        <Button
+                                            className="w-full h-12 text-lg bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg shadow-pink-500/20"
+                                            onClick={() => {
+                                                setIsMobileMenuOpen(false);
+                                                onOpen("sign_up");
+                                            }}
+                                        >
+                                            Sign Up
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
 
                         </motion.div>
                     )
