@@ -1,18 +1,26 @@
 import Link from "next/link";
 import { Instagram, Twitter, Youtube } from "lucide-react";
+import Image from "next/image";
 
 export function Footer() {
     return (
         <footer className="border-t border-border/40 py-12">
-            <div className="container mx-auto px-4 md:px-6">
+            <div className="container mx-auto px-4">
                 <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
                     {/* Copyright */}
                     <div className="flex flex-col items-center md:items-start gap-2">
                         <div className="flex items-center gap-2">
-                            <span className="text-xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">iReal</span>
+                            <Image
+                                src="/text-logo.svg"
+                                alt="LiveReal Logo"
+                                width={160}
+                                height={20}
+                                className="w-auto h-12 hover:opacity-80 transition-opacity"
+                                priority
+                            />
                         </div>
-                        <p className="text-sm text-muted-foreground">
-                            © {new Date().getFullYear()} iReal. All rights reserved.
+                        <p className="text-sm text-muted-foreground pl-2">
+                            © {new Date().getFullYear()} LiveReal. All rights reserved.
                         </p>
                     </div>
 

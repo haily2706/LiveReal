@@ -79,7 +79,6 @@ export function Navbar() {
                             </nav>
                         </SheetContent>
                     </Sheet>
-
                     {/* Page Title with dynamic effect */}
                     <div className="hidden md:block">
                         <h1 className="text-lg font-bold tracking-tight bg-linear-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">

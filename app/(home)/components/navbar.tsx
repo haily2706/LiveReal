@@ -78,14 +78,15 @@ export function Navbar({ }: NavbarProps) {
                 animate={{ y: 0 }}
                 className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-backdrop-filter:bg-background/80"
             >
-                <div className="flex h-16 items-center justify-between px-4 relative z-10 gap-4">
+                <div className="flex h-12 items-center justify-between px-2 relative z-10 gap-4">
                     <Link href="/">
                         <Image
-                            src="/logo.svg"
-                            alt="iReal Logo"
-                            width={120}
-                            height={30}
-                            className="h-12 w-auto"
+                            src="/text-logo.svg"
+                            alt="LiveReal Logo"
+                            width={160}
+                            height={40}
+                            className="w-auto h-18 hover:opacity-80 transition-opacity"
+                            priority
                         />
                     </Link>
 
