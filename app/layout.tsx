@@ -10,12 +10,12 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     metadataBase: new URL("https://livereal.vercel.app"),
     title: {
-        default: "LiveReal - Streaming Platform",
+        default: "LiveReal - GenZ Streaming Platform",
         template: "%s | LiveReal",
     },
     description: "Turn your events into a live experience. Stream your celebration, connect with your audience, and receive gifts in real-time.",
     icons: {
-        icon: "/icon.svg",
+        icon: "/text-logo.svg",
     },
     openGraph: {
         type: "website",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
         description: "Stream your event celebration, connect with your audience, and receive gifts in real-time.",
         images: [
             {
-                url: "/icon.svg",
+                url: "/text-logo.svg",
                 width: 1200,
                 height: 630,
                 alt: "LiveReal - Streaming Platform",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "LiveReal - Streaming Platform",
         description: "Stream your event celebration, connect with your audience, and receive gifts in real-time.",
-        images: ["/icon.svg"],
+        images: ["/text-logo.svg"],
     },
 };
 

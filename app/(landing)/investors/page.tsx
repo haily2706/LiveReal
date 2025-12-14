@@ -33,7 +33,7 @@ export default function InvestorPage() {
                         </span>
                         <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-tight text-foreground">
                             Fueling the <br />
-                            <span className="text-transparent bg-clip-text bg-linear-to-b from-gray-900 to-gray-500 dark:from-white dark:to-white/50">Next Gen</span>{" "}
+                            <span className="text-transparent bg-clip-text bg-linear-to-b from-gray-900 to-gray-500 dark:from-white dark:to-white/50">Next GenZ</span>{" "}
                             <span className="text-transparent bg-clip-text bg-linear-to-r from-pink-500 via-purple-500 to-indigo-500">
                                 Live Platform
                             </span>
