@@ -220,9 +220,7 @@ export function Sidebar() {
 
             {/* Footer Actions */}
             <div className={cn("mt-auto p-4 flex items-center border-t border-border/50 bg-background/60 dark:bg-background/20 backdrop-blur-md relative z-20", isCollapsed ? "justify-center flex-col gap-4" : "justify-between")}>
-                <span className="text-[10px] font-bold text-muted-foreground/30 select-none px-2">
-                    v1.0.0
-                </span>
+
                 {user ? (
                     <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all">
                         <LogOut className="h-5 w-5" />

@@ -77,12 +77,7 @@ export function Sidebar() {
                 <div className="absolute -bottom-[10%] left-[10%] w-[40%] h-[30%] bg-pink-500/5 dark:bg-pink-500/10 blur-[80px] rounded-full" />
             </div>
 
-            <div className={cn("h-14 flex items-center relative z-20", isCollapsed ? "justify-center" : "justify-between pr-2")}>
-                {!isCollapsed && (
-                    <Link href="/dashboard" className="flex items-center">
-                        <TextLogo className="h-16 w-auto" />
-                    </Link>
-                )}
+            <div className={cn("h-14 flex items-center relative z-20", isCollapsed ? "justify-center" : "justify-between px-2")}>
                 <Button
                     variant="ghost"
                     size="icon"
@@ -186,9 +181,7 @@ export function Sidebar() {
 
             {/* Footer Actions */}
             <div className={cn("mt-auto p-4 flex items-center border-t border-border/50 bg-background/60 dark:bg-background/20 backdrop-blur-md relative z-20", isCollapsed ? "justify-center flex-col gap-4" : "justify-between")}>
-                <span className="text-[10px] font-bold text-muted-foreground/30 select-none px-2">
-                    v1.0.0
-                </span>
+
                 {user ? (
                     <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all">
                         <LogOut className="h-5 w-5" />

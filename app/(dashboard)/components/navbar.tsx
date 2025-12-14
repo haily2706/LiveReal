@@ -44,7 +44,7 @@ export function Navbar() {
             {/* Ambient Gradient Top Line */}
             <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-indigo-500/20 to-transparent" />
 
-            <div className="flex h-full items-center px-4 gap-4">
+            <div className="flex h-full items-center pl-2 pr-4 gap-4">
                 {/* Left Section: Mobile Menu & Title */}
                 <div className="flex items-center gap-4 flex-1">
                     <Sheet>
@@ -77,12 +77,7 @@ export function Navbar() {
                         </SheetContent>
                     </Sheet>
 
-                    {/* Page Title with dynamic effect */}
-                    <div className="hidden md:block">
-                        <h1 className="text-lg font-bold tracking-tight bg-linear-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">
-                            {pageTitle}
-                        </h1>
-                    </div>
+                    <TextLogo />
                 </div>
 
                 {/* Right Section: Actions */}
