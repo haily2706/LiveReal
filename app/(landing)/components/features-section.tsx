@@ -13,7 +13,7 @@ import {
 const features = [
     {
         icon: Timer,
-        title: "Birthday Countdown",
+        title: "Event Countdown",
         description: "Automated countdown timer builds excitement before your stream goes live",
         color: "text-pink-600 dark:text-pink-400",
         gradient: "from-pink-500/20 to-rose-500/20",
