@@ -91,9 +91,11 @@ export function Navbar() {
                         </Button>
                     </div>
                     <div className="flex items-center gap-1 border-r border-border pr-3 mr-1">
-                        <div className="hover:bg-accent rounded-full transition-colors">
-                            <NotiDropdown />
-                        </div>
+                        {user && (
+                            <div className="hover:bg-accent rounded-full transition-colors">
+                                <NotiDropdown />
+                            </div>
+                        )}
                         <div className="hover:bg-accent rounded-full transition-colors">
                             <ModeToggle />
                         </div>

@@ -189,7 +189,7 @@ export function Navbar({ }: NavbarProps) {
                             </motion.div>
                         )}
 
-                        <NotiDropdown />
+                        {user && <NotiDropdown />}
 
                         <div className="scale-90">
                             <ModeToggle />

@@ -8,35 +8,35 @@ import { AuthListener } from "@/app/components/auth/auth-listener";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://livereal.live"),
+    metadataBase: new URL("https://livereal.vercel.app"),
     title: {
         default: "LiveReal - Streaming Platform",
         template: "%s | LiveReal",
     },
-    description: "Turn your birthday into a live experience. Stream your celebration, connect with your audience, and receive gifts in real-time.",
+    description: "Turn your events into a live experience. Stream your celebration, connect with your audience, and receive gifts in real-time.",
     icons: {
         icon: "/icon.svg",
     },
     openGraph: {
         type: "website",
         locale: "en_US",
-        url: "https://livereal.live",
+        url: "https://livereal.vercel.app",
         siteName: "LiveReal",
         title: "LiveReal - Streaming Platform",
-        description: "Stream your birthday celebration, connect with your audience, and receive gifts in real-time.",
+        description: "Stream your event celebration, connect with your audience, and receive gifts in real-time.",
         images: [
             {
-                url: "icon.svg",
+                url: "/icon.svg",
                 width: 1200,
                 height: 630,
-                alt: "LiveReal - Birthday Streaming Platform",
+                alt: "LiveReal - Streaming Platform",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "LiveReal - Birthday Streaming Platform",
-        description: "Stream your birthday, receive gifts, and connect with your audience live.",
+        title: "LiveReal - Streaming Platform",
+        description: "Stream your event celebration, connect with your audience, and receive gifts in real-time.",
         images: ["/icon.svg"],
     },
 };
