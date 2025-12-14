@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     metadataBase: new URL("https://livereal.live"),
     title: {
-        default: "LiveReal - Birthday Streaming Platform",
+        default: "LiveReal - Streaming Platform",
         template: "%s | LiveReal",
     },
     description: "Turn your birthday into a live experience. Stream your celebration, connect with your audience, and receive gifts in real-time.",
@@ -22,11 +22,11 @@ export const metadata: Metadata = {
         locale: "en_US",
         url: "https://livereal.live",
         siteName: "LiveReal",
-        title: "LiveReal - Birthday Streaming Platform",
+        title: "LiveReal - Streaming Platform",
         description: "Stream your birthday celebration, connect with your audience, and receive gifts in real-time.",
         images: [
             {
-                url: "/og-image.png",
+                url: "icon.svg",
                 width: 1200,
                 height: 630,
                 alt: "LiveReal - Birthday Streaming Platform",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "LiveReal - Birthday Streaming Platform",
         description: "Stream your birthday, receive gifts, and connect with your audience live.",
-        images: ["/og-image.png"],
+        images: ["/icon.svg"],
     },
 };
 

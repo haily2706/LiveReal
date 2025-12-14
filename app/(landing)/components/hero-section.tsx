@@ -1,9 +1,45 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Cake, Gift, Sparkles, Play, Users, DollarSign, Globe } from "lucide-react";
 import Link from "next/link";
+
+const RotatingText = () => {
+    const items = [
+        { text: "Birthday", color: "bg-linear-to-r from-pink-500 via-rose-500 to-yellow-500" },
+        { text: "Gaming", color: "bg-linear-to-r from-purple-500 via-violet-500 to-indigo-500" },
+        { text: "Singing", color: "bg-linear-to-r from-cyan-400 via-blue-500 to-purple-500" },
+        { text: "FanMeet", color: "bg-linear-to-r from-orange-500 via-amber-500 to-yellow-400" },
+    ];
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setIndex((prev) => (prev + 1) % items.length);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <span className="inline-grid grid-cols-1 place-items-center h-[1.2em] align-top overflow-hidden mx-2">
+            <span className="opacity-0 col-start-1 row-start-1 invisible pointer-events-none">Birthday</span>
+            <AnimatePresence mode="wait">
+                <motion.span
+                    key={index}
+                    initial={{ y: "100%", opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: "-100%", opacity: 0 }}
+                    transition={{ duration: 0.5, ease: "circOut" }}
+                    className={`col-start-1 row-start-1 bg-clip-text text-transparent animate-gradient bg-300% ${items[index].color}`}
+                >
+                    {items[index].text}
+                </motion.span>
+            </AnimatePresence>
+        </span>
+    );
+};
 
 export function HeroSection() {
     return (
@@ -64,7 +100,7 @@ export function HeroSection() {
                 >
                     <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm font-medium text-pink-600 dark:text-pink-400">
                         <Sparkles className="w-4 h-4" />
-                        The Future of Birthday Celebrations
+                        The Future of Celebrations
                     </span>
                 </motion.div>
 
@@ -75,7 +111,7 @@ export function HeroSection() {
                     transition={{ duration: 0.7, delay: 0.1 }}
                     className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6"
                 >
-                    Turn Your Birthday Into
+                    Turn Your <RotatingText /> Into
                     <br />
                     <span className="bg-linear-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
                         a Live Experience
