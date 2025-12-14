@@ -26,6 +26,10 @@ export function StreamCard({ stream, type, index, rank, showRemindMe = false, is
     return (
         <motion.div
             className={`group relative flex flex-col gap-3 ${isVertical ? 'row-span-2' : 'col-span-1'}`}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: index * 0.05 }}
         >
             {/* Stream/Event Card */}
             <div className={`relative rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group-hover:-translate-y-1 ring-1 ring-white/10 w-full ${isVertical ? 'aspect-[9/16]' : 'aspect-video'}`}>
