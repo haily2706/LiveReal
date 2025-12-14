@@ -7,7 +7,7 @@ interface TextLogoProps {
     height?: number;
 }
 
-export function TextLogo({ className, width = 160, height = 40 }: TextLogoProps) {
+export function TextLogo({ className, width = 180, height = 40 }: TextLogoProps) {
     return (
         <Image
             src="/text-logo.svg"
