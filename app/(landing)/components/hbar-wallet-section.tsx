@@ -19,8 +19,8 @@ const CoinIcon = ({ className }: { className?: string }) => (
 const features = [
     {
         icon: Wallet,
-        title: "Personal HBar Wallet",
-        description: "Every user gets a secure, dedicated HBar-based wallet to manage assets effortlessly.",
+        title: "Personal Wallet",
+        description: "Every user gets a secure, dedicated wallet to manage assets effortlessly.",
         color: "text-brand-gold",
         gradient: "from-brand-gold/20 to-yellow-500/20",
     },
@@ -33,8 +33,8 @@ const features = [
     },
     {
         icon: ArrowRightLeft,
-        title: "Seamless HBar Trading",
-        description: "Trade directly on the Hedera Hashgraph network with lightning-fast finality.",
+        title: "Seamless Transfer",
+        description: "Transfer gifts directly on the network with lightning-fast finality.",
         color: "text-purple-600 dark:text-purple-400",
         gradient: "from-purple-500/20 to-pink-500/20",
     },
@@ -74,9 +74,8 @@ export function HBarWalletSection() {
                             </span>
                         </h2>
                         <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                            Experience true ownership with your personal HBar wallet.
-                            Receive gifts, hold LiveReal coins, and trade on the HBar network
-                            with low fees and instant settlement.
+                            Experience true ownership with your personal wallet.
+                            Receive gifts, hold LiveReal coins.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4">
