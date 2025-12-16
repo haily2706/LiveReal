@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -5,10 +6,19 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Plus, ArrowUpRight, ArrowDownLeft, CreditCard, MoreHorizontal, Wallet as WalletIcon } from "lucide-react";
+import { Plus, ArrowUpRight, ArrowDownLeft, CreditCard, MoreHorizontal, Wallet as WalletIcon, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { Coin } from "@/components/ui/coin";
 import Image from "next/image";
 import { CashInModal } from "./components/cash-in-modal";
+import { Badge } from "@/components/ui/badge";
+
+type Transaction = {
+    id: string;
+    amount: string;
+    currency: string;
+    status: string;
+    createdAt: string;
+};
 
 export default function WalletPage() {
     const [balanceData, setBalanceData] = useState<{
@@ -16,25 +26,54 @@ export default function WalletPage() {
         tokenBalance: string;
         accountId: string;
     } | null>(null);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchBalance = async () => {
+        const fetchData = async () => {
             try {
-                const res = await fetch('/api/wallet/balance');
-                if (res.ok) {
-                    const data = await res.json();
+                const [balanceRes, transactionsRes] = await Promise.all([
+                    fetch('/api/wallet/balance'),
+                    fetch('/api/wallet/transactions')
+                ]);
+
+                if (balanceRes.ok) {
+                    const data = await balanceRes.json();
                     setBalanceData(data);
                 }
+
+                if (transactionsRes.ok) {
+                    const data = await transactionsRes.json();
+                    setTransactions(data);
+                }
             } catch (error) {
-                console.error("Failed to fetch balance", error);
+                console.error("Failed to fetch wallet data", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchBalance();
+        fetchData();
     }, []);
+
+    const getStatusIcon = (status: string) => {
+        switch (status) {
+            case 'succeeded':
+                return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+            case 'failed':
+                return <XCircle className="h-4 w-4 text-red-500" />;
+            default:
+                return <Clock className="h-4 w-4 text-orange-500" />;
+        }
+    };
+
+    const formatCurrency = (amount: string, currency: string) => {
+        const value = parseInt(amount) / 100;
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency.toUpperCase(),
+        }).format(value);
+    };
 
     return (
         <div className="space-y-8 animate-in fade-in-50 duration-500">
@@ -158,15 +197,48 @@ export default function WalletPage() {
                 </Card>
             </div>
 
-            {/* Transaction History Placeholder */}
+            {/* Transaction History */}
             <div className="space-y-4 pt-4">
                 <div className="flex items-center justify-between">
                     <h4 className="text-base font-semibold">Recent Activity</h4>
                     <Button variant="link" className="text-xs h-auto p-0">View All</Button>
                 </div>
                 <Card className="border-muted/60">
-                    <CardContent className="p-8 text-center text-muted-foreground text-sm">
-                        No recent transactions
+                    <CardContent className="p-0">
+                        {transactions.length === 0 ? (
+                            <div className="p-8 text-center text-muted-foreground text-sm">
+                                No recent transactions
+                            </div>
+                        ) : (
+                            <div className="divide-y divide-border/50">
+                                {transactions.map((tx) => (
+                                    <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-muted/10 transition-colors">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-10 w-10 rounded-full bg-muted/50 flex items-center justify-center">
+                                                {getStatusIcon(tx.status)}
+                                            </div>
+                                            <div>
+                                                <div className="font-medium text-sm">Cash In</div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    {new Date(tx.createdAt).toLocaleDateString()} • {new Date(tx.createdAt).toLocaleTimeString()}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="font-bold text-sm">
+                                                +{formatCurrency(tx.amount, tx.currency)}
+                                            </div>
+                                            <Badge variant="outline" className={`text-xs capitalize ${tx.status === 'succeeded' ? 'border-green-500/20 text-green-600' :
+                                                tx.status === 'failed' ? 'border-red-500/20 text-red-600' :
+                                                    'border-orange-500/20 text-orange-600'
+                                                }`}>
+                                                {tx.status}
+                                            </Badge>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>
