@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         locale: "en_US",
         url: "https://livereal.vercel.app",
         siteName: "LiveReal",
-        title: "LiveReal - Streaming Platform",
+        title: "NextGen Streaming Platform",
         description: "Stream your event celebration, connect with your audience, and receive gifts in real-time.",
         images: [
             {
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "LiveReal - Streaming Platform",
+        title: "NextGen Streaming Platform",
         description: "Stream your event celebration, connect with your audience, and receive gifts in real-time.",
         images: ["/text-logo.svg"],
     },
