@@ -34,7 +34,6 @@ export async function POST(req: Request) {
             return new NextResponse("User id is required", { status: 400 });
         }
 
-        console.log(JSON.stringify(subscriptions, null, 2));
         await db.insert(subscriptions).values({
             id: subscription.id,
             userId: session.metadata.userId,
