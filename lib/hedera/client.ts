@@ -1,12 +1,12 @@
 import { Client, PrivateKey, AccountCreateTransaction, Hbar, TokenAssociateTransaction, AccountBalanceQuery, TransferTransaction } from "@hashgraph/sdk";
 
-const HEDERA_NETWORK = process.env.NEXT_PUBLIC_HEDERA_NETWORK || 'testnet';
-const OPERATOR_ID = process.env.HEDERA_OPERATOR_ID;
-const OPERATOR_KEY = process.env.HEDERA_OPERATOR_KEY;
+const HEDERA_NETWORK = process.env.HEDERA_NETWORK || 'testnet';
+const OPERATOR_ID = process.env.HEDERA_ACCOUNT_ID;
+const OPERATOR_KEY = process.env.HEDERA_PRIVATE_KEY;
 
 export const getClient = () => {
     if (!OPERATOR_ID || !OPERATOR_KEY) {
-        throw new Error("HEDERA_OPERATOR_ID and HEDERA_OPERATOR_KEY must be set in .env");
+        throw new Error("HEDERA_OPERATOR_ID and HEDERA_PRIVATE_KEY must be set in .env");
     }
 
     const client = HEDERA_NETWORK === 'mainnet' ? Client.forMainnet() : Client.forTestnet();
@@ -86,7 +86,7 @@ export async function getAccountBalance(accountId: string) {
 export async function transferToken(toAccountId: string, amount: number) {
     const client = getClient();
     const tokenId = process.env.LIVEREAL_TOKEN_ID;
-    const treasuryId = process.env.NEXT_PUBLIC_HEDERA_ACCOUNT_ID; // Assuming this is treasury
+    const treasuryId = process.env.HEDERA_ACCOUNT_ID; // Assuming this is treasury
     const treasuryKey = process.env.HEDERA_PRIVATE_KEY;
 
     if (!tokenId || !treasuryId || !treasuryKey) {
