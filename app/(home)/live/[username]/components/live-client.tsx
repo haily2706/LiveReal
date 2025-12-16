@@ -48,6 +48,10 @@ export function LiveClient({ username }: LiveClientProps) {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    useEffect(() => {
         // Decode username as it might be URL encoded
         const decodedUsername = decodeURIComponent(username);
 

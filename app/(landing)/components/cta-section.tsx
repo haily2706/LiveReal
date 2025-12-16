@@ -115,7 +115,7 @@ export function CTASection() {
                             className="h-14 px-8 text-lg bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 animate-pulse-glow text-white"
                             asChild
                         >
-                            <Link href="/home">
+                            <Link href="/home" scroll={true}>
                                 Create Free Account
                                 <ArrowRight className="ml-2 h-5 w-5" />
                             </Link>

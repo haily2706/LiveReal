@@ -8,5 +8,6 @@ interface PageProps {
 export default async function LivePage({ params }: PageProps) {
     const { username } = await params;
 
+
     return <LiveClient username={username} />;
 }

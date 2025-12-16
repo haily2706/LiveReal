@@ -22,6 +22,9 @@ export function HomeProvider({
     const [showPremiumBalance, setShowPremiumBalance] = useState(true);
 
     useEffect(() => {
+        // Enforce scroll to top on mount to fix navigation from landing page
+        window.scrollTo(0, 0);
+
         const storedBalance = localStorage.getItem("sidebar-show-premium-balance");
         if (storedBalance) {
             setShowPremiumBalance(JSON.parse(storedBalance));
