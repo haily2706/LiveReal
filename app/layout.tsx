@@ -27,7 +27,7 @@ export const metadata: Metadata = {
         description: "Stream your event celebration, connect with your audience, and receive gifts in real-time.",
         images: [
             {
-                url: "/text-logo.svg",
+                url: "/og-image.png",
                 width: 1200,
                 height: 630,
                 alt: "LiveReal - Streaming Platform",
