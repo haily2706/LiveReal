@@ -5,12 +5,13 @@ import { redirect } from "next/navigation";
 
 
 interface SubscriptionPageProps {
-    searchParams: {
+    searchParams: Promise<{
         planId?: string;
-    }
+    }>
 }
 
 export default async function SubscriptionPage({ searchParams }: SubscriptionPageProps) {
+    const { planId } = await searchParams;
     const supabase = await createClient();
     const {
         data: { user },
@@ -30,7 +31,7 @@ export default async function SubscriptionPage({ searchParams }: SubscriptionPag
             </p>
             <SubscriptionView
                 subscription={subscription}
-                planIdFromUrl={searchParams.planId}
+                planIdFromUrl={planId}
             />
         </div>
     );

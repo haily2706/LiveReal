@@ -24,6 +24,7 @@ export async function POST(req: Request) {
 
     const session = event.data.object as Stripe.Checkout.Session;
 
+
     if (event.type === "checkout.session.completed") {
         const subscription = await stripe.subscriptions.retrieve(
             session.subscription as string
@@ -40,9 +41,7 @@ export async function POST(req: Request) {
             stripeCustomerId: subscription.customer as string,
             stripePriceId: subscription.items.data[0].price.id,
             planId: session.metadata.planId,
-            stripeCurrentPeriodEnd: (subscription as any).current_period_end
-                ? new Date((subscription as any).current_period_end * 1000)
-                : null,
+            stripeCurrentPeriodEnd: subscription.items.data[0].current_period_end ? new Date(subscription.items.data[0].current_period_end * 1000) : null,
         });
     }
 
@@ -56,9 +55,7 @@ export async function POST(req: Request) {
             .update(subscriptions)
             .set({
                 stripePriceId: subscription.items.data[0].price.id,
-                stripeCurrentPeriodEnd: (subscription as any).current_period_end
-                    ? new Date((subscription as any).current_period_end * 1000)
-                    : null,
+                stripeCurrentPeriodEnd: subscription.items.data[0].current_period_end ? new Date(subscription.items.data[0].current_period_end * 1000) : null;
                 planId: subscription.metadata.planId,
             })
             .where(eq(subscriptions.stripeSubscriptionId, subscription.id));
@@ -74,9 +71,7 @@ export async function POST(req: Request) {
             .update(subscriptions)
             .set({
                 stripePriceId: subscription.items.data[0].price.id,
-                stripeCurrentPeriodEnd: (subscription as any).current_period_end
-                    ? new Date((subscription as any).current_period_end * 1000)
-                    : null,
+                stripeCurrentPeriodEnd: subscription.items.data[0].current_period_end ? new Date(subscription.items.data[0].current_period_end * 1000) : null,
                 planId: subscription.metadata.planId,
             })
             .where(eq(subscriptions.stripeSubscriptionId, subscription.id));
