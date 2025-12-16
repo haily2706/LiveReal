@@ -61,6 +61,20 @@ export const SubscriptionView = ({ subscription, planIdFromUrl }: SubscriptionVi
         }
     };
 
+    const onCancel = async () => {
+        try {
+            setLoading(true);
+            await axios.post("/api/payments/stripe/cancel");
+            toast.success("Subscription canceled successfully at period end");
+            // Optional: trigger a re-fetch or reload
+            window.location.reload();
+        } catch (error) {
+            toast.error("Something went wrong");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="space-y-8">
             {/* Current Plan Section */}
@@ -90,20 +104,36 @@ export const SubscriptionView = ({ subscription, planIdFromUrl }: SubscriptionVi
                             <p className="text-muted-foreground">
                                 You are currently on the {currentPlan.name.toLowerCase()} plan.
                             </p>
-                            <div className="flex items-baseline gap-x-1">
-                                <span className="text-3xl font-bold">{currentPlan.price}</span>
-                                <span className="text-muted-foreground">{currentPlan.period}</span>
+                            <div>
+                                <div className="flex items-baseline gap-x-1">
+                                    <span className="text-3xl font-bold">{currentPlan.price}</span>
+                                    <span className="text-muted-foreground">{currentPlan.period}</span>
+                                </div>
+                                {subscription?.stripeCurrentPeriodEnd && (
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                        Renews on {new Date(subscription.stripeCurrentPeriodEnd).toLocaleDateString()}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
-                        <div className="flex items-end">
-                            <Button
-                                variant="outline"
-                                disabled
-                                className="bg-white/50 backdrop-blur-sm dark:bg-black/50"
-                            >
-                                Current Plan
-                            </Button>
+                        <div className="flex items-end gap-2">
+                            {subscription?.status === 'active' && !subscription?.cancelAtPeriodEnd && currentPlanId !== PlanId.FREE && (
+                                <Button
+                                    onClick={onCancel}
+                                    disabled={loading}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                                >
+                                    Cancel Subscription
+                                </Button>
+                            )}
+                            {subscription?.cancelAtPeriodEnd && currentPlanId !== PlanId.FREE && (
+                                <p className="text-xs text-center text-amber-600 font-medium">
+                                    Cancels on {new Date(subscription.stripeCurrentPeriodEnd).toLocaleDateString()}
+                                </p>
+                            )}
                         </div>
                     </div>
 

@@ -41,6 +41,8 @@ export async function POST(req: Request) {
             stripeCustomerId: subscription.customer as string,
             stripePriceId: subscription.items.data[0].price.id,
             planId: session.metadata.planId,
+            status: subscription.status,
+            cancelAtPeriodEnd: subscription.cancel_at_period_end,
             stripeCurrentPeriodEnd: subscription.items.data[0].current_period_end ? new Date(subscription.items.data[0].current_period_end * 1000) : null,
         });
     }
@@ -57,6 +59,8 @@ export async function POST(req: Request) {
                 stripePriceId: subscription.items.data[0].price.id,
                 stripeCurrentPeriodEnd: subscription.items.data[0].current_period_end ? new Date(subscription.items.data[0].current_period_end * 1000) : null,
                 planId: subscription.metadata.planId,
+                status: subscription.status,
+                cancelAtPeriodEnd: subscription.cancel_at_period_end,
             })
             .where(eq(subscriptions.stripeSubscriptionId, subscription.id));
     }
@@ -73,6 +77,8 @@ export async function POST(req: Request) {
                 stripePriceId: subscription.items.data[0].price.id,
                 stripeCurrentPeriodEnd: subscription.items.data[0].current_period_end ? new Date(subscription.items.data[0].current_period_end * 1000) : null,
                 planId: subscription.metadata.planId,
+                status: subscription.status,
+                cancelAtPeriodEnd: subscription.cancel_at_period_end,
             })
             .where(eq(subscriptions.stripeSubscriptionId, subscription.id));
     }
