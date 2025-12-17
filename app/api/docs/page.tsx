@@ -30,17 +30,13 @@ export const getApiDocs = async () => {
     return spec;
 };
 
-import { DocsNavbar } from './components/docs-navbar';
 import { ApiDocs } from './components/api-docs';
 
 export default async function IndexPage() {
     const spec = await getApiDocs();
     return (
-        <main className="min-h-screen bg-background text-foreground flex flex-col">
-            <DocsNavbar />
-            <div className="flex-1 relative">
-                <ApiDocs spec={spec} />
-            </div>
+        <main className="bg-background text-foreground">
+            <ApiDocs spec={spec} />
         </main>
     );
 }

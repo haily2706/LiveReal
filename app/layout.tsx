@@ -69,7 +69,7 @@ export default function RootLayout({
                     <Suspense fallback={null}>
                         <AuthModal />
                     </Suspense>
-                    <Toaster theme="system" richColors closeButton />
+                    <Toaster theme="system" richColors closeButton position="top-right" />
                 </ThemeProvider>
             </body>
         </html>

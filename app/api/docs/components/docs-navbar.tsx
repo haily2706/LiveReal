@@ -9,19 +9,33 @@ import { UserMenu } from '@/components/auth/user-menu';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
-export function DocsNavbar() {
+interface DocsNavbarProps {
+    mobileNav?: React.ReactNode;
+    mobileRightNav?: React.ReactNode;
+}
+
+export function DocsNavbar({ mobileNav, mobileRightNav }: DocsNavbarProps) {
     const { user, isLoading } = useAuthStore();
     const { onOpen } = useAuthModal();
 
     return (
-        <nav className="sticky top-0 z-50 w-full h-16 border-b border-border/50 bg-background/80 backdrop-blur-xl supports-backdrop-filter:bg-background/60">
+        <nav className="sticky top-0 z-50 w-full h-16 border-b border-border/50 bg-background/40 backdrop-blur-xl supports-backdrop-filter:bg-background/20 transition-all duration-300">
             <div className="container mx-auto h-full px-6 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2">
-                    <TextLogo />
-                </Link>
                 <div className="flex items-center gap-4">
-                    <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
-                        Home
+                    {mobileNav}
+                    <Link href="/" className="flex items-center gap-2">
+                        <TextLogo />
+                    </Link>
+                </div>
+                <div className="flex items-center gap-4">
+                    {mobileRightNav}
+                    <Link href="/">
+                        <Button
+                            variant="ghost"
+                            className="hidden sm:inline-flex hover:text-pink-500 hover:bg-pink-500/10 active:scale-95 transition-all"
+                        >
+                            Home
+                        </Button>
                     </Link>
 
                     <div className="h-6 w-px bg-border/50 hidden sm:block" />
