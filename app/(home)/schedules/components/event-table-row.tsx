@@ -13,6 +13,7 @@ import {
     Signal,
     CalendarClock,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -23,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { deleteEvent, publishEvent } from "../actions";
@@ -45,16 +46,21 @@ interface EventTableRowProps {
         views: number;
         likes: number;
         comments: number;
+        lreal: number;
         dislikes: number;
     };
     isVertical?: boolean;
+    index?: number;
 }
+
+const MotionTableRow = motion(TableRow);
 
 export function EventTableRow({
     event,
     onEdit,
-    mockStats = { views: 0, likes: 0, comments: 0, dislikes: 0 },
-    isVertical = false
+    mockStats = { views: 0, likes: 0, comments: 0, lreal: 0, dislikes: 0 },
+    isVertical = false,
+    index = 0
 }: EventTableRowProps) {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
@@ -107,7 +113,7 @@ export function EventTableRow({
     } else if (isPast(endDate)) {
         statusText = "Public"; // Ended but public
     } else if (event.status === "published") {
-        statusText = "Scheduled";
+        statusText = "Published";
         statusIcon = <CalendarClock className="h-4 w-4 text-emerald-500" />;
     }
 
@@ -122,14 +128,28 @@ export function EventTableRow({
         return Math.abs(hash);
     };
 
+    const formatNumber = (num: number) => {
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1) + "k";
+        }
+        return num.toLocaleString();
+    };
+
     const seed = getHash(event.id);
-    const views = mockStats.views || ((seed % 5000) + 100);
-    const likes = mockStats.likes || ((seed % 500) + 10);
+    const views = mockStats.views || ((seed % 5000) + 1200);
+    const likes = mockStats.likes || ((seed % 2000) + 300);
+    const lreal = mockStats.lreal || ((seed % 1000) + 500);
     const comments = mockStats.comments || (seed % 50);
     const likePercentage = 95 + ((seed % 50) / 10);
 
     return (
-        <TableRow className="group hover:bg-muted/50 border-white/5 transition-colors">
+        <MotionTableRow
+            className="group hover:bg-muted/50 border-border dark:border-white/5 transition-colors"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: index * 0.05 }}
+        >
 
 
             {/* Video / Short Content */}
@@ -137,7 +157,7 @@ export function EventTableRow({
                 <div className="flex gap-3">
                     {/* Thumbnail */}
                     <div className={cn(
-                        "relative shrink-0 overflow-hidden rounded-md bg-muted border border-white/10 group-hover:border-white/20 transition-colors",
+                        "relative shrink-0 overflow-hidden rounded-md bg-muted border border-border dark:border-white/10 group-hover:border-border dark:group-hover:border-white/20 transition-colors",
                         "aspect-video w-[120px] h-[68px]"
                     )}>
                         {event.thumbnailUrl ? (
@@ -213,17 +233,14 @@ export function EventTableRow({
                                 </Button>
                             )}
 
-                            <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
-                                <Eye className="h-3 w-3" />
-                            </Button>
 
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
-                                        <MoreVertical className="h-3 w-3" />
+                                        <MoreVertical className="h-3.5 w-3.5" />
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="start" className="w-48 bg-zinc-950 border-zinc-800">
+                                <DropdownMenuContent align="start" className="w-48 bg-background border-border">
                                     {event.status !== "published" && (
                                         <DropdownMenuItem onClick={onPublish} disabled={isPending}>
                                             <Play className="mr-2 h-4 w-4" /> Publish
@@ -261,7 +278,7 @@ export function EventTableRow({
 
             {/* Views */}
             <TableCell className="align-top py-2">
-                <span className="text-sm text-foreground">{views.toLocaleString()}</span>
+                <span className="text-sm text-foreground">{formatNumber(views)}</span>
             </TableCell>
 
             {/* Comments */}
@@ -269,18 +286,23 @@ export function EventTableRow({
                 <span className="text-sm text-foreground">{comments}</span>
             </TableCell>
 
+            {/* LREAL */}
+            <TableCell className="align-top py-2">
+                <span className="text-sm font-semibold text-foreground">{formatNumber(lreal)}</span>
+            </TableCell>
+
             {/* Likes (vs Dislikes) */}
             <TableCell className="align-top py-2 w-[200px]">
                 <div className="flex flex-col gap-1 pt-0.5">
                     <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                         <span className="text-foreground font-medium">{likePercentage.toFixed(1)}%</span>
-                        <span>{likes} like</span>
+                        <span>{formatNumber(likes)} like</span>
                     </div>
-                    <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-1 w-full bg-muted dark:bg-white/10 rounded-full overflow-hidden">
                         <div className="h-full bg-muted-foreground/50 rounded-full" style={{ width: `${likePercentage}%` }} />
                     </div>
                 </div>
             </TableCell>
-        </TableRow>
+        </MotionTableRow>
     );
 }

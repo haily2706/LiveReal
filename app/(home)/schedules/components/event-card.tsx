@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import {
     Calendar,
     Trash2,
@@ -9,7 +9,6 @@ import {
     Play,
     Clock,
     MoreVertical,
-    Eye,
     Heart,
     Coins,
     Signal,
@@ -107,7 +106,7 @@ export function EventCard({
 
     if (event.isLive) {
         statusBadge = (
-            <Badge variant="destructive" className="animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.6)] font-bold tracking-widest uppercase border-0 flex items-center gap-1.5 px-3 py-1 bg-red-600/90 text-white">
+            <Badge variant="destructive" className="animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.6)] font-bold tracking-widest border-0 flex items-center gap-1.5 px-3 py-1 bg-red-600/90 text-white">
                 <Signal className="h-3 w-3" /> LIVE
             </Badge>
         );
@@ -124,10 +123,17 @@ export function EventCard({
         return Math.abs(hash);
     };
 
+    const formatNumber = (num: number) => {
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1) + "k";
+        }
+        return num.toLocaleString();
+    };
+
     const seed = getHash(event.id);
-    const views = mockStats.views || ((seed % 1000) + 50);
-    const likes = mockStats.likes || ((seed % 500) + 10);
-    const lreal = mockStats.lreal || ((seed % 200) + 5);
+    const views = mockStats.views || ((seed % 5000) + 1200);
+    const likes = mockStats.likes || ((seed % 2000) + 300);
+    const lreal = mockStats.lreal || ((seed % 1000) + 500);
 
     return (
         <motion.div
@@ -141,7 +147,7 @@ export function EventCard({
             transition={{ duration: 0.4, delay: index * 0.05 }}
         >
             <Card className={cn(
-                "relative overflow-hidden border-0 shadow-lg transition-all duration-500 hover:-translate-y-1 ring-1 ring-white/10 dark:ring-white/5 bg-transparent shrink-0",
+                "relative overflow-hidden border-0 shadow-lg transition-all duration-500 hover:-translate-y-1 ring-1 ring-border dark:ring-white/5 bg-transparent shrink-0",
                 isVertical ? "aspect-9/16" : "w-[40%] max-w-[160px] aspect-video md:w-full"
             )}>
                 {/* Main Background Image - Absolute Cover */}
@@ -169,7 +175,10 @@ export function EventCard({
                 </div>
 
                 {/* Date Badge - Top Right */}
-                <div className="absolute top-2 right-2 z-20">
+                <div className={cn(
+                    "absolute top-2 right-2 z-20",
+                    !isVertical && "hidden" // Hide in thumbnail for horizontal layout
+                )}>
                     <EventDateBadge startTime={event.startTime} />
                 </div>
 
@@ -178,20 +187,23 @@ export function EventCard({
                     {statusBadge}
                 </div>
 
-                {/* Menu Button - Top Right (Shifted Left on Desktop) */}
-                <div className="absolute top-3 right-16 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:block">
+                {/* Menu Button - Top Right (Shifted Left only if Badge is present) */}
+                <div className={cn(
+                    "absolute top-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:block",
+                    isVertical ? "right-16" : "right-3"
+                )}>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button
                                 size="icon"
                                 variant="secondary"
-                                className="h-8 w-8 rounded-full bg-black/40 backdrop-blur-md hover:bg-black/60 text-white border-0 shadow-lg ring-1 ring-white/20 transition-all duration-300 hover:scale-105"
+                                className="h-8 w-8 rounded-full bg-background/80 dark:bg-black/40 backdrop-blur-md hover:bg-background dark:hover:bg-black/60 text-foreground dark:text-white border-0 shadow-lg ring-1 ring-border dark:ring-white/20 transition-all duration-300 hover:scale-105"
                             >
                                 <MoreVertical className="h-4 w-4" />
                                 <span className="sr-only">Menu</span>
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-52 bg-background/80 backdrop-blur-2xl border border-white/10 shadow-2xl p-1">
+                        <DropdownMenuContent align="end" className="w-52 bg-background/80 backdrop-blur-2xl border border-border dark:border-white/10 shadow-2xl p-1">
                             {event.status !== "published" && (
                                 <DropdownMenuItem
                                     onClick={onPublish}
@@ -203,13 +215,13 @@ export function EventCard({
                                 </DropdownMenuItem>
                             )}
                             {onEdit ? (
-                                <DropdownMenuItem onClick={() => onEdit(event)} className="cursor-pointer p-2.5 rounded-sm font-medium">
+                                <DropdownMenuItem onClick={() => onEdit(event)} className="cursor-pointer p-2.5 rounded-sm font-medium text-foreground dark:text-white">
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit Details
                                 </DropdownMenuItem>
                             ) : (
                                 <DropdownMenuItem asChild>
-                                    <Link href={`/schedules/${event.id}/edit`} className="cursor-pointer flex items-center p-2.5 rounded-sm font-medium">
+                                    <Link href={`/schedules/${event.id}/edit`} className="cursor-pointer flex items-center p-2.5 rounded-sm font-medium text-foreground dark:text-white">
                                         <Edit className="mr-2 h-4 w-4" />
                                         Edit Details
                                     </Link>
@@ -236,17 +248,21 @@ export function EventCard({
                                 <h3 className="font-bold text-base text-white line-clamp-2 leading-tight drop-shadow-md">
                                     {event.title}
                                 </h3>
+                                <div className="flex items-center gap-1.5 text-[10px] font-medium text-white/80">
+                                    <CalendarClock className="h-3 w-3" />
+                                    <span>{format(startDate, "MMM d • h:mm")}{format(startDate, "aaaaa").toLowerCase()}</span>
+                                </div>
                             </div>
 
                             {/* Vertical Stats Pill */}
-                            <div className="flex flex-col gap-2 items-end">
-                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-xs font-bold text-white shadow-lg">
-                                    <Eye className="h-3.5 w-3.5 text-sky-400" />
-                                    <span>{views}</span>
+                            <div className="flex flex-col gap-2 items-end text-white">
+                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-[10px] font-bold shadow-lg">
+                                    <span>{formatNumber(views)}</span>
+                                    <span className="opacity-70">views</span>
                                 </div>
-                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-xs font-bold text-white shadow-lg">
+                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-xs font-bold shadow-lg">
                                     <ThumbsUp className="h-3.5 w-3.5 text-green-400" />
-                                    <span>{likes}</span>
+                                    <span>{formatNumber(likes)}</span>
                                 </div>
                             </div>
                         </div>
@@ -295,44 +311,53 @@ export function EventCard({
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5 md:hidden">
-                        <span>{views} views</span>
-                        <span>•</span>
-                        <span>{formatDistanceToNow(startDate, { addSuffix: true })}</span>
+                    {/* Mobile Date */}
+                    <div className="flex flex-col gap-1 md:hidden">
+                        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs font-semibold text-primary/90">
+                            <CalendarClock className="h-3.5 w-3.5" />
+                            <span>{format(startDate, "MMM d • h:mm")}{format(startDate, "aaaaa").toLowerCase()}</span>
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-2 mt-auto md:hidden">
                         {/* Mobile Actions/Stats */}
                         <div className="flex items-center gap-4 text-muted-foreground">
-                            <div className="flex items-center gap-1.5">
-                                <ThumbsUp className="h-3.5 w-3.5" />
-                                <span className="text-xs">{likes}</span>
+                            <div className="flex items-center gap-1 text-[11px] font-bold">
+                                <span>{formatNumber(views)}</span>
+                                <span className="text-[10px] opacity-70">views</span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                                <div className="h-3.5 w-3.5 flex items-center justify-center">
-                                    <div className="w-3 h-3 rounded-full border border-current" />
-                                </div>
-                                <span className="text-xs">1</span>
+                                <ThumbsUp className="h-3.5 w-3.5" />
+                                <span className="text-xs font-bold">{formatNumber(likes)}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                                <Image src="/coin.svg" alt="Coin" width={12} height={12} />
+                                <span className="text-xs font-bold">{formatNumber(lreal)}</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Desktop Description & Full Stats (Hidden on Mobile) */}
-                    <div className="hidden md:block space-y-2">
+                    <div className="hidden md:block space-y-1.5">
+                        <div className="flex items-center gap-2 text-primary/80 font-semibold text-sm">
+                            <CalendarClock className="h-4 w-4" />
+                            <span>{format(startDate, "EEEE, MMMM do • h:mm")}{format(startDate, "aaaaa").toLowerCase()}</span>
+                        </div>
+
                         <p className="text-xs text-muted-foreground line-clamp-1 font-medium">
                             {event.description || "No description"}
                         </p>
 
                         <div className="flex items-center gap-3 mt-1">
-                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/50 border border-border/50 text-xs font-bold text-muted-foreground shadow-sm hover:bg-secondary/80 transition-colors">
-                                <Eye className="h-3.5 w-3.5 text-sky-500" />
-                                <span>{views.toLocaleString()}</span>
+                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/50 border border-border/50 text-xs font-bold text-muted-foreground shadow-sm hover:bg-secondary/80 transition-colors">
+                                <span>{formatNumber(views)}</span>
+                                <span className="text-[10px] opacity-70">views</span>
                             </div>
 
                             <div className="flex items-center gap-0 rounded-full bg-secondary/50 border border-border/50 p-0.5 shadow-sm">
                                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/50 hover:bg-green-500/10 hover:text-green-600 transition-colors cursor-pointer text-xs font-bold text-muted-foreground border border-transparent hover:border-green-500/20">
                                     <ThumbsUp className="h-3.5 w-3.5" />
-                                    <span>{likes.toLocaleString()}</span>
+                                    <span>{formatNumber(likes)}</span>
                                 </div>
                                 <div className="w-px h-4 bg-border/60 mx-0.5"></div>
                                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full hover:bg-red-500/10 hover:text-red-500 transition-colors cursor-pointer text-xs font-bold text-muted-foreground">
@@ -341,8 +366,8 @@ export function EventCard({
                             </div>
 
                             <div className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-xs font-bold text-yellow-600 dark:text-yellow-500 shadow-sm">
-                                <Coins className="h-3.5 w-3.5 fill-yellow-500 text-yellow-600" />
-                                <span>{lreal.toLocaleString()}</span>
+                                <Image src="/coin.svg" alt="Coin" width={14} height={14} className="brightness-110" />
+                                <span>{formatNumber(lreal)}</span>
                             </div>
                         </div>
                     </div>

@@ -33,9 +33,9 @@ export function EventDurationBadge({ startTime, endTime, className }: EventDurat
     return (
         <div className={cn(
             "px-1.5 py-0.5 rounded",
-            "bg-black/80 backdrop-blur-sm",
-            "text-[10px] font-medium text-white tracking-wide leading-none",
-            "shadow-sm",
+            "bg-background/80 dark:bg-black/80 backdrop-blur-sm",
+            "text-[10px] font-bold text-foreground dark:text-white tracking-wide leading-none",
+            "shadow-sm ring-1 ring-border dark:ring-white/10",
             className
         )}>
             {duration}

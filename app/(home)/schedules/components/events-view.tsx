@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CalendarDays, Search } from "lucide-react";
+import { CalendarDays, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EventTableRow } from "./event-table-row";
 import { EventCard } from "./event-card"; // Import EventCard
@@ -42,6 +42,7 @@ import { cn } from "@/lib/utils";
 
 
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 interface EventsViewProps {
     initialEvents: any[];
@@ -87,6 +88,9 @@ export function EventsView({ initialEvents }: EventsViewProps) {
         startTime: new Date(event.startTime).toISOString().slice(0, 16),
         endTime: new Date(event.endTime).toISOString().slice(0, 16),
         thumbnailUrl: event.thumbnailUrl || "",
+        isShort: event.isShort || false,
+        hashtags: event.hashtags || "",
+        visibility: event.visibility || "public",
         description: event.description || "",
         isLive: event.isLive || false,
     });
@@ -104,12 +108,7 @@ export function EventsView({ initialEvents }: EventsViewProps) {
 
     return (
         <div className="flex-1 w-full min-h-screen relative overflow-x-hidden">
-            {/* Dynamic Background Mesh */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-500/30 dark:bg-purple-900/20 blur-[120px] rounded-full dark:mix-blend-screen animate-pulse" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/30 dark:bg-blue-900/20 blur-[120px] rounded-full dark:mix-blend-screen animate-pulse" style={{ animationDelay: '1s' }} />
-                <div className="absolute top-[20%] right-[20%] w-[30%] h-[30%] bg-red-500/30 dark:bg-red-900/10 blur-[100px] rounded-full dark:mix-blend-screen animate-pulse" style={{ animationDelay: '2s' }} />
-            </div>
+
 
             {/* Header Section - Only shown when there are events */}
             {initialEvents.length > 0 && (
@@ -124,22 +123,7 @@ export function EventsView({ initialEvents }: EventsViewProps) {
                             </p>
                         </div>
 
-                        {/* Tabs - Premium Segmented Control */}
-                        <div className="inline-flex items-center p-0.5 rounded-lg bg-black/20 border border-white/10 backdrop-blur-md self-start md:self-auto">
-                            {["Events", "Promotions"].map((tab) => (
-                                <button
-                                    key={tab}
-                                    className={cn(
-                                        "px-3 py-1 rounded-md text-sm font-medium transition-all duration-300",
-                                        tab === "Events"
-                                            ? "bg-white/10 text-white shadow-lg ring-1 ring-white/10"
-                                            : "text-muted-foreground hover:text-white hover:bg-white/5"
-                                    )}
-                                >
-                                    {tab}
-                                </button>
-                            ))}
-                        </div>
+
                     </div>
                 </div>
             )}
@@ -152,7 +136,15 @@ export function EventsView({ initialEvents }: EventsViewProps) {
                             title="No events scheduled"
                             description="Your schedule is empty. Start your journey by creating an innovative stream or event today."
                             icon={CalendarDays}
-                        />
+                        >
+                            <Button
+                                onClick={() => setIsCreateOpen(true)}
+                                className="bg-linear-to-r from-[#FF3B5C] to-purple-600 hover:opacity-90 text-white font-semibold px-6"
+                            >
+                                <CalendarDays className="mr-2 h-4 w-4" />
+                                Create Your First Event
+                            </Button>
+                        </ComingSoon>
                     </div>
 
                 ) : (
@@ -165,12 +157,12 @@ export function EventsView({ initialEvents }: EventsViewProps) {
                                     <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                     <Input
                                         placeholder="Search events..."
-                                        className="pl-9 bg-black/20 border-white/10 focus:border-brand-purple/50 transition-all text-sm h-8"
+                                        className="pl-9 bg-background/50 dark:bg-black/20 border-border dark:border-white/10 focus:border-brand-purple/50 transition-all text-sm h-8"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
                                 </div>
-                                <Button variant="outline" size="sm" className="h-8 gap-1.5 px-3 bg-black/20 border-white/10 text-muted-foreground hover:text-foreground shrink-0">
+                                <Button variant="outline" size="sm" className="h-8 gap-1.5 px-3 bg-background/50 dark:bg-black/20 border-border dark:border-white/10 text-muted-foreground hover:text-foreground shrink-0">
                                     <div className="flex flex-col gap-0.5 w-3">
                                         <div className="h-0.5 w-full bg-current rounded-full" />
                                         <div className="h-0.5 w-2/3 bg-current rounded-full" />
@@ -191,7 +183,7 @@ export function EventsView({ initialEvents }: EventsViewProps) {
                                             setCurrentPage(1);
                                         }}
                                     >
-                                        <SelectTrigger className="h-7 w-[60px] bg-black/20 border-white/10 text-xs">
+                                        <SelectTrigger className="h-7 w-[60px] bg-background/50 dark:bg-black/20 border-border dark:border-white/10 text-xs">
                                             <SelectValue placeholder={pageSize} />
                                         </SelectTrigger>
                                         <SelectContent side="top">
@@ -204,42 +196,42 @@ export function EventsView({ initialEvents }: EventsViewProps) {
                                     </Select>
                                 </div>
                                 <div className="flex w-[90px] items-center justify-center text-xs font-medium text-muted-foreground">
-                                    {(currentPage - 1) * pageSize + 1}-
+                                    {totalEvents > 0 ? (currentPage - 1) * pageSize + 1 : 0}-
                                     {Math.min(currentPage * pageSize, totalEvents)} of {totalEvents}
                                 </div>
                                 <div className="flex items-center space-x-1">
                                     <Button
                                         variant="outline"
-                                        className="hidden h-7 w-7 p-0 bg-black/20 border-white/10 xl:flex"
+                                        className="hidden h-7 w-7 p-0 bg-background/50 dark:bg-black/20 border-border dark:border-white/10 xl:flex"
                                         onClick={() => setCurrentPage(1)}
-                                        disabled={currentPage === 1}
+                                        disabled={currentPage === 1 || totalEvents === 0}
                                     >
                                         <span className="sr-only">Go to first page</span>
                                         <ChevronsLeft className="h-3.5 w-3.5" />
                                     </Button>
                                     <Button
                                         variant="outline"
-                                        className="h-7 w-7 p-0 bg-black/20 border-white/10"
+                                        className="h-7 w-7 p-0 bg-background/50 dark:bg-black/20 border-border dark:border-white/10"
                                         onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                                        disabled={currentPage === 1}
+                                        disabled={currentPage === 1 || totalEvents === 0}
                                     >
                                         <span className="sr-only">Go to previous page</span>
                                         <ChevronLeft className="h-3.5 w-3.5" />
                                     </Button>
                                     <Button
                                         variant="outline"
-                                        className="h-7 w-7 p-0 bg-black/20 border-white/10"
+                                        className="h-7 w-7 p-0 bg-background/50 dark:bg-black/20 border-border dark:border-white/10"
                                         onClick={() => setCurrentPage((p) => Math.min(Math.ceil(totalEvents / pageSize), p + 1))}
-                                        disabled={currentPage === Math.ceil(totalEvents / pageSize)}
+                                        disabled={currentPage === Math.ceil(totalEvents / pageSize) || totalEvents === 0}
                                     >
                                         <span className="sr-only">Go to next page</span>
                                         <ChevronRight className="h-3.5 w-3.5" />
                                     </Button>
                                     <Button
                                         variant="outline"
-                                        className="hidden h-7 w-7 p-0 bg-black/20 border-white/10 xl:flex"
+                                        className="hidden h-7 w-7 p-0 bg-background/50 dark:bg-black/20 border-border dark:border-white/10 xl:flex"
                                         onClick={() => setCurrentPage(Math.ceil(totalEvents / pageSize))}
-                                        disabled={currentPage === Math.ceil(totalEvents / pageSize)}
+                                        disabled={currentPage === Math.ceil(totalEvents / pageSize) || totalEvents === 0}
                                     >
                                         <span className="sr-only">Go to last page</span>
                                         <ChevronsRight className="h-3.5 w-3.5" />
@@ -248,82 +240,119 @@ export function EventsView({ initialEvents }: EventsViewProps) {
                             </div>
                         </div>
 
-                        {/* Desktop Table View */}
-                        <div className="hidden md:block rounded-xl border border-white/10 bg-black/20 backdrop-blur-sm overflow-hidden shadow-2xl">
-                            <Table>
-                                <TableHeader className="bg-black/40 hover:bg-black/40">
-                                    <TableRow className="hover:bg-transparent border-white/10">
-                                        <TableHead className="w-[450px] text-xs font-semibold uppercase tracking-wider text-muted-foreground">Event</TableHead>
-                                        <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Visibility</TableHead>
-                                        <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground cursor-pointer">
-                                            <div className="flex items-center gap-1">
-                                                Date <span className="text-[10px]">↓</span>
-                                            </div>
-                                        </TableHead>
-                                        <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Views</TableHead>
-                                        <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Comments</TableHead>
-                                        <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground w-[200px]">Likes (vs. dislikes)</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {paginatedEvents
-                                        .map((event: any, index: number) => (
-                                            <EventTableRow
-                                                key={event.id}
-                                                event={event}
-                                                isVertical={(index + 1) % 5 === 0}
-                                                onEdit={(evt) => setEditingEvent(evt)}
-                                            />
-                                        ))}
-                                </TableBody>
-                            </Table>
-                        </div>
+                        {totalEvents === 0 ? (
+                            <div className="py-20 flex flex-col items-center justify-center text-center">
+                                <div className="h-20 w-20 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+                                    <Search className="h-10 w-10 text-muted-foreground/50" />
+                                </div>
+                                <h3 className="text-lg font-semibold">No results found</h3>
+                                <p className="text-muted-foreground text-sm max-w-sm mx-auto mt-1">
+                                    We couldn't find any events matching "{searchQuery}". Try a different search term or clear the filter.
+                                </p>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="mt-6 h-9 px-4"
+                                    onClick={() => setSearchQuery("")}
+                                >
+                                    Clear search
+                                </Button>
+                            </div>
+                        ) : (
+                            <>
+                                {/* Desktop Table View */}
+                                <div className="hidden md:block rounded-xl border border-border dark:border-white/10 bg-card/50 dark:bg-black/20 backdrop-blur-sm overflow-hidden shadow-2xl">
+                                    <Table>
+                                        <TableHeader className="bg-muted/50 dark:bg-black/40 hover:bg-muted/50 dark:hover:bg-black/40">
+                                            <TableRow className="hover:bg-transparent border-border dark:border-white/10">
+                                                <TableHead className="w-[450px] text-xs font-semibold uppercase tracking-wider text-muted-foreground">Event</TableHead>
+                                                <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Visibility</TableHead>
+                                                <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground cursor-pointer">
+                                                    <div className="flex items-center gap-1">
+                                                        Date <span className="text-[10px]">↓</span>
+                                                    </div>
+                                                </TableHead>
+                                                <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Views</TableHead>
+                                                <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Comments</TableHead>
+                                                <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span>LREAL</span>
+                                                        <Image src="/coin.svg" alt="Coin" width={14} height={14} className="brightness-110" />
+                                                    </div>
+                                                </TableHead>
+                                                <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground w-[200px]">Likes (vs. dislikes)</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {paginatedEvents
+                                                .map((event: any, index: number) => (
+                                                    <EventTableRow
+                                                        key={event.id}
+                                                        event={event}
+                                                        index={index}
+                                                        isVertical={(index + 1) % 5 === 0}
+                                                        onEdit={(evt) => setEditingEvent(evt)}
+                                                    />
+                                                ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
 
-                        {/* Mobile Card View */}
-                        <div className="grid grid-cols-1 gap-4 md:hidden">
-                            {paginatedEvents.map((event: any, index: number) => (
-                                <EventCard
-                                    key={event.id}
-                                    event={event}
-                                    index={index}
-                                    onEdit={(evt) => setEditingEvent(evt)}
-                                    isVertical={false}
-                                />
-                            ))}
-                        </div>
+                                {/* Mobile Card View */}
+                                <div className="grid grid-cols-1 gap-4 md:hidden">
+                                    {paginatedEvents.map((event: any, index: number) => (
+                                        <EventCard
+                                            key={event.id}
+                                            event={event}
+                                            index={index}
+                                            onEdit={(evt) => setEditingEvent(evt)}
+                                            isVertical={false}
+                                        />
+                                    ))}
+                                </div>
+                            </>
+                        )}
                     </div>
                 )}
             </div>
 
             {/* Create Dialog */}
             <Dialog open={isCreateOpen} onOpenChange={handleOpenChange}>
-                <DialogContent className="sm:max-w-xl">
-                    <DialogHeader>
-                        <DialogTitle>Create New Event</DialogTitle>
-                        <DialogDescription>
-                            Set up your next stream or event. You can edit this later.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <EventForm onSuccess={handleSuccess} />
+                <DialogContent className="sm:max-w-3xl p-0 overflow-hidden border-0 bg-transparent shadow-none">
+                    <div className="bg-background/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
+                        <DialogHeader className="mb-6">
+                            <DialogTitle className="flex items-center gap-2.5 text-xl font-bold">
+                                <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                                    <Sparkles className="h-4 w-4" />
+                                </div>
+                                Launch New Event
+                            </DialogTitle>
+                        </DialogHeader>
+                        <EventForm onSuccess={handleSuccess} />
+                    </div>
                 </DialogContent>
             </Dialog>
 
             {/* Edit Dialog */}
             <Dialog open={!!editingEvent} onOpenChange={(open) => !open && setEditingEvent(null)}>
-                <DialogContent className="sm:max-w-xl">
-                    <DialogHeader>
-                        <DialogTitle>Edit Event</DialogTitle>
-                        <DialogDescription>
-                            Update your event details.
-                        </DialogDescription>
-                    </DialogHeader>
-                    {editingEvent && (
-                        <EventForm
-                            initialData={formatEventForForm(editingEvent)}
-                            isEditing
-                            onSuccess={handleSuccess}
-                        />
-                    )}
+                <DialogContent className="sm:max-w-3xl p-0 overflow-hidden border-0 bg-transparent shadow-none">
+                    <div className="bg-background/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
+                        <DialogHeader className="mb-6">
+                            <DialogTitle className="flex items-center gap-2.5 text-xl font-bold">
+                                <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                                    <Sparkles className="h-4 w-4" />
+                                </div>
+                                Refine Your Event
+                            </DialogTitle>
+                        </DialogHeader>
+                        {editingEvent && (
+                            <EventForm
+                                initialData={formatEventForForm(editingEvent)}
+                                isEditing
+                                onSuccess={handleSuccess}
+                            />
+                        )}
+                    </div>
                 </DialogContent>
             </Dialog>
         </div >

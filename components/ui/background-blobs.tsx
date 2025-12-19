@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export function BackgroundBlobs() {
     return (
-        <div className="fixed inset-0 pointer-events-none -z-50 overflow-hidden">
+        <div className="fixed inset-0 pointer-events-none -z-50 overflow-hidden bg-background">
             <motion.div
                 animate={{
                     scale: [1, 1.2, 1],
@@ -17,7 +17,7 @@ export function BackgroundBlobs() {
                     repeat: Infinity,
                     ease: "easeInOut",
                 }}
-                className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-purple-500/20 rounded-full blur-[100px]"
+                className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-purple-500/5 rounded-full blur-[100px]"
             />
             <motion.div
                 animate={{
@@ -32,7 +32,7 @@ export function BackgroundBlobs() {
                     ease: "easeInOut",
                     delay: 2,
                 }}
-                className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-500/20 rounded-full blur-[100px]"
+                className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-500/5 rounded-full blur-[100px]"
             />
         </div>
     );

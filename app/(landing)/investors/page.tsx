@@ -12,7 +12,7 @@ import {
 
 export default function InvestorPage() {
     return (
-        <div className="flex flex-col min-h-screen overflow-x-hidden bg-background font-sans">
+        <div className="flex flex-col min-h-screen overflow-x-hidden font-sans">
             <BackgroundBlobs />
 
             <main className="flex-1 container mx-auto px-4 pt-32 pb-20">

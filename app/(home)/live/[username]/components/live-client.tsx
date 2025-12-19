@@ -22,6 +22,7 @@ import {
     Save
 } from "lucide-react";
 import { ChatList } from "./chat-list";
+import { BackgroundBlobs } from "@/components/ui/background-blobs";
 
 interface LiveClientProps {
     username: string;
@@ -103,7 +104,7 @@ export function LiveClient({ username }: LiveClientProps) {
     }
 
     return (
-        <div className="flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-64px)] overflow-y-auto lg:overflow-hidden bg-background text-foreground relative">
+        <div className="flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-64px)] overflow-y-auto lg:overflow-hidden text-foreground relative">
             <style jsx global>{`
                 @keyframes floatUp {
                     0% { transform: translateY(0) scale(0.8); opacity: 0; }
@@ -131,12 +132,13 @@ export function LiveClient({ username }: LiveClientProps) {
 
             {/* Main Content */}
             <div className="flex-1 w-full overflow-y-visible lg:overflow-y-auto overflow-x-hidden relative scroll-smooth custom-scrollbar">
+                <BackgroundBlobs />
                 {/* Dynamic Background Mesh */}
-                <div className="fixed inset-0 pointer-events-none z-0">
+                {/* <div className="fixed inset-0 pointer-events-none z-0">
                     <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-500/30 dark:bg-purple-900/20 blur-[120px] rounded-full dark:mix-blend-screen animate-pulse" />
                     <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/30 dark:bg-blue-900/20 blur-[120px] rounded-full dark:mix-blend-screen animate-pulse" style={{ animationDelay: '1s' }} />
                     <div className="absolute top-[20%] right-[20%] w-[30%] h-[30%] bg-red-500/30 dark:bg-red-900/10 blur-[100px] rounded-full dark:mix-blend-screen animate-pulse" style={{ animationDelay: '2s' }} />
-                </div>
+                </div> */}
 
                 <div className="max-w-[1700px] mx-auto p-4 lg:p-6 relative z-10">
                     {/* Video Player Container */}

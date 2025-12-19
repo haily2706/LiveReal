@@ -48,8 +48,7 @@ export default async function HomePage({
 
 
     return (
-        <div className="flex flex-col min-h-screen bg-background relative overflow-x-hidden">
-            <BackgroundBlobs />
+        <div className="flex flex-col min-h-screen relative overflow-x-hidden">
             <div className="p-4 md:p-6 space-y-16 max-w-[2000px] mx-auto w-full relative z-10 pb-20">
 
                 {/* Ads Banner */}

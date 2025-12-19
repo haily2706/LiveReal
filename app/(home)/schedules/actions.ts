@@ -38,7 +38,7 @@ export async function createEvent(values: unknown) {
         return { error: "Invalid fields" };
     }
 
-    const { title, description, startTime, endTime, isLive, thumbnailUrl } = validatedFields.data;
+    const { title, description, startTime, isLive, thumbnailUrl, isShort, hashtags, visibility } = validatedFields.data;
 
     try {
         await db.insert(events).values({
@@ -47,9 +47,11 @@ export async function createEvent(values: unknown) {
             title,
             description,
             startTime: new Date(startTime),
-            endTime: new Date(endTime),
             isLive: isLive || false,
             thumbnailUrl,
+            isShort: isShort || false,
+            hashtags,
+            visibility: visibility || 'public',
             status: "draft",
         });
 
@@ -75,7 +77,7 @@ export async function updateEvent(id: string, values: unknown) {
         return { error: "Invalid fields" };
     }
 
-    const { title, description, startTime, endTime, isLive, thumbnailUrl } = validatedFields.data;
+    const { title, description, startTime, isLive, thumbnailUrl, isShort, hashtags, visibility } = validatedFields.data;
 
     try {
         const existingEvent = await db.query.events.findFirst({
@@ -91,9 +93,11 @@ export async function updateEvent(id: string, values: unknown) {
                 title,
                 description,
                 startTime: new Date(startTime),
-                endTime: new Date(endTime),
                 isLive,
                 thumbnailUrl,
+                isShort,
+                hashtags,
+                visibility,
                 updatedAt: new Date(),
             })
             .where(eq(events.id, id));

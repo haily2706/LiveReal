@@ -56,11 +56,14 @@ export const events = pgTable('events', {
     title: text('title').notNull(),
     description: text('description'),
     startTime: timestamp('start_time').notNull(),
-    endTime: timestamp('end_time').notNull(),
+    endTime: timestamp('end_time'),
     isLive: boolean('is_live').default(false),
     streamUrl: text('stream_url'),
     streamKey: text('stream_key'),
     thumbnailUrl: text('thumbnail_url'),
+    isShort: boolean('is_short').default(false),
+    hashtags: text('hashtags'),
+    visibility: text('visibility').default('public'), // public, private, unlisted
     status: text('status').default('draft'), // draft, published, ended
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
