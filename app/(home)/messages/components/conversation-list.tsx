@@ -122,7 +122,7 @@ export function ConversationList({ className, isCollapsed, onToggle, allowCollap
                 {!isCollapsed ? (
                     <>
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold tracking-tight text-foreground w-fit">
+                            <h2 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-pink-500 to-purple-500 w-fit">
                                 Messages
                             </h2>
                             <div className="flex items-center gap-2">
