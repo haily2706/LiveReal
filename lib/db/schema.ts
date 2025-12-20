@@ -68,3 +68,30 @@ export const events = pgTable('events', {
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
 });
+
+export const conversations = pgTable('conversations', {
+    id: text('id').primaryKey(),
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow(),
+    lastMessageAt: timestamp('last_message_at').defaultNow(),
+    isEncrypted: boolean('is_encrypted').default(true),
+});
+
+export const participants = pgTable('participants', {
+    conversationId: text('conversation_id').notNull().references(() => conversations.id),
+    userId: text('user_id').notNull().references(() => users.id),
+    lastReadAt: timestamp('last_read_at'),
+}, (table) => {
+    return {
+        pk: { columns: [table.conversationId, table.userId] },
+    };
+});
+
+export const messages = pgTable('messages', {
+    id: text('id').primaryKey(),
+    conversationId: text('conversation_id').notNull().references(() => conversations.id),
+    senderId: text('sender_id').notNull().references(() => users.id),
+    content: text('content').notNull(), // Encrypted blob if isEncrypted is true, or plain text
+    type: text('type').default('text'), // text, image, etc.
+    createdAt: timestamp('created_at').defaultNow(),
+});

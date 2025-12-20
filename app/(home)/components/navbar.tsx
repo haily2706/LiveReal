@@ -78,7 +78,7 @@ export function Navbar({ }: NavbarProps) {
             <header
                 className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-backdrop-filter:bg-background/80"
             >
-                <div className="flex h-14 items-center justify-between px-6 relative z-10 gap-4">
+                <div className="flex h-16 items-center justify-between px-6 relative z-10 gap-4">
                     <div className="flex items-center gap-2">
                         <div className="md:hidden">
                             <Button
@@ -207,7 +207,7 @@ export function Navbar({ }: NavbarProps) {
                             <Button
                                 onClick={() => router.push("/schedules?action=create")}
                                 variant="outline"
-                                className="hidden md:flex items-center gap-2 rounded-full border-white/10 bg-white/5 hover:bg-white/10 text-foreground backdrop-blur-sm h-9 px-4 transition-all hover:scale-105 active:scale-95"
+                                className="hidden md:flex items-center gap-2 rounded-full border-white/10 bg-white/5 hover:bg-white/10 text-foreground backdrop-blur-sm h-10 px-4 transition-all hover:scale-105 active:scale-95"
                             >
                                 <Video className="h-4 w-4" />
                                 <span className="font-medium">Create</span>

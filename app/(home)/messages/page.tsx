@@ -1,16 +1,12 @@
-"use client";
+import { ChatLayout } from "./components/chat-layout";
 
-import { MessageCircle } from "lucide-react";
-import { ComingSoon } from "@/components/coming-soon";
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
 
-export default function MessagesPage() {
+export default async function MessagesPage(props: {
+    searchParams: SearchParams
+}) {
+    // Next.js 15 style async searchParams
     return (
-        <div className="flex-1 w-full h-full p-6">
-            <ComingSoon
-                title="Messages"
-                description="Direct messaging and group chats are coming soon. Connect with your favorite creators and friends directly!"
-                icon={MessageCircle}
-            />
-        </div>
+        <ChatLayout searchParams={props.searchParams} />
     );
 }
