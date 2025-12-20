@@ -134,7 +134,7 @@ export function EventsView({ initialEvents }: EventsViewProps) {
                     <div className="h-[600px] w-full relative overflow-hidden flex items-center justify-center">
                         <ComingSoon
                             title="No events scheduled"
-                            description="Your schedule is empty. Start your journey by creating an innovative stream or event today."
+                            description="Your events list is empty. Start your journey by creating an innovative stream or event today."
                             icon={CalendarDays}
                         >
                             <Button

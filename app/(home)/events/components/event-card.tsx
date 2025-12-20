@@ -221,7 +221,7 @@ export function EventCard({
                                 </DropdownMenuItem>
                             ) : (
                                 <DropdownMenuItem asChild>
-                                    <Link href={`/schedules/${event.id}/edit`} className="cursor-pointer flex items-center p-2.5 rounded-sm font-medium text-foreground dark:text-white">
+                                    <Link href={`/events/${event.id}/edit`} className="cursor-pointer flex items-center p-2.5 rounded-sm font-medium text-foreground dark:text-white">
                                         <Edit className="mr-2 h-4 w-4" />
                                         Edit Details
                                     </Link>

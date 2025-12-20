@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     description: "Manage your upcoming live streams and broadcast events.",
 };
 
-export default async function SchedulesPage() {
+export default async function EventsPage() {
     const events = await getEvents();
 
     return (

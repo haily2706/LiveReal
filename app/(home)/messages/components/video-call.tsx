@@ -1,13 +1,12 @@
 "use client";
 
-import { LiveKitRoom, VideoConference } from "@livekit/components-react";
+import { LiveKitRoom, VideoConference, PreJoin, type LocalUserChoices } from "@livekit/components-react";
 import "@livekit/components-styles";
 import { useEffect, useState } from "react";
 import { Loader2, X } from "lucide-react";
 import { getToken } from "@/app/actions/livekit";
 import { Button } from "@/components/ui/button";
-
-
+import { CustomPreJoin } from "./pre-join";
 
 export interface VideoCallProps {
     room: string;
@@ -21,6 +20,7 @@ export interface VideoCallProps {
 export function VideoCall({ room, username, userName, onDisconnect, className, children }: VideoCallProps) {
     const [token, setToken] = useState("");
     const [error, setError] = useState("");
+    const [preJoinChoices, setPreJoinChoices] = useState<LocalUserChoices | undefined>(undefined);
 
     useEffect(() => {
         (async () => {
@@ -33,7 +33,7 @@ export function VideoCall({ room, username, userName, onDisconnect, className, c
                 setError("Failed to connect to the call. Please check your connection and try again.");
             }
         })();
-    }, [room, username]);
+    }, [room, username, userName]);
 
     if (error) {
         return (
@@ -57,99 +57,57 @@ export function VideoCall({ room, username, userName, onDisconnect, className, c
 
     return (
         <div className={`relative flex flex-col h-full w-full bg-background overflow-hidden ${className || ''}`}>
-            {/* Hide LiveKit internal chat toggle since we have our own side-chat */}
+            {/* Override styles for PreJoin and LiveKit components */}
             <style dangerouslySetInnerHTML={{
                 __html: `
                 .lk-chat-toggle { display: none !important; }
                 
-                [data-lk-theme="default"] {
-                    --lk-bg: hsl(var(--background));
-                    --lk-fg: hsl(var(--foreground));
-                    --lk-control-bg: hsl(var(--secondary));
-                    --lk-control-fg: hsl(var(--secondary-foreground));
-                    --lk-control-hover-bg: hsl(var(--accent));
-                    --lk-control-active-bg: hsl(var(--accent));
-                    --lk-accent-bg: hsl(var(--primary));
-                    --lk-accent-fg: hsl(var(--primary-foreground));
-                    --lk-danger-fg: hsl(var(--destructive));
-                    --lk-border-color: hsl(var(--border));
-                }
-
-                .lk-control-bar {
-                    background-color: hsl(var(--background) / 0.8) !important;
-                    backdrop-filter: blur(12px) !important;
-                    border-top: 1px solid hsl(var(--border) / 0.4) !important;
-                    padding: 0 1rem !important;
-                    height: 80px !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    border-radius: 0 !important;
-                    margin-bottom: 0 !important;
-                    box-sizing: border-box !important;
-                }
-
-                .lk-button {
+                /* Make all control buttons transparent and borderless, except the disconnect (Leave) button */
+                .lk-button:not(.lk-disconnect-button) {
                     background-color: transparent !important;
-                    border: none !important;
-                    padding: 1rem !important;
-                }
-
-                .lk-participant-metadata {
-                    color: white !important;
-                    padding: 4px 8px !important;
-                    border-radius: 6px !important;
+                    border-color: transparent !important;
                 }
                 
-                .lk-participant-name {
-                    color: white !important;
+                .lk-button:not(.lk-disconnect-button):hover {
+                    background-color: rgba(255, 255, 255, 0.1) !important;
                 }
+            `}} />            {!preJoinChoices ? (
+                <CustomPreJoin
+                    room={room}
+                    username={username}
+                    userName={userName || "Participant"}
+                    onSubmit={setPreJoinChoices}
+                    onCancel={onDisconnect}
+                />
+            ) : (
+                <LiveKitRoom
+                    video={preJoinChoices.videoEnabled ? { deviceId: preJoinChoices.videoDeviceId } : false}
+                    audio={preJoinChoices.audioEnabled ? { deviceId: preJoinChoices.audioDeviceId } : false}
+                    token={token}
+                    serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
+                    data-lk-theme="default"
+                    style={{ height: '100%', width: '100%' }}
+                    onDisconnected={onDisconnect}
+                    onError={(err) => {
+                        console.error("LiveKit error:", err);
+                        setError("An error occurred with the video connection.");
+                    }}
+                >
+                    <VideoConference />
+                </LiveKitRoom>
+            )}
 
-                .lk-connection-quality {
-                    color: white !important;
-                }
-
-                @media (max-width: 640px) {
-                    .lk-control-bar {
-                        height: 64px !important;
-                        padding: 0 0.5rem !important;
-                    }
-                    
-                    .lk-button {
-                        padding: 0.5rem !important;
-                    }
-
-                    .lk-button svg {
-                        width: 20px !important;
-                        height: 20px !important;
-                    }
-                }
-            `}} />
-            <LiveKitRoom
-                video={true}
-                audio={true}
-                token={token}
-                serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
-                data-lk-theme="default"
-                style={{ height: '100%', width: '100%' }}
-                onDisconnected={onDisconnect}
-                onError={(err) => {
-                    console.error("LiveKit error:", err);
-                    setError("An error occurred with the video connection.");
-                }}
-            >
-                <VideoConference />
-            </LiveKitRoom>
-            {/* Custom controls or overlay buttons can be added here if needed, 
-                LiveKit's VideoConference handles most controls */}
+            {/* Close / Disconnect Button */}
             <Button
                 onClick={onDisconnect}
                 variant="ghost"
                 size="icon"
-                className="absolute top-4 right-4 z-50 bg-background/50 hover:bg-destructive/90 hover:text-white rounded-full backdrop-blur-sm transition-all duration-300"
+                className="absolute top-4 right-4 z-50 bg-background/50 hover:bg-destructive/90 hover:text-white rounded-2xl backdrop-blur-sm transition-all duration-300 shadow-lg"
             >
                 <X className="h-5 w-5" />
             </Button>
+
+            {/* Children typically contain overlays */}
             {children}
         </div>
     );

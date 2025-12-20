@@ -6,8 +6,8 @@ import { Calendar, Video, Wallet } from "lucide-react";
 const steps = [
     {
         icon: Calendar,
-        title: "Schedule",
-        description: "Pick your event date and customize your stream with themes and overlays",
+        title: "Create Event",
+        description: "Plan your event date and customize your stream with themes and overlays",
         color: "from-pink-500 to-rose-500",
         bgColor: "bg-pink-500/10",
         iconColor: "text-pink-600 dark:text-pink-500",

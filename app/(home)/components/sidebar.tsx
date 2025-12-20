@@ -203,7 +203,7 @@ export function Sidebar() {
                             { icon: Compass, label: "Explore", href: "/home", color: "text-blue-400" },
                             // { icon: Clapperboard, label: "Shorts", href: "/shorts", color: "text-red-400" },
                             { icon: MessageCircle, label: "Messages", href: "/messages", color: "text-green-400" },
-                            { icon: Calendar, label: "Schedules", href: "/schedules", color: "text-purple-400" },
+                            { icon: Calendar, label: "Events", href: "/events", color: "text-purple-400" },
                             { icon: Settings, label: "Settings", href: "/settings", color: "text-gray-400" }
                         ].map((link) => (
                             <div key={link.href}>

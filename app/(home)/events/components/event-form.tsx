@@ -84,7 +84,7 @@ export function EventForm({ initialData, isEditing = false, onSuccess }: EventFo
                         if (onSuccess) {
                             onSuccess();
                         } else {
-                            router.push("/schedules");
+                            router.push("/events");
                         }
                     }
                 })

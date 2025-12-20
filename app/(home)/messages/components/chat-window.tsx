@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { ArrowLeft, Image as ImageIcon, Info, Lock, MoreVertical, Paperclip, Phone, Search, Send, Smile, Info as InfoIcon, Video } from "lucide-react";
+import { ArrowLeft, Image as ImageIcon, Info, Lock, MoreVertical, Paperclip, Send, Smile, Info as InfoIcon, Video } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { getMessages, sendMessage, getConversationDetails, getCurrentUser } from "../actions";
@@ -61,6 +61,16 @@ export function ChatWindow({
             onVideoCallChange(isVideoCallActive);
         }
     }, [isVideoCallActive, onVideoCallStart, onVideoCallChange]);
+
+    // Auto-close chat on mobile when video call starts
+    useEffect(() => {
+        if (isVideoCallActive) {
+            const isMobile = window.matchMedia("(max-width: 768px)").matches;
+            if (isMobile) {
+                setIsChatOpen(false);
+            }
+        }
+    }, [isVideoCallActive]);
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -191,7 +201,7 @@ export function ChatWindow({
                                         variant="secondary"
                                         size="icon"
                                         onClick={onToggleSidebar}
-                                        className="absolute top-4 left-4 pointer-events-auto rounded-full bg-background/50 backdrop-blur-md hover:bg-background/80 shadow-lg transition-all duration-300"
+                                        className="absolute top-4 left-4 pointer-events-auto rounded-2xl bg-background/50 backdrop-blur-md hover:bg-background/80 shadow-lg transition-all duration-300"
                                     >
                                         {isSidebarCollapsed ? (
                                             <PanelLeftOpen className="h-5 w-5" />
@@ -206,7 +216,7 @@ export function ChatWindow({
                                     variant="secondary"
                                     size="icon"
                                     onClick={() => setIsChatOpen(!isChatOpen)}
-                                    className="absolute top-4 right-16 pointer-events-auto rounded-full bg-background/50 backdrop-blur-md hover:bg-background/80 shadow-lg transition-all duration-300"
+                                    className="absolute top-4 right-16 pointer-events-auto rounded-2xl bg-background/50 backdrop-blur-md hover:bg-background/80 shadow-lg transition-all duration-300"
                                 >
                                     {isChatOpen ? <MessageSquareOff className="h-5 w-5" /> : <MessageSquare className="h-5 w-5" />}
                                 </Button>
@@ -225,7 +235,7 @@ export function ChatWindow({
                     : "relative flex-1 w-full translate-x-0"
             )}>
                 {/* Header */}
-                <div className="z-20 p-4 border-b border-border/40 flex items-center justify-between bg-background/80 backdrop-blur-xl sticky top-0">
+                <div className="z-20 border-b border-border/40 flex items-center justify-between bg-background/80 backdrop-blur-xl sticky top-0">
                     <div className="flex items-center gap-3">
                         <Button
                             variant="ghost"
@@ -265,17 +275,17 @@ export function ChatWindow({
                                         animate={{ opacity: 1, x: 0 }}
                                         className="flex items-center gap-3.5"
                                     >
-                                        <button className="flex items-center gap-4 group/header p-2 rounded-2xl hover:bg-secondary/50 transition-all duration-300">
+                                        <button className="flex items-center gap-2 group/header p-2 rounded-2xl hover:bg-secondary/50 transition-all duration-300">
                                             <div className="relative">
                                                 <Avatar className="h-12 w-12 border-2 border-background shadow-lg transition-transform duration-300 group-hover/header:rotate-3 group-hover/header:scale-105">
                                                     <AvatarImage src={otherUser?.avatar || undefined} className="object-cover" />
-                                                    <AvatarFallback className="bg-linear-to-br from-indigo-500 via-purple-500 to-pink-500 text-white font-bold text-lg">
+                                                    <AvatarFallback className="bg-linear-to-br from-pink-500 via-purple-500 to-blue-500 text-white font-bold text-lg">
                                                         {otherUser?.name?.[0]?.toUpperCase() || "?"}
                                                     </AvatarFallback>
                                                 </Avatar>
                                             </div>
                                             <div className="text-left">
-                                                <h3 className="font-bold text-base flex items-center gap-2 text-foreground group-hover/header:text-primary transition-colors">
+                                                <h3 className="font-bold text-xl flex items-center gap-2 text-foreground group-hover/header:text-primary transition-colors">
                                                     {otherUser?.name || "Unknown"}
                                                 </h3>
                                                 <p className="text-xs text-muted-foreground font-medium flex items-center gap-2 mt-0.5">
@@ -293,21 +303,16 @@ export function ChatWindow({
                     <div className="flex items-center gap-1">
                         {!isVideoCallActive && (
                             <>
-                                <Button variant="ghost" size="icon" className="hidden sm:flex text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all duration-300">
-                                    <Phone className="h-4.5 w-4.5" />
-                                </Button>
+
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="hidden sm:flex text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all duration-300"
+                                    className="bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-full transition-all duration-300 shadow-sm"
                                     onClick={() => setIsVideoCallActive(true)}
                                 >
                                     <Video className="h-4.5 w-4.5" />
                                 </Button>
-                                <div className="w-px h-6 bg-border/40 mx-1 hidden sm:block" />
-                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all duration-300">
-                                    <Search className="h-4.5 w-4.5" />
-                                </Button>
+
                             </>
                         )}
                         <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all duration-300">
@@ -317,8 +322,8 @@ export function ChatWindow({
                 </div>
 
                 {/* Messages */}
-                <ScrollArea className="flex-1 p-4 lg:px-8">
-                    <div className="space-y-6 w-full flex flex-col justify-end min-h-full pb-6">
+                <ScrollArea className="flex-1 p-4 lg:px-6">
+                    <div className="space-y-1 w-full flex flex-col justify-end min-h-full pb-4">
                         {loading && (
                             <div className="flex flex-col gap-4 w-full">
                                 {Array.from({ length: 4 }).map((_, i) => (
@@ -347,7 +352,7 @@ export function ChatWindow({
 
                         {!loading && (
                             <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 opacity-70 animate-in fade-in zoom-in-95 duration-700">
-                                <div className="h-16 w-16 rounded-3xl bg-linear-to-br from-indigo-500/10 to-purple-600/10 flex items-center justify-center text-primary mb-2 shadow-xl ring-1 ring-white/10 backdrop-blur-md">
+                                <div className="h-16 w-16 rounded-3xl bg-muted/30 flex items-center justify-center text-muted-foreground/50 mb-2 shadow-xs ring-1 ring-border/20 backdrop-blur-md">
                                     <Lock className="h-7 w-7" />
                                 </div>
                                 <div className="space-y-1">
@@ -362,7 +367,8 @@ export function ChatWindow({
                         <AnimatePresence initial={false}>
                             {messages.map((message, index) => {
                                 const isMe = message.senderId === currentUserId;
-                                const showAvatar = !isMe && (index === 0 || messages[index - 1]?.senderId !== message.senderId);
+                                const isFirstInSequence = index === 0 || messages[index - 1]?.senderId !== message.senderId;
+                                const showAvatar = !isMe && isFirstInSequence;
 
                                 return (
                                     <motion.div
@@ -371,20 +377,21 @@ export function ChatWindow({
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         transition={{ duration: 0.3, ease: "easeOut" }}
                                         className={cn(
-                                            "flex gap-3 max-w-[85%] md:max-w-[70%]",
-                                            isMe ? "ml-auto flex-row-reverse" : "items-end"
+                                            "flex gap-2 max-w-[85%] md:max-w-[70%]",
+                                            isMe ? "ml-auto flex-row-reverse" : "items-end",
+                                            isFirstInSequence && index !== 0 && "mt-2"
                                         )}
                                     >
                                         {!isMe && (
-                                            <div className="w-8 shrink-0 flex flex-col items-center">
+                                            <div className="w-10 shrink-0 flex flex-col items-center">
                                                 {showAvatar ? (
-                                                    <Avatar className="h-8 w-8 border-2 border-background shadow-md">
+                                                    <Avatar className="h-10 w-10 border-2 border-background shadow-md">
                                                         <AvatarImage src={otherUser?.avatar || undefined} className="object-cover" />
                                                         <AvatarFallback className="bg-secondary text-[10px] font-bold">
                                                             {otherUser?.name?.[0]?.toUpperCase() || "?"}
                                                         </AvatarFallback>
                                                     </Avatar>
-                                                ) : <div className="w-8" />}
+                                                ) : <div className="w-10" />}
                                             </div>
                                         )}
 
@@ -392,23 +399,29 @@ export function ChatWindow({
                                             "flex flex-col gap-1",
                                             isMe ? "items-end" : "items-start"
                                         )}>
+                                            {isFirstInSequence && (
+                                                <div className={cn(
+                                                    "flex items-center gap-2 mb-0.5 px-1",
+                                                    isMe ? "flex-row-reverse" : "flex-row"
+                                                )}>
+                                                    {!isMe && (
+                                                        <span className="text-[11px] font-semibold text-foreground/80">
+                                                            {otherUser?.name || "Unknown"}
+                                                        </span>
+                                                    )}
+                                                    <span className="text-[10px] text-muted-foreground/60">
+                                                        {format(message.createdAt, "h:mm a")}
+                                                    </span>
+                                                </div>
+                                            )}
                                             <div className={cn(
-                                                "px-4 py-2.5 rounded-2xl text-[15px] leading-relaxed relative group shadow-xs transition-all duration-300",
+                                                "px-3 py-1 rounded-xl leading-relaxed relative group shadow-xs transition-all duration-300",
                                                 isMe
-                                                    ? "bg-linear-to-br from-indigo-500 to-purple-600 text-white rounded-tr-sm shadow-md shadow-indigo-500/10"
-                                                    : "bg-secondary/80 backdrop-blur-md text-secondary-foreground rounded-tl-sm border border-border/20",
+                                                    ? "bg-primary text-primary-foreground rounded-tr-md shadow-sm"
+                                                    : "bg-secondary text-secondary-foreground rounded-tl-md shadow-sm",
                                                 message.status === 'sending' && "opacity-70 scale-[0.98]"
                                             )}>
                                                 <p className="font-normal">{message.content}</p>
-                                                <div className={cn(
-                                                    "text-[10px] flex items-center gap-1.5 mt-1 font-medium opacity-70",
-                                                    isMe ? "text-white/80" : "text-muted-foreground"
-                                                )}>
-                                                    {format(message.createdAt, "h:mm a")}
-                                                    {isMe && message.status === 'sending' && (
-                                                        <span className="h-1.5 w-1.5 rounded-full bg-white/50 animate-pulse" />
-                                                    )}
-                                                </div>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -420,7 +433,7 @@ export function ChatWindow({
                 </ScrollArea>
 
                 {/* Input */}
-                <div className="h-20 px-4 border-t border-border/40 bg-background/80 backdrop-blur-xl sticky bottom-0 z-20 flex items-center">
+                <div className="h-17 px-4 border-t border-border/40 bg-background/80 backdrop-blur-xl sticky bottom-0 z-20 flex items-center">
                     <form onSubmit={handleSend} className="w-full relative flex items-center gap-3">
                         <div className="flex items-center gap-1.5 bg-secondary/30 rounded-2xl p-1 border border-border/20 backdrop-blur-md">
                             <Button type="button" variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground hover:bg-white/10 shrink-0 transition-all duration-300 border-0 focus-visible:ring-0 focus-visible:ring-offset-0">
@@ -455,7 +468,7 @@ export function ChatWindow({
                             className={cn(
                                 "h-11 w-11 rounded-2xl shadow-xl transition-all duration-300",
                                 newMessage.trim()
-                                    ? "bg-linear-to-br from-indigo-500 to-purple-600 hover:scale-105 active:scale-95 text-white"
+                                    ? "bg-primary text-primary-foreground hover:scale-105 active:scale-95"
                                     : "bg-secondary text-muted-foreground opacity-50 cursor-not-allowed",
                                 sending && "opacity-70 cursor-not-allowed"
                             )}
@@ -464,7 +477,7 @@ export function ChatWindow({
                         </Button>
                     </form>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

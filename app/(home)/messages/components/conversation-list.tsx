@@ -122,7 +122,7 @@ export function ConversationList({ className, isCollapsed, onToggle, allowCollap
                 {!isCollapsed ? (
                     <>
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-pink-500 to-purple-500 w-fit">
+                            <h2 className="text-2xl font-bold tracking-tight text-foreground w-fit">
                                 Messages
                             </h2>
                             <div className="flex items-center gap-2">
@@ -245,7 +245,7 @@ export function ConversationList({ className, isCollapsed, onToggle, allowCollap
                                 animate={{ opacity: 1, scale: 1 }}
                                 className="h-64 flex flex-col items-center justify-center text-center p-4"
                             >
-                                <div className="h-16 w-16 rounded-3xl bg-linear-to-br from-indigo-500/10 to-purple-500/10 flex items-center justify-center mb-4 ring-1 ring-white/10 shadow-xl backdrop-blur-sm">
+                                <div className="h-16 w-16 rounded-3xl bg-linear-to-br from-pink-500/10 via-purple-500/10 to-blue-500/10 flex items-center justify-center mb-4 ring-1 ring-white/10 shadow-xl backdrop-blur-sm">
                                     <Search className="h-7 w-7 text-primary/70" />
                                 </div>
                                 <h3 className="font-semibold text-lg mb-1">No chats yet</h3>
@@ -269,7 +269,7 @@ export function ConversationList({ className, isCollapsed, onToggle, allowCollap
                                             key={conversation.id}
                                             onClick={() => handleSelect(conversation.id)}
                                             className={cn(
-                                                "w-full flex items-center gap-4 p-3 rounded-2xl transition-all duration-300 text-left group relative overflow-hidden",
+                                                "w-full flex items-center gap-2 p-3 rounded-2xl transition-all duration-300 text-left group relative overflow-hidden",
                                                 isCollapsed && "justify-center px-2",
                                                 selectedId === conversation.id
                                                     ? "bg-primary/10 border-primary/10" // Active state
@@ -278,13 +278,13 @@ export function ConversationList({ className, isCollapsed, onToggle, allowCollap
                                         >
                                             <div className="relative shrink-0">
                                                 <Avatar className={cn(
-                                                    "h-12 w-12 border-2 transition-all duration-300",
+                                                    "h-12 w-12 border-1 transition-all duration-300",
                                                     selectedId === conversation.id
                                                         ? "border-primary scale-105"
                                                         : "border-transparent group-hover:border-primary/20"
                                                 )}>
                                                     <AvatarImage src={conversation.otherUser.avatar || undefined} className="object-cover" />
-                                                    <AvatarFallback className="bg-linear-to-br from-indigo-500 via-purple-500 to-pink-500 text-white font-bold text-sm">
+                                                    <AvatarFallback className="bg-linear-to-br from-pink-500 via-purple-500 to-blue-500 text-white font-bold text-sm">
                                                         {conversation.otherUser.name?.[0]?.toUpperCase()}
                                                     </AvatarFallback>
                                                 </Avatar>

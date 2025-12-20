@@ -55,7 +55,7 @@ export async function createEvent(values: unknown) {
             status: "draft",
         });
 
-        revalidatePath("/schedules");
+        revalidatePath("/events");
         return { success: true };
     } catch (error) {
         console.error("Error creating event:", error);
@@ -102,7 +102,7 @@ export async function updateEvent(id: string, values: unknown) {
             })
             .where(eq(events.id, id));
 
-        revalidatePath("/schedules");
+        revalidatePath("/events");
         return { success: true };
     } catch (error) {
         console.error("Error updating event:", error);
@@ -129,7 +129,7 @@ export async function deleteEvent(id: string) {
 
         await db.delete(events).where(eq(events.id, id));
 
-        revalidatePath("/schedules");
+        revalidatePath("/events");
         return { success: true };
     } catch (error) {
         console.error("Error deleting event:", error);
@@ -158,7 +158,7 @@ export async function publishEvent(id: string) {
             .set({ status: "published", updatedAt: new Date() })
             .where(eq(events.id, id));
 
-        revalidatePath("/schedules");
+        revalidatePath("/events");
         return { success: true };
     } catch (error) {
         console.error("Error publishing event:", error);

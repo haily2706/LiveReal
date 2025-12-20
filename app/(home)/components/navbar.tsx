@@ -25,7 +25,7 @@ import { TextLogo } from "@/components/ui/text-logo";
 const appLinks = [
     { name: "Explore", href: "/home" },
     { name: "Messages", href: "/messages" },
-    { name: "Schedules", href: "/schedules" },
+    { name: "Events", href: "/events" },
     { name: "Settings", href: "/settings" },
 ];
 
@@ -205,7 +205,7 @@ export function Navbar({ }: NavbarProps) {
 
                         {user && (
                             <Button
-                                onClick={() => router.push("/schedules?action=create")}
+                                onClick={() => router.push("/events?action=create")}
                                 variant="outline"
                                 className="hidden md:flex items-center gap-2 rounded-full border-white/10 bg-white/5 hover:bg-white/10 text-foreground backdrop-blur-sm h-10 px-4 transition-all hover:scale-105 active:scale-95"
                             >

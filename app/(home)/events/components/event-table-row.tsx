@@ -200,7 +200,7 @@ export function EventTableRow({
                     {/* Meta */}
                     <div className="flex flex-col gap-0.5 py-0.5">
                         <Link
-                            href={`/schedules/${event.id}`}
+                            href={`/events/${event.id}`}
                             className="font-semibold text-sm text-foreground line-clamp-2 hover:text-brand-purple transition-colors mb-0"
                         >
                             {event.title}
@@ -227,7 +227,7 @@ export function EventTableRow({
                                     className="h-6 w-6 text-muted-foreground hover:text-foreground"
                                     asChild
                                 >
-                                    <Link href={`/schedules/${event.id}/edit`}>
+                                    <Link href={`/events/${event.id}/edit`}>
                                         <Edit className="h-3 w-3" />
                                     </Link>
                                 </Button>
