@@ -225,14 +225,14 @@ export function ConversationList({ className, isCollapsed, onToggle, allowCollap
                                         "flex items-center gap-4 p-3 rounded-2xl animate-pulse",
                                         isCollapsed && "justify-center px-0"
                                     )}>
-                                        <div className="h-12 w-12 shrink-0 rounded-full bg-muted/40" />
+                                        <div className="h-12 w-12 shrink-0 rounded-full bg-secondary" />
                                         {!isCollapsed && (
                                             <div className="flex-1 space-y-2.5 min-w-0">
                                                 <div className="flex justify-between w-full">
-                                                    <div className="h-4 w-24 bg-muted/40 rounded-md" />
-                                                    <div className="h-3 w-10 bg-muted/30 rounded-md" />
+                                                    <div className="h-4 w-24 bg-secondary rounded-md" />
+                                                    <div className="h-3 w-10 bg-secondary/70 rounded-md" />
                                                 </div>
-                                                <div className="h-3 w-3/4 bg-muted/30 rounded-md" />
+                                                <div className="h-3 w-3/4 bg-secondary/70 rounded-md" />
                                             </div>
                                         )}
                                     </div>
@@ -278,7 +278,7 @@ export function ConversationList({ className, isCollapsed, onToggle, allowCollap
                                         >
                                             <div className="relative shrink-0">
                                                 <Avatar className={cn(
-                                                    "h-12 w-12 border-1 transition-all duration-300",
+                                                    "h-12 w-12 border transition-all duration-300",
                                                     selectedId === conversation.id
                                                         ? "border-primary scale-105"
                                                         : "border-transparent group-hover:border-primary/20"

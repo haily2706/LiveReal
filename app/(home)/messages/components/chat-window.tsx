@@ -262,10 +262,10 @@ export function ChatWindow({
                                         exit={{ opacity: 0 }}
                                         className="flex items-center gap-2 p-2"
                                     >
-                                        <div className="h-12 w-12 rounded-full bg-muted/40 animate-pulse border-2 border-background/20" />
+                                        <div className="h-12 w-12 rounded-full bg-secondary animate-pulse border-2 border-background/20" />
                                         <div className="space-y-1.5 flex flex-col justify-center">
-                                            <div className="h-5 w-32 bg-muted/40 rounded-md animate-pulse" />
-                                            <div className="h-3 w-16 bg-muted/30 rounded-md animate-pulse" />
+                                            <div className="h-5 w-32 bg-secondary rounded-md animate-pulse" />
+                                            <div className="h-3 w-16 bg-secondary/70 rounded-md animate-pulse" />
                                         </div>
                                     </motion.div>
                                 ) : (
@@ -334,16 +334,16 @@ export function ChatWindow({
                                             i % 2 === 0 ? "ml-auto flex-row-reverse" : ""
                                         )}
                                     >
-                                        <div className="w-8 h-8 rounded-full bg-muted/40 shrink-0" />
+                                        <div className="w-8 h-8 rounded-full bg-secondary shrink-0" />
                                         <div className={cn(
                                             "flex flex-col gap-1 w-full",
                                             i % 2 === 0 ? "items-end" : "items-start"
                                         )}>
                                             <div className={cn(
-                                                "h-12 w-full rounded-2xl bg-muted/40",
+                                                "h-12 w-full rounded-2xl bg-secondary",
                                                 i % 2 === 0 ? "rounded-tr-sm" : "rounded-tl-sm w-[80%]"
                                             )} />
-                                            <div className="h-3 w-10 bg-muted/30 rounded-md" />
+                                            <div className="h-3 w-10 bg-secondary/70 rounded-md" />
                                         </div>
                                     </div>
                                 ))}
