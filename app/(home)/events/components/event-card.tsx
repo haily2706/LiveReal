@@ -27,7 +27,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { EventDurationBadge } from "./event-duration-badge";
-import { EventDateBadge } from "./event-date-badge";
+
 import { cn } from "@/lib/utils";
 import {
     DropdownMenu,
@@ -149,7 +149,7 @@ export function EventCard({
         >
             <Card className={cn(
                 "relative overflow-hidden border-0 shadow-lg transition-all duration-500 hover:-translate-y-1 ring-1 ring-border dark:ring-white/5 bg-transparent shrink-0",
-                isVertical ? "aspect-9/16" : "w-[35%] max-w-[130px] aspect-video md:w-full"
+                isVertical ? "aspect-9/16" : "w-[35%] max-w-[130px] aspect-video md:w-full md:max-w-none"
             )}>
                 {/* Main Background Image - Absolute Cover */}
                 <div className="absolute inset-0 z-0">
@@ -178,9 +178,9 @@ export function EventCard({
                 {/* Date Badge - Top Right */}
                 <div className={cn(
                     "absolute top-2 right-2 z-20",
-                    !isVertical && "hidden" // Hide in thumbnail for horizontal layout
+                    !isVertical && "hidden md:block" // Show on desktop grid, hide on mobile row
                 )}>
-                    <EventDateBadge startTime={event.startTime} />
+                    {/* Badge Removed */}
                 </div>
 
                 {/* Status Badge - Top Left */}
@@ -188,10 +188,10 @@ export function EventCard({
                     {statusBadge}
                 </div>
 
-                {/* Menu Button - Top Right (Shifted Left only if Badge is present) */}
+                {/* Menu Button - Top Right (Shifted Left if Badge is present) */}
                 <div className={cn(
                     "absolute top-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:block",
-                    isVertical ? "right-16" : "right-3"
+                    isVertical ? "right-3" : "right-3"
                 )}>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -311,64 +311,29 @@ export function EventCard({
                         </div>
                     </div>
 
-                    {/* Mobile Date */}
-                    <div className="flex flex-col gap-1 md:hidden">
-                        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
-                            <CalendarClock className="h-3.5 w-3.5" />
-                            <span>{format(startDate, "MMM d • h:mm")}{format(startDate, "aaaaa").toLowerCase()}</span>
+                    {/* Unified Date & Description */}
+                    <div className="mt-0.5 space-y-1">
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+                            <CalendarClock className="h-3.5 w-3.5 opacity-70" />
+                            <span>{format(startDate, "MMM d, h:mm a")}</span>
                         </div>
+
+
                     </div>
 
-                    <div className="flex items-center gap-2 mt-auto md:hidden">
-                        {/* Mobile Actions/Stats */}
-                        <div className="flex items-center gap-4 text-muted-foreground">
-                            <div className="flex items-center gap-1 text-[11px]">
-                                <ChartNoAxesColumn className="h-3.5 w-3.5 opacity-70" />
-                                <span>{formatNumber(views)}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                                <ThumbsUp className="h-3.5 w-3.5" />
-                                <span className="text-xs">{formatNumber(likes)}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                                <Image src="/coin.svg" alt="Coin" width={12} height={12} />
-                                <span className="text-xs">{formatNumber(lreal)}</span>
-                            </div>
+                    {/* Minimal Stats Row */}
+                    <div className="mt-auto flex items-center gap-3.5 pt-2">
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                            <ChartNoAxesColumn className="h-3.5 w-3.5 opacity-70" />
+                            <span className="font-medium">{formatNumber(views)}</span>
                         </div>
-                    </div>
-
-                    {/* Desktop Description & Full Stats (Hidden on Mobile) */}
-                    <div className="hidden md:block space-y-1.5">
-                        <div className="flex items-center gap-2 text-primary/80 font-semibold text-sm">
-                            <CalendarClock className="h-4 w-4" />
-                            <span>{format(startDate, "EEEE, MMMM do • h:mm")}{format(startDate, "aaaaa").toLowerCase()}</span>
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-green-500 transition-colors">
+                            <ThumbsUp className="h-3.5 w-3.5 opacity-70" />
+                            <span className="font-medium">{formatNumber(likes)}</span>
                         </div>
-
-                        <p className="text-xs text-muted-foreground line-clamp-1 font-medium">
-                            {event.description || "No description"}
-                        </p>
-
-                        <div className="flex items-center gap-3 mt-1">
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/50 border border-border/50 text-xs font-bold text-muted-foreground shadow-sm hover:bg-secondary/80 transition-colors">
-                                <ChartNoAxesColumn className="h-3.5 w-3.5 opacity-70" />
-                                <span>{formatNumber(views)}</span>
-                            </div>
-
-                            <div className="flex items-center gap-0 rounded-full bg-secondary/50 border border-border/50 p-0.5 shadow-sm">
-                                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/50 hover:bg-green-500/10 hover:text-green-600 transition-colors cursor-pointer text-xs font-bold text-muted-foreground border border-transparent hover:border-green-500/20">
-                                    <ThumbsUp className="h-3.5 w-3.5" />
-                                    <span>{formatNumber(likes)}</span>
-                                </div>
-                                <div className="w-px h-4 bg-border/60 mx-0.5"></div>
-                                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full hover:bg-red-500/10 hover:text-red-500 transition-colors cursor-pointer text-xs font-bold text-muted-foreground">
-                                    <ThumbsDown className="h-3.5 w-3.5" />
-                                </div>
-                            </div>
-
-                            <div className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-xs font-bold text-yellow-600 dark:text-yellow-500 shadow-sm">
-                                <Image src="/coin.svg" alt="Coin" width={14} height={14} className="brightness-110" />
-                                <span>{formatNumber(lreal)}</span>
-                            </div>
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-yellow-500 transition-colors">
+                            <Image src="/coin.svg" alt="Coin" width={14} height={14} className="opacity-80 grayscale group-hover:grayscale-0 transition-all" />
+                            <span className="font-medium">{formatNumber(lreal)}</span>
                         </div>
                     </div>
                 </div>

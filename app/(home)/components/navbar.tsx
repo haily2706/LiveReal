@@ -203,16 +203,7 @@ export function Navbar({ }: NavbarProps) {
                             )}
                         </AnimatePresence>
 
-                        {user && (
-                            <Button
-                                onClick={() => router.push("/events?action=create")}
-                                variant="outline"
-                                className="hidden md:flex items-center gap-2 rounded-full border-white/10 bg-white/5 hover:bg-white/10 text-foreground backdrop-blur-sm h-10 px-4 transition-all hover:scale-105 active:scale-95"
-                            >
-                                <Video className="h-4 w-4" />
-                                <span className="font-medium">Create</span>
-                            </Button>
-                        )}
+
 
                         {user && <NotiDropdown />}
 

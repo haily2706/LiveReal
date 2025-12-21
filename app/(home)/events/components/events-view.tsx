@@ -4,18 +4,11 @@ import { useState, useEffect } from "react";
 import { CalendarDays, Search, Sparkles, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { EventTableRow } from "./event-table-row";
 import { EventCard } from "./event-card"; // Import EventCard
 import { ComingSoon } from "@/components/coming-soon"; // Import ComingSoon
 import { Input } from "@/components/ui/input"; // Import Input
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
+// Table imports removed
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { EventForm } from "./event-form";
 import {
@@ -25,18 +18,8 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
-    ChevronLeft,
-    ChevronRight,
-    ChevronsLeft,
-    ChevronsRight,
     Plus,
     Video
 } from "lucide-react";
@@ -61,15 +44,8 @@ export function EventsView({ initialEvents }: EventsViewProps) {
 
     const [searchQuery, setSearchQuery] = useState("");
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
-
     const searchParams = useSearchParams();
 
-    // Reset page when search query changes
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [searchQuery]);
 
     useEffect(() => {
         if (searchParams.get("action") === "create") {
@@ -109,8 +85,7 @@ export function EventsView({ initialEvents }: EventsViewProps) {
 
     const filteredEvents = initialEvents.filter(e => e.title.toLowerCase().includes(searchQuery.toLowerCase()));
     const totalEvents = filteredEvents.length;
-    // const totalPages = Math.ceil(totalEvents / pageSize); // Unused for now
-    const paginatedEvents = filteredEvents.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
 
     return (
         <div className="flex-1 w-full min-h-screen relative overflow-x-hidden">
@@ -118,21 +93,102 @@ export function EventsView({ initialEvents }: EventsViewProps) {
 
             {/* Header Section - Only shown when there are events */}
             {initialEvents.length > 0 && (
-                <div className="hidden md:block space-y-4 pt-4 pb-4 px-4 md:px-6 relative z-10 max-w-[2000px] mx-auto">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div className="space-y-4 pt-4 pb-4 px-4 md:px-6 relative z-10 max-w-[2000px] mx-auto">
+                    <div className="flex flex-row items-center justify-between gap-3">
                         <div className="space-y-0.5">
                             <h2 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-pink-500 to-purple-500 w-fit">
                                 Events
                             </h2>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-muted-foreground hidden md:block">
                                 Manage and track your upcoming streams
                             </p>
                         </div>
 
 
+
+
+                        {/* Desktop Search & Filter & Create */}
+                        <div className="flex items-center gap-2">
+                            <div className="relative h-8 flex items-center">
+                                <AnimatePresence initial={false} mode="wait">
+                                    {isSearchOpen || searchQuery ? (
+                                        <motion.div
+                                            key="search-input"
+                                            initial={{ width: 32, opacity: 0 }}
+                                            animate={{ width: 220, opacity: 1 }}
+                                            exit={{ width: 32, opacity: 0 }}
+                                            className="relative w-full lg:w-80"
+                                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                        >
+                                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                                            <Input
+                                                autoFocus
+                                                placeholder="Search events..."
+                                                className="pl-9 pr-8 bg-background/50 dark:bg-black/20 border-border dark:border-white/10 focus:border-brand-purple/50 transition-all text-sm h-8 w-full"
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                onBlur={() => {
+                                                    if (!searchQuery) setIsSearchOpen(false);
+                                                }}
+                                            />
+                                            {searchQuery && (
+                                                <button
+                                                    onClick={() => setSearchQuery("")}
+                                                    onMouseDown={(e) => e.preventDefault()}
+                                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                                >
+                                                    <X className="h-3 w-3" />
+                                                </button>
+                                            )}
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="search-icon"
+                                            initial={{ width: 320, opacity: 0 }}
+                                            animate={{ width: 32, opacity: 1 }}
+                                            exit={{ width: 320, opacity: 0 }}
+                                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                        >
+                                            <motion.div
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                className="relative"
+                                            >
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 shrink-0 rounded-full bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground border border-border relative group overflow-hidden transition-all duration-300"
+                                                    onClick={() => setIsSearchOpen(true)}
+                                                >
+                                                    <Search className="h-4 w-4 transition-all duration-300 group-hover:text-primary" />
+                                                </Button>
+                                            </motion.div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                            <Button variant="outline" size="sm" className="h-8 gap-1.5 px-3 bg-background/50 dark:bg-black/20 border-border dark:border-white/10 text-muted-foreground hover:text-foreground shrink-0">
+                                <div className="flex flex-col gap-0.5 w-3">
+                                    <div className="h-0.5 w-full bg-current rounded-full" />
+                                    <div className="h-0.5 w-2/3 bg-current rounded-full" />
+                                    <div className="h-0.5 w-1/3 bg-current rounded-full" />
+                                </div>
+                                <span className="text-xs hidden sm:inline">Filter</span>
+                            </Button>
+                            {user && (
+                                <Button
+                                    onClick={() => setIsCreateOpen(true)}
+                                    className="h-8 gap-2 bg-linear-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white font-medium px-4 rounded-md transition-all hover:scale-105 active:scale-95"
+                                >
+                                    <Video className="h-4 w-4" />
+                                    <span className="text-xs hidden sm:inline">Create</span>
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </div>
-            )}
+            )
+            }
 
             {/* Content Section */}
             <div className="px-4 md:px-6 max-w-[2000px] mx-auto relative z-10 pb-20 pt-4 md:pt-0">
@@ -155,162 +211,6 @@ export function EventsView({ initialEvents }: EventsViewProps) {
 
                 ) : (
                     <div className="space-y-4">
-                        {/* Search, Filter & Pagination */}
-                        <div className="flex flex-row items-center justify-between gap-2">
-                            {/* Left: Search & Filter */}
-                            <div className="flex items-center gap-2">
-                                <div className="relative h-8 flex items-center">
-                                    <AnimatePresence initial={false} mode="wait">
-                                        {isSearchOpen || searchQuery ? (
-                                            <motion.div
-                                                key="search-input"
-                                                initial={{ width: 32, opacity: 0 }}
-                                                animate={{ width: 220, opacity: 1 }}
-                                                exit={{ width: 32, opacity: 0 }}
-                                                className="relative w-full lg:w-80"
-                                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                            >
-                                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                                                <Input
-                                                    autoFocus
-                                                    placeholder="Search events..."
-                                                    className="pl-9 pr-8 bg-background/50 dark:bg-black/20 border-border dark:border-white/10 focus:border-brand-purple/50 transition-all text-sm h-8 w-full"
-                                                    value={searchQuery}
-                                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                                    onBlur={() => {
-                                                        if (!searchQuery) setIsSearchOpen(false);
-                                                    }}
-                                                />
-                                                {searchQuery && (
-                                                    <button
-                                                        onClick={() => setSearchQuery("")}
-                                                        onMouseDown={(e) => e.preventDefault()}
-                                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                                                    >
-                                                        <X className="h-3 w-3" />
-                                                    </button>
-                                                )}
-                                            </motion.div>
-                                        ) : (
-                                            <motion.div
-                                                key="search-icon"
-                                                initial={{ width: 320, opacity: 0 }}
-                                                animate={{ width: 32, opacity: 1 }}
-                                                exit={{ width: 320, opacity: 0 }}
-                                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                            >
-                                                <motion.div
-                                                    whileHover={{ scale: 1.05 }}
-                                                    whileTap={{ scale: 0.95 }}
-                                                    className="relative"
-                                                >
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 shrink-0 rounded-full bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground border border-border relative group overflow-hidden transition-all duration-300"
-                                                        onClick={() => setIsSearchOpen(true)}
-                                                    >
-                                                        <Search className="h-4 w-4 transition-all duration-300 group-hover:text-primary" />
-                                                    </Button>
-                                                </motion.div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-                                <Button variant="outline" size="sm" className="h-8 gap-1.5 px-3 bg-background/50 dark:bg-black/20 border-border dark:border-white/10 text-muted-foreground hover:text-foreground shrink-0">
-                                    <div className="flex flex-col gap-0.5 w-3">
-                                        <div className="h-0.5 w-full bg-current rounded-full" />
-                                        <div className="h-0.5 w-2/3 bg-current rounded-full" />
-                                        <div className="h-0.5 w-1/3 bg-current rounded-full" />
-                                    </div>
-                                    <span className="text-xs hidden sm:inline">Filter</span>
-                                </Button>
-                            </div>
-
-                            {/* Right: Pagination Controls */}
-                            <div className="flex items-center gap-2 shrink-0">
-                                <div className="hidden md:flex items-center space-x-2">
-                                    <p className="text-xs font-medium text-muted-foreground whitespace-nowrap">Rows per page</p>
-                                    <Select
-                                        value={`${pageSize}`}
-                                        onValueChange={(value) => {
-                                            setPageSize(Number(value));
-                                            setCurrentPage(1);
-                                        }}
-                                    >
-                                        <SelectTrigger className="h-7 w-[60px] bg-background/50 dark:bg-black/20 border-border dark:border-white/10 text-xs">
-                                            <SelectValue placeholder={pageSize} />
-                                        </SelectTrigger>
-                                        <SelectContent side="top">
-                                            {[10, 20, 30, 40, 50].map((pageSize) => (
-                                                <SelectItem key={pageSize} value={`${pageSize}`}>
-                                                    {pageSize}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="hidden md:flex w-[90px] items-center justify-center text-xs font-medium text-muted-foreground">
-                                    {totalEvents > 0 ? (currentPage - 1) * pageSize + 1 : 0}-
-                                    {Math.min(currentPage * pageSize, totalEvents)} of {totalEvents}
-                                </div>
-                                <div className="flex items-center space-x-1">
-                                    <Button
-                                        variant="outline"
-                                        className="hidden h-7 w-7 p-0 bg-background/50 dark:bg-black/20 border-border dark:border-white/10 xl:flex"
-                                        onClick={() => setCurrentPage(1)}
-                                        disabled={currentPage === 1 || totalEvents === 0}
-                                    >
-                                        <span className="sr-only">Go to first page</span>
-                                        <ChevronsLeft className="h-3.5 w-3.5" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className="h-7 w-7 p-0 bg-background/50 dark:bg-black/20 border-border dark:border-white/10"
-                                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                                        disabled={currentPage === 1 || totalEvents === 0}
-                                    >
-                                        <span className="sr-only">Go to previous page</span>
-                                        <ChevronLeft className="h-3.5 w-3.5" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className="h-7 w-7 p-0 bg-background/50 dark:bg-black/20 border-border dark:border-white/10"
-                                        onClick={() => setCurrentPage((p) => Math.min(Math.ceil(totalEvents / pageSize), p + 1))}
-                                        disabled={currentPage === Math.ceil(totalEvents / pageSize) || totalEvents === 0}
-                                    >
-                                        <span className="sr-only">Go to next page</span>
-                                        <ChevronRight className="h-3.5 w-3.5" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className="hidden h-7 w-7 p-0 bg-background/50 dark:bg-black/20 border-border dark:border-white/10 xl:flex"
-                                        onClick={() => setCurrentPage(Math.ceil(totalEvents / pageSize))}
-                                        disabled={currentPage === Math.ceil(totalEvents / pageSize) || totalEvents === 0}
-                                    >
-                                        <span className="sr-only">Go to last page</span>
-                                        <ChevronsRight className="h-3.5 w-3.5" />
-                                    </Button>
-                                    {user && (
-                                        <motion.div
-                                            whileHover={{ scale: 1.05 }}
-                                            whileTap={{ scale: 0.95 }}
-                                            className="md:hidden relative ml-1"
-                                        >
-                                            <Button
-                                                onClick={() => setIsCreateOpen(true)}
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-8 w-8 shrink-0 rounded-full bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground border border-border relative group overflow-hidden transition-all duration-300"
-                                            >
-                                                <Video className="h-4 w-4 transition-all duration-300 group-hover:text-primary" />
-                                            </Button>
-                                        </motion.div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
                         {totalEvents === 0 ? (
                             <div className="py-20 flex flex-col items-center justify-center text-center">
                                 <div className="h-20 w-20 rounded-full bg-muted/50 flex items-center justify-center mb-4">
@@ -330,58 +230,17 @@ export function EventsView({ initialEvents }: EventsViewProps) {
                                 </Button>
                             </div>
                         ) : (
-                            <>
-                                {/* Desktop Table View */}
-                                <div className="hidden md:block rounded-xl border border-border dark:border-white/10 bg-card/50 dark:bg-black/20 backdrop-blur-sm overflow-hidden shadow-2xl">
-                                    <Table>
-                                        <TableHeader className="bg-muted/50 dark:bg-black/40 hover:bg-muted/50 dark:hover:bg-black/40">
-                                            <TableRow className="hover:bg-transparent border-border dark:border-white/10">
-                                                <TableHead className="w-[450px] text-xs font-semibold uppercase tracking-wider text-muted-foreground">Event</TableHead>
-                                                <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Visibility</TableHead>
-                                                <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground cursor-pointer">
-                                                    <div className="flex items-center gap-1">
-                                                        Date <span className="text-[10px]">↓</span>
-                                                    </div>
-                                                </TableHead>
-                                                <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Views</TableHead>
-                                                <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Comments</TableHead>
-                                                <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                                    <div className="flex items-center gap-1.5">
-                                                        <span>LREAL</span>
-                                                        <Image src="/coin.svg" alt="Coin" width={14} height={14} className="brightness-110" />
-                                                    </div>
-                                                </TableHead>
-                                                <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground w-[200px]">Likes (vs. dislikes)</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {paginatedEvents
-                                                .map((event: any, index: number) => (
-                                                    <EventTableRow
-                                                        key={event.id}
-                                                        event={event}
-                                                        index={index}
-                                                        isVertical={(index + 1) % 5 === 0}
-                                                        onEdit={(evt) => setEditingEvent(evt)}
-                                                    />
-                                                ))}
-                                        </TableBody>
-                                    </Table>
-                                </div>
-
-                                {/* Mobile Card View */}
-                                <div className="grid grid-cols-1 gap-4 md:hidden">
-                                    {paginatedEvents.map((event: any, index: number) => (
-                                        <EventCard
-                                            key={event.id}
-                                            event={event}
-                                            index={index}
-                                            onEdit={(evt) => setEditingEvent(evt)}
-                                            isVertical={false}
-                                        />
-                                    ))}
-                                </div>
-                            </>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                                {filteredEvents.map((event: any, index: number) => (
+                                    <EventCard
+                                        key={event.id}
+                                        event={event}
+                                        index={index}
+                                        onEdit={(evt) => setEditingEvent(evt)}
+                                        isVertical={false}
+                                    />
+                                ))}
+                            </div>
                         )}
                     </div>
                 )}
@@ -426,6 +285,6 @@ export function EventsView({ initialEvents }: EventsViewProps) {
                     </div>
                 </DialogContent>
             </Dialog>
-        </div >
+        </div>
     );
 }

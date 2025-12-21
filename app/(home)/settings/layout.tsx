@@ -49,11 +49,11 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
                     </div>
 
                     <div className="flex flex-col space-y-4 lg:flex-row lg:space-x-8 lg:space-y-0">
-                        <aside className="lg:w-[160px]">
+                        <aside className="lg:w-[220px] lg:border-r lg:pr-6">
                             <Sidebar items={sidebarNavItems} />
                         </aside>
                         <div className={cn("flex-1", isCollapsed ? "max-w-full" : "lg:max-w-4xl")}>
-                            <div className="md:bg-background/50 md:backdrop-blur-xl md:border md:rounded-2xl md:p-8 md:shadow-sm">
+                            <div className="">
                                 {children}
                             </div>
                         </div>
