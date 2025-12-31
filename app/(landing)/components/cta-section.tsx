@@ -9,10 +9,8 @@ import Link from "next/link";
 const RotatingText = () => {
     const items = [
         { text: "Birthday", color: "bg-linear-to-r from-pink-500 via-rose-500 to-yellow-500" },
-        { text: "Gaming", color: "bg-linear-to-r from-purple-500 via-violet-500 to-indigo-500" },
         { text: "Singing", color: "bg-linear-to-r from-cyan-400 via-blue-500 to-purple-500" },
         { text: "FanMeet", color: "bg-linear-to-r from-orange-500 via-amber-500 to-yellow-400" },
-        { text: "Sports", color: "bg-linear-to-r from-green-400 via-emerald-500 to-teal-500" },
     ];
     const [index, setIndex] = useState(0);
 

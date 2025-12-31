@@ -2,7 +2,7 @@
 import { db } from "@/lib/db";
 import { subscriptions, cashIns, users } from "@/lib/db/schema";
 import { transferToken } from "@/lib/hedera/client";
-import { CASH_IN_PLANS } from "@/app/(home)/wallet/constants";
+import { CASH_IN_PLANS } from "@/app/(home)/settings/wallet/constants";
 import { stripe } from "@/lib/stripe";
 import { eq } from "drizzle-orm";
 import Stripe from "stripe";

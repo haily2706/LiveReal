@@ -1,5 +1,6 @@
-import ProfilePage from "./profile/page";
+
+import WalletPage from "./wallet/page";
 
 export default function SettingsPage() {
-    return <ProfilePage />;
+    return <WalletPage />;
 }

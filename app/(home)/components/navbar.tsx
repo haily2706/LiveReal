@@ -24,8 +24,6 @@ import { TextLogo } from "@/components/ui/text-logo";
 
 const appLinks = [
     { name: "Explore", href: "/home" },
-    { name: "Messages", href: "/messages" },
-    { name: "Events", href: "/events" },
     { name: "Settings", href: "/settings" },
 ];
 
@@ -35,10 +33,9 @@ import { UserMenu } from "@/components/auth/user-menu";
 
 export const categories = [
     "All",
-    "Birthday",
-    "Gaming",
-    "Singing",
-    "Sports"
+    "Live",
+    "Upcoming",
+    "Favorite"
 ];
 
 interface NavbarProps { }

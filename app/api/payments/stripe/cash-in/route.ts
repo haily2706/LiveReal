@@ -6,7 +6,7 @@ import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import { subscriptions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { CASH_IN_PLANS } from "@/app/(home)/wallet/constants";
+import { CASH_IN_PLANS } from "@/app/(home)/settings/wallet/constants";
 
 /**
  * @swagger

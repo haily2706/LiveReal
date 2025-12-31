@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import {
     Settings,
+    User,
 
     LogOut,
     LogIn,
@@ -83,14 +84,14 @@ export function Sidebar() {
             </div>
 
             <div className={cn("h-12 mb-4 flex items-center relative z-20", isCollapsed ? "justify-center" : "justify-between px-2")}>
-                {/* <Button
+                <Button
                     variant="ghost"
                     size="icon"
                     className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-full shrink-0 transition-all duration-300 hover:rotate-180"
                     onClick={toggleSidebar}
                 >
                     <Menu className="h-6 w-6" />
-                </Button> */}
+                </Button>
                 {/* <Badge
                     variant="outline"
                     className={cn(
@@ -145,14 +146,6 @@ export function Sidebar() {
                                         </Avatar>
                                     </div>
                                 </motion.div>
-
-                                {/* Status Indicator with Pulse */}
-                                <div className="absolute bottom-1 right-1">
-                                    <span className="relative flex h-4 w-4">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500 border-2 border-background"></span>
-                                    </span>
-                                </div>
                             </div>
 
                             <AnimatePresence mode="wait">
@@ -170,12 +163,6 @@ export function Sidebar() {
                                                 {user.user_metadata?.full_name || user.email?.split('@')[0] || "User"}
                                             </h2>
                                         </div>
-                                        <div className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-muted/50 border border-border backdrop-blur-sm max-w-full">
-                                            <span className="text-xs font-medium text-muted-foreground truncate max-w-[150px]">
-                                                {user.user_metadata?.handle ?? ''}
-                                            </span>
-                                        </div>
-
                                         {/* Premium Balance Card */}
                                         {showPremiumBalance && (
                                             <PremiumBalanceCard />
@@ -319,9 +306,7 @@ function isActive(pathname: string, href: string) {
 
 const NAV_LINKS = [
     { icon: Compass, label: "Explore", href: "/home", color: "text-blue-400" },
-    // { icon: Clapperboard, label: "Shorts", href: "/shorts", color: "text-red-400" },
-    { icon: MessageCircle, label: "Messages", href: "/messages", color: "text-green-400" },
-    { icon: Calendar, label: "Events", href: "/events", color: "text-purple-400" },
+    { icon: User, label: "Profile", href: "/profile", color: "text-purple-400" },
     { icon: Settings, label: "Settings", href: "/settings", color: "text-gray-400" }
 ];
 
