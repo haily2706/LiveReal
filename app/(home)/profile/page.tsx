@@ -206,9 +206,9 @@ export default function ProfilePage() {
         >
             <div className="flex items-center justify-between gap-4 pb-6">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-pink-500 to-purple-500 w-fit">Profile Settings</h1>
-                    <p className="text-muted-foreground text-sm mt-1">
-                        Manage your profile and upcoming birthday event.
+                    <h1 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-pink-500 to-purple-500 w-fit">My Event</h1>
+                    <p className="text-muted-foreground text-sm mt-1 hidden sm:block">
+                        Manage your upcoming birthday event and personal details.
                     </p>
                 </div>
                 <Button
@@ -272,7 +272,7 @@ export default function ProfilePage() {
                 <div className="flex-1 space-y-6">
                     <div className="text-card-foreground rounded-xl shadow-xs space-y-4">
                         <div className="space-y-2">
-                            <h3 className="font-semibold leading-none tracking-tight">Profile</h3>
+                            <h3 className="font-semibold leading-none tracking-tight">Personal Details</h3>
                             <p className="text-sm text-muted-foreground">Manage how you appear to others.</p>
                         </div>
                         <Separator />
@@ -316,7 +316,7 @@ export default function ProfilePage() {
                                                     !birthdayDate && "text-muted-foreground"
                                                 )}
                                             >
-                                                <CalendarIcon className="mr-2 h-4 w-4 text-pink-500" />
+                                                <CalendarIcon className="mr-2 h-4 w-4" />
                                                 {birthdayDate ? format(birthdayDate, "PPP") : <span>Pick a date</span>}
                                             </Button>
                                         </PopoverTrigger>
@@ -349,13 +349,13 @@ export default function ProfilePage() {
 
 
                     <div className="text-card-foreground shadow-xs space-y-4 overflow-hidden relative">
-                        <div className="absolute top-0 right-0 p-6 opacity-10">
-                            <CalendarIcon className="w-14 h-14 text-pink-500" />
+                        <div className="absolute top-[-24px] right-0 p-6 opacity-10">
+                            <CalendarIcon className="w-12 h-12 text-pink-500" />
                         </div>
                         <div className="flex items-center justify-between relative z-10">
                             <div className="space-y-1">
                                 <h3 className="font-semibold leading-none tracking-tight flex items-center gap-2">
-                                    Upcoming Birthday Stream
+                                    Upcoming Birthday Live Stream
                                     {isBirthdayEnabled && <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />}
                                 </h3>
                                 <p className="text-sm text-muted-foreground">Schedule your next celebration.</p>
@@ -363,24 +363,104 @@ export default function ProfilePage() {
                         </div>
 
                         <div className="space-y-6 pt-2 relative z-10 w-full">
-                            <div className="grid gap-2">
-                                <Label>Visibility</Label>
-                                <Select
-                                    value={isBirthdayEnabled ? "published" : "private"}
-                                    onValueChange={(v) => setIsBirthdayEnabled(v === "published")}
-                                >
-                                    <SelectTrigger className="bg-background/50">
-                                        <SelectValue placeholder="Select visibility" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="private">Private (Only you)</SelectItem>
-                                        <SelectItem value="published">Published (Everyone)</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid gap-2">
+                                    <Label>Visibility</Label>
+                                    <Select
+                                        value={isBirthdayEnabled ? "published" : "private"}
+                                        onValueChange={(v) => setIsBirthdayEnabled(v === "published")}
+                                    >
+                                        <SelectTrigger className="bg-background/50">
+                                            <SelectValue placeholder="Select visibility" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="private">Private (Only you)</SelectItem>
+                                            <SelectItem value="published">Published (Everyone)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label>Live Stream Start Time</Label>
+                                    <div className="flex gap-2">
+                                        <Select
+                                            value={(() => {
+                                                if (!birthdayTime) return "12";
+                                                const [h] = birthdayTime.split(":");
+                                                let hour = parseInt(h);
+                                                if (hour === 0) return "12";
+                                                if (hour > 12) return (hour - 12).toString();
+                                                return hour.toString();
+                                            })()}
+                                            onValueChange={(v) => {
+                                                const [h, m] = (birthdayTime || "12:00").split(":");
+                                                const oldHour = parseInt(h);
+                                                const isPM = oldHour >= 12;
+                                                let newHour = parseInt(v);
+                                                if (isPM && newHour !== 12) newHour += 12;
+                                                if (!isPM && newHour === 12) newHour = 0;
+                                                setBirthdayTime(`${newHour.toString().padStart(2, '0')}:${m}`);
+                                            }}
+                                        >
+                                            <SelectTrigger className="flex-1 bg-background/50">
+                                                <SelectValue placeholder="Hour" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
+                                                    <SelectItem key={h} value={h.toString()}>
+                                                        {h}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+
+                                        <Select
+                                            value={birthdayTime ? birthdayTime.split(":")[1] : "00"}
+                                            onValueChange={(v) => {
+                                                const [h] = (birthdayTime || "12:00").split(":");
+                                                setBirthdayTime(`${h}:${v}`);
+                                            }}
+                                        >
+                                            <SelectTrigger className="flex-1 bg-background/50">
+                                                <SelectValue placeholder="Min" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {Array.from({ length: 12 }, (_, i) => i * 5).map((m) => (
+                                                    <SelectItem key={m} value={m.toString().padStart(2, "0")}>
+                                                        {m.toString().padStart(2, "0")}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+
+                                        <Select
+                                            value={(() => {
+                                                if (!birthdayTime) return "AM";
+                                                const [h] = birthdayTime.split(":");
+                                                return parseInt(h) >= 12 ? "PM" : "AM";
+                                            })()}
+                                            onValueChange={(v) => {
+                                                const [h, m] = (birthdayTime || "12:00").split(":");
+                                                let hour = parseInt(h);
+                                                if (v === "PM" && hour < 12) hour += 12;
+                                                if (v === "AM" && hour >= 12) hour -= 12;
+                                                setBirthdayTime(`${hour.toString().padStart(2, '0')}:${m}`);
+                                            }}
+                                        >
+                                            <SelectTrigger className="flex-1 bg-background/50">
+                                                <SelectValue placeholder="AM/PM" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="AM">AM</SelectItem>
+                                                <SelectItem value="PM">PM</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="grid gap-2">
-                                <Label>Stream Thumbnail</Label>
+                                <Label>Live Stream Thumbnail</Label>
                                 <div
                                     className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 flex flex-col items-center justify-center gap-2 hover:bg-muted/50 transition-colors cursor-pointer text-center h-48 relative overflow-hidden group"
                                     onClick={triggerThumbnailInput}
@@ -413,170 +493,15 @@ export default function ProfilePage() {
                                 />
                             </div>
 
-                            <div className="flex flex-col sm:flex-row gap-4 sm:items-end">
-                                <div className="grid gap-2">
-                                    <Label>Live Stream Start Time</Label>
-                                    <div className="flex gap-2">
-                                        <Select
-                                            value={(() => {
-                                                if (!birthdayTime) return "12";
-                                                const [h] = birthdayTime.split(":");
-                                                let hour = parseInt(h);
-                                                if (hour === 0) return "12";
-                                                if (hour > 12) return (hour - 12).toString();
-                                                return hour.toString();
-                                            })()}
-                                            onValueChange={(v) => {
-                                                const [h, m] = (birthdayTime || "12:00").split(":");
-                                                const oldHour = parseInt(h);
-                                                const isPM = oldHour >= 12;
-                                                let newHour = parseInt(v);
-                                                if (isPM && newHour !== 12) newHour += 12;
-                                                if (!isPM && newHour === 12) newHour = 0;
-                                                setBirthdayTime(`${newHour.toString().padStart(2, '0')}:${m}`);
-                                            }}
-                                        >
-                                            <SelectTrigger className="w-[80px] bg-background/50">
-                                                <SelectValue placeholder="Hour" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
-                                                    <SelectItem key={h} value={h.toString()}>
-                                                        {h}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-
-                                        <Select
-                                            value={birthdayTime ? birthdayTime.split(":")[1] : "00"}
-                                            onValueChange={(v) => {
-                                                const [h] = (birthdayTime || "12:00").split(":");
-                                                setBirthdayTime(`${h}:${v}`);
-                                            }}
-                                        >
-                                            <SelectTrigger className="w-[80px] bg-background/50">
-                                                <SelectValue placeholder="Min" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {Array.from({ length: 12 }, (_, i) => i * 5).map((m) => (
-                                                    <SelectItem key={m} value={m.toString().padStart(2, "0")}>
-                                                        {m.toString().padStart(2, "0")}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-
-                                        <Select
-                                            value={(() => {
-                                                if (!birthdayTime) return "AM";
-                                                const [h] = birthdayTime.split(":");
-                                                return parseInt(h) >= 12 ? "PM" : "AM";
-                                            })()}
-                                            onValueChange={(v) => {
-                                                const [h, m] = (birthdayTime || "12:00").split(":");
-                                                let hour = parseInt(h);
-                                                if (v === "PM" && hour < 12) hour += 12;
-                                                if (v === "AM" && hour >= 12) hour -= 12;
-                                                setBirthdayTime(`${hour.toString().padStart(2, '0')}:${m}`);
-                                            }}
-                                        >
-                                            <SelectTrigger className="w-[80px] bg-background/50">
-                                                <SelectValue placeholder="AM/PM" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="AM">AM</SelectItem>
-                                                <SelectItem value="PM">PM</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-
+                            <div className="flex justify-end pt-2">
                                 <Button
                                     type="button"
                                     onClick={handleStartStream}
-                                    className="bg-linear-to-r from-pink-500 to-purple-600 font-semibold text-white shadow-md hover:shadow-lg transition-all"
+                                    className="bg-linear-to-r from-pink-500 to-purple-600 font-semibold text-white shadow-md hover:shadow-lg transition-all w-full sm:w-auto"
                                 >
                                     <VideoIcon className="mr-2 h-4 w-4" />
                                     Start Live Stream
                                 </Button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="text-card-foreground rounded-xl shadow-xs space-y-4">
-                        <div className="space-y-2">
-                            <h3 className="font-semibold leading-none tracking-tight">Previous Birthday Live Events</h3>
-                            <p className="text-sm text-muted-foreground">Relive your past celebrations.</p>
-                        </div>
-                        <Separator />
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="group relative flex border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors overflow-hidden">
-                                <div className="relative h-24 w-40 shrink-0 bg-muted">
-                                    <img
-                                        src="https://images.unsplash.com/photo-1566737236500-c8ac43014a67?q=80&w=1740&auto=format&fit=crop"
-                                        alt="Thumbnail"
-                                        className="h-full w-full object-cover"
-                                    />
-                                    <div className="absolute top-1 right-1 flex items-center gap-1 text-[10px] font-semibold text-white bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded-full">
-                                        <img src="/coin.svg" alt="Coin" className="h-2.5 w-2.5" />
-                                        <span>12.4k</span>
-                                    </div>
-                                </div>
-                                <div className="flex flex-col flex-1 p-3 min-w-0 justify-between">
-                                    <div className="space-y-1">
-                                        <h4 className="font-medium text-sm line-clamp-1 group-hover:text-primary transition-colors">My 25th Birthday</h4>
-                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                                            <span className="flex items-center gap-1">
-                                                <CalendarIcon className="h-3 w-3" />
-                                                Oct 24
-                                            </span>
-                                            <span className="flex items-center gap-1">
-                                                <VideoIcon className="h-3 w-3" />
-                                                2h 15m
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="pt-2">
-                                        <Button variant="ghost" size="sm" className="h-7 px-0 text-xs text-pink-500 hover:text-pink-600 hover:bg-transparent font-medium p-0 justify-start">
-                                            Watch Replay &rarr;
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="group relative flex border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors overflow-hidden">
-                                <div className="relative h-24 w-40 shrink-0 bg-muted">
-                                    <img
-                                        src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000&auto=format&fit=crop"
-                                        alt="Thumbnail"
-                                        className="h-full w-full object-cover"
-                                    />
-                                    <div className="absolute top-1 right-1 flex items-center gap-1 text-[10px] font-semibold text-white bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded-full">
-                                        <img src="/coin.svg" alt="Coin" className="h-2.5 w-2.5" />
-                                        <span>8.3k</span>
-                                    </div>
-                                </div>
-                                <div className="flex flex-col flex-1 p-3 min-w-0 justify-between">
-                                    <div className="space-y-1">
-                                        <h4 className="font-medium text-sm line-clamp-1 group-hover:text-primary transition-colors">Casual Chat & Games</h4>
-                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                                            <span className="flex items-center gap-1">
-                                                <CalendarIcon className="h-3 w-3" />
-                                                Sep 12
-                                            </span>
-                                            <span className="flex items-center gap-1">
-                                                <VideoIcon className="h-3 w-3" />
-                                                1h 45m
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="pt-2">
-                                        <Button variant="ghost" size="sm" className="h-7 px-0 text-xs text-pink-500 hover:text-pink-600 hover:bg-transparent font-medium p-0 justify-start">
-                                            Watch Replay &rarr;
-                                        </Button>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
