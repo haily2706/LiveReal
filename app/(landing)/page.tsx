@@ -16,8 +16,7 @@ import { Footer } from "@/app/(landing)/components/footer";
 export default function Page() {
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden">
-      <BackgroundBlobs />
-
+  
       <div className="flex-1">
         {/* Hero Section */}
         <HeroSection />
