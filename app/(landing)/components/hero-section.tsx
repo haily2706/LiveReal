@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Cake, Gift, Sparkles, Play, Users, DollarSign, Globe } from "lucide-react";
 import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faApple, faAndroid, faChrome } from "@fortawesome/free-brands-svg-icons";
 
 import { EventTypes } from "@/lib/constants";
 
@@ -134,7 +136,7 @@ export function HeroSection() {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7, delay: 0.3 }}
-                    className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
+                    className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
                 >
                     <Button
                         size="lg"
@@ -157,6 +159,30 @@ export function HeroSection() {
                             Watch Demo
                         </Link>
                     </Button>
+                </motion.div>
+
+                {/* Platform Availability */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, delay: 0.35 }}
+                    className="flex justify-center items-center gap-4 mb-8 text-muted-foreground"
+                >
+                    <span className="text-sm font-medium mr-2">Available on:</span>
+                    <div className="flex items-center gap-6">
+                        <Link href="/home" className="flex items-center gap-2 hover:text-foreground transition-colors duration-300" title="Web">
+                            <FontAwesomeIcon icon={faChrome} className="w-5 h-5" />
+                            <span className="text-sm">Web</span>
+                        </Link>
+                        <Link href="/home" className="flex items-center gap-2 hover:text-foreground transition-colors duration-300" title="iOS">
+                            <FontAwesomeIcon icon={faApple} className="w-5 h-5" />
+                            <span className="text-sm">iOS</span>
+                        </Link>
+                        <Link href="/home" className="flex items-center gap-2 hover:text-foreground transition-colors duration-300" title="Android">
+                            <FontAwesomeIcon icon={faAndroid} className="w-5 h-5" />
+                            <span className="text-sm">Android</span>
+                        </Link>
+                    </div>
                 </motion.div>
 
                 {/* Stats/Trust Badges */}

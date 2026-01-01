@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
+
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { config } from "@fortawesome/fontawesome-svg-core";
+config.autoAddCss = false;
+
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { AuthModal } from "@/components/auth/auth-modal";
 import { AuthListener } from "@/components/auth/auth-listener";
