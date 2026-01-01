@@ -172,7 +172,7 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <Video className="h-5 w-5" />
@@ -185,65 +185,115 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
                 </DialogHeader>
 
                 <div className="space-y-6 pt-2">
-                    <div className="grid grid-cols-1 gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="streamTitle">Title</Label>
-                            <Input
-                                id="streamTitle"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                placeholder="Give your stream a catchy title"
-                                className="bg-background/50"
-                            />
+                    <div className="flex flex-col md:flex-row gap-6">
+                        <div className="flex-1 flex flex-col gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="streamTitle">Title</Label>
+                                <Input
+                                    id="streamTitle"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    placeholder="Give your stream a catchy title"
+                                    className="bg-background/50"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2 flex-1">
+                                <Label htmlFor="streamDescription">Description</Label>
+                                <Textarea
+                                    id="streamDescription"
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    placeholder="What's your stream about?"
+                                    className="bg-background/50 resize-none flex-1 min-h-[100px]"
+                                />
+                            </div>
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="streamDescription">Description</Label>
-                            <Textarea
-                                id="streamDescription"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                placeholder="What's your stream about?"
-                                className="bg-background/50 resize-none h-20"
+
+                        <div className="flex flex-col gap-2 shrink-0">
+                            <div className="flex items-center justify-between">
+                                <Label>Thumbnail</Label>
+                                <div className="flex items-center">
+                                    <Label htmlFor="short-stream-switch" className="text-xs text-muted-foreground font-normal cursor-pointer">9:16</Label>
+                                    <Switch
+                                        id="short-stream-switch"
+                                        checked={isShortStream}
+                                        onCheckedChange={setIsShortStream}
+                                        className="scale-75 origin-right"
+                                    />
+                                </div>
+                            </div>
+                            <div
+                                className={cn(
+                                    "border-2 border-dashed border-muted-foreground/25 rounded-lg flex flex-col items-center justify-center gap-2 hover:bg-muted/50 transition-all cursor-pointer text-center relative overflow-hidden group bg-muted/10",
+                                )}
+                                style={{
+                                    width: isShortStream ? "140px" : "240px",
+                                    aspectRatio: isShortStream ? "9/16" : "16/9"
+                                }}
+                                onClick={triggerThumbnailInput}
+                            >
+                                {thumbnailUrl ? (
+                                    <>
+                                        <img src={thumbnailUrl} alt="Thumbnail" className="absolute inset-0 w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <p className="text-white text-xs font-medium">Change</p>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="p-2 bg-secondary rounded-full">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>
+                                        </div>
+                                        <div className="space-y-1 px-2">
+                                            <p className="text-xs font-medium text-muted-foreground">Upload</p>
+                                            <p className="text-[10px] text-muted-foreground/75">{isShortStream ? "720x1280" : "1280x720"}</p>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                            <input
+                                type="file"
+                                ref={thumbnailInputRef}
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleThumbnailUpload}
+                                disabled={uploading}
                             />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                            <Label>Event Type</Label>
-                            <Select
-                                value={eventType}
-                                onValueChange={setEventType}
-                            >
-                                <SelectTrigger className="bg-background/50">
-                                    <SelectValue placeholder="Select event type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {EventTypes.map((type) => (
-                                        <SelectItem key={type.value} value={type.value.toString()}>
-                                            {type.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="grid gap-2">
-                            <Label>Visibility</Label>
-                            <Select
-                                value={isBirthdayEnabled ? "published" : "private"}
-                                onValueChange={(v) => setIsBirthdayEnabled(v === "published")}
-                            >
-                                <SelectTrigger className="bg-background/50">
-                                    <SelectValue placeholder="Select visibility" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="private">Private (Only you)</SelectItem>
-                                    <SelectItem value="published">Published (Everyone)</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                    <div className="flex flex-col gap-4">
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <div className="grid gap-2 flex-1">
+                                <Label>Event Type</Label>
+                                {(() => {
+                                    const selectedType = EventTypes.find(t => t.value.toString() === eventType);
+                                    const Icon = selectedType?.icon;
+                                    return (
+                                        <Select
+                                            value={eventType}
+                                            onValueChange={setEventType}
+                                        >
+                                            <SelectTrigger className="bg-background/50">
+                                                <div className="flex items-center gap-2">
+                                                    <SelectValue placeholder="Select event type" />
+                                                </div>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {EventTypes.map((type) => (
+                                                    <SelectItem key={type.value} value={type.value.toString()}>
+                                                        <div className="flex items-center gap-2">
+                                                            <type.icon className="h-4 w-4 text-muted-foreground" />
+                                                            {type.name}
+                                                        </div>
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    );
+                                })()}
+                            </div>
 
-                        <div className="col-span-1 sm:col-span-2 flex flex-wrap items-end gap-4">
                             <div className="grid gap-2">
                                 <Label>Start Date</Label>
                                 <Popover>
@@ -349,52 +399,25 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
                                 </div>
                             </div>
                         </div>
+
+                        <div className="grid gap-2">
+                            <Label>Visibility</Label>
+                            <Select
+                                value={isBirthdayEnabled ? "published" : "private"}
+                                onValueChange={(v) => setIsBirthdayEnabled(v === "published")}
+                            >
+                                <SelectTrigger className="bg-background/50">
+                                    <SelectValue placeholder="Select visibility" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="private">Private (Only you)</SelectItem>
+                                    <SelectItem value="published">Published (Everyone)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
 
-                    <div className="grid gap-2">
-                        <div className="flex items-center justify-between">
-                            <Label>Thumbnail</Label>
-                            <div className="flex items-center gap-2">
-                                <Label htmlFor="short-stream-switch" className="text-sm text-muted-foreground font-normal cursor-pointer">Short (9:16)</Label>
-                                <Switch
-                                    id="short-stream-switch"
-                                    checked={isShortStream}
-                                    onCheckedChange={setIsShortStream}
-                                />
-                            </div>
-                        </div>
-                        <div
-                            className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 flex flex-col items-center justify-center gap-2 hover:bg-muted/50 transition-colors cursor-pointer text-center h-40 relative overflow-hidden group"
-                            onClick={triggerThumbnailInput}
-                        >
-                            {thumbnailUrl ? (
-                                <>
-                                    <img src={thumbnailUrl} alt="Thumbnail" className="absolute inset-0 w-full h-full object-cover" />
-                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <p className="text-white font-medium">Change Thumbnail</p>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="p-3 bg-secondary rounded-full">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-sm font-medium text-muted-foreground">Click to upload thumbnail</p>
-                                        <p className="text-xs text-muted-foreground/75">{isShortStream ? "720x1280" : "1280x720"} recommended</p>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                        <input
-                            type="file"
-                            ref={thumbnailInputRef}
-                            className="hidden"
-                            accept="image/*"
-                            onChange={handleThumbnailUpload}
-                            disabled={uploading}
-                        />
-                    </div>
+
                 </div>
 
                 <div className="flex justify-end gap-2 pt-4">
