@@ -13,13 +13,7 @@ import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+
 import { Switch } from "@/components/ui/switch";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -31,7 +25,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { countries } from "@/lib/countries";
 import { EventTypes } from "@/lib/constants";
-import { CalendarIcon, VideoIcon, Coins, PenSquare } from "lucide-react";
+import { CalendarIcon, VideoIcon, Coins, PenSquare, Check, ChevronsUpDown, Search } from "lucide-react";
 import { CreateEventModal } from "../components/create-event-modal";
 
 export default function ProfilePage() {
@@ -60,6 +54,8 @@ export default function ProfilePage() {
     const [uploading, setUploading] = useState(false);
     const [isEditingAvatar, setIsEditingAvatar] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isCountryOpen, setIsCountryOpen] = useState(false);
+    const [countrySearchQuery, setCountrySearchQuery] = useState("");
     const { isCollapsed } = useSidebar();
     const router = useRouter();
 
@@ -289,18 +285,64 @@ export default function ProfilePage() {
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="country">Location</Label>
-                                    <Select value={country} onValueChange={setCountry}>
-                                        <SelectTrigger id="country" className="bg-transparent">
-                                            <SelectValue placeholder="Select your country" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {countries.map((c) => (
-                                                <SelectItem key={c.value} value={c.value}>
-                                                    {c.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    <Popover open={isCountryOpen} onOpenChange={setIsCountryOpen}>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                aria-expanded={isCountryOpen}
+                                                className="w-full justify-between font-normal bg-transparent hover:bg-transparent"
+                                            >
+                                                {country
+                                                    ? countries.find((c) => c.value === country)?.label
+                                                    : "Select your country"}
+                                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                                            <div className="flex flex-col">
+                                                <div className="flex items-center border-b px-3">
+                                                    <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                                                    <input
+                                                        className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                                                        placeholder="Search country..."
+                                                        onChange={(e) => setCountrySearchQuery(e.target.value)}
+                                                        value={countrySearchQuery}
+                                                    />
+                                                </div>
+                                                <div className="max-h-[300px] overflow-y-auto p-1">
+                                                    {countries.filter((item) =>
+                                                        item.label.toLowerCase().includes(countrySearchQuery.toLowerCase())
+                                                    ).map((c) => (
+                                                        <div
+                                                            key={c.value}
+                                                            className={cn(
+                                                                "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
+                                                                country === c.value && "bg-accent text-accent-foreground"
+                                                            )}
+                                                            onClick={() => {
+                                                                setCountry(c.value);
+                                                                setIsCountryOpen(false);
+                                                            }}
+                                                        >
+                                                            <Check
+                                                                className={cn(
+                                                                    "mr-2 h-4 w-4",
+                                                                    country === c.value ? "opacity-100" : "opacity-0"
+                                                                )}
+                                                            />
+                                                            {c.label}
+                                                        </div>
+                                                    ))}
+                                                    {countries.filter((item) =>
+                                                        item.label.toLowerCase().includes(countrySearchQuery.toLowerCase())
+                                                    ).length === 0 && (
+                                                            <p className="p-2 text-sm text-muted-foreground text-center">No country found.</p>
+                                                        )}
+                                                </div>
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
                                 </div>
                             </div>
 

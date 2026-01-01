@@ -14,6 +14,9 @@ import {
     Plus,
     Radio,
     PenSquare,
+    Compass,
+    Calendar,
+    Settings,
 } from "lucide-react";
 import {
     DropdownMenu,
@@ -30,10 +33,17 @@ import { currentUser } from "@/lib/data";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { NotiDropdown } from "./noti-dropdown";
 import { TextLogo } from "@/components/ui/text-logo";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 const appLinks = [
     { name: "Explore", href: "/home" },
     { name: "Settings", href: "/settings" },
+];
+
+const mobileLinks = [
+    { name: "Explore", href: "/home", icon: Compass },
+    { name: "My Event", href: "/profile", icon: Calendar },
+    { name: "Settings", href: "/settings", icon: Settings }
 ];
 
 import { useAuthStore } from "@/components/auth/use-auth-store";
@@ -87,16 +97,36 @@ export function Navbar({ }: NavbarProps) {
             >
                 <div className="flex h-16 items-center justify-between px-6 relative z-10 gap-4">
                     <div className="flex items-center gap-2">
-                        {/* <div className="md:hidden">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setIsMobileMenuOpen(true)}
-                                className="-ml-2"
-                            >
-                                <Menu className="h-6 w-6" />
-                            </Button>
-                        </div> */}
+                        <div className="md:hidden">
+                            <Sheet>
+                                <SheetTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="-ml-2 text-muted-foreground hover:text-foreground hover:bg-accent">
+                                        <Menu className="h-6 w-6" />
+                                    </Button>
+                                </SheetTrigger>
+                                <SheetContent side="left" className="w-[300px] border-r border-border p-0">
+                                    <SheetHeader className="p-6 border-b border-border">
+                                        <SheetTitle asChild>
+                                            <Link href="/" className="flex items-center gap-3">
+                                                <TextLogo />
+                                            </Link>
+                                        </SheetTitle>
+                                    </SheetHeader>
+                                    <nav className="flex flex-col gap-1 p-4">
+                                        {mobileLinks.map((link) => (
+                                            <Link
+                                                key={link.href}
+                                                href={link.href}
+                                                className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-accent text-muted-foreground hover:text-foreground transition-all duration-300"
+                                            >
+                                                <link.icon className="h-5 w-5" />
+                                                {link.name}
+                                            </Link>
+                                        ))}
+                                    </nav>
+                                </SheetContent>
+                            </Sheet>
+                        </div>
                         <Link href="/">
                             <TextLogo />
                         </Link>
@@ -216,7 +246,7 @@ export function Navbar({ }: NavbarProps) {
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button
-                                        className="hidden md:flex items-center gap-2 rounded-full bg-muted/50 hover:bg-muted text-foreground border border-input px-4 transition-all"
+                                        className="flex items-center gap-2 rounded-full bg-muted/50 hover:bg-muted text-foreground border border-input px-3 md:px-4 transition-all"
                                         variant="ghost"
                                         size="default"
                                     >
@@ -250,7 +280,7 @@ export function Navbar({ }: NavbarProps) {
 
 
 
-                        <div className="scale-90">
+                        <div className="scale-90 hidden md:block">
                             <ModeToggle />
                         </div>
 
