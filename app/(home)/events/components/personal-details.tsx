@@ -47,7 +47,7 @@ export function PersonalDetails({
                 <Button
                     type="submit"
                     size="sm"
-                    className="w-[130px] font-medium bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all hover:-translate-y-0.5"
+                    className="w-[130px] font-medium bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all hover:-translate-y-0.5 cursor-pointer"
                     disabled={loading}
                 >
                     {loading ? "Saving..." : "Save Changes"}

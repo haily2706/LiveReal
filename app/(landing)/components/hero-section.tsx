@@ -168,7 +168,7 @@ export function HeroSection() {
                     transition={{ duration: 0.7, delay: 0.35 }}
                     className="flex justify-center items-center gap-4 mb-8 text-muted-foreground"
                 >
-                    <span className="text-sm font-medium mr-2">Available on:</span>
+                    <span className="text-sm font-medium mr-2 hidden md:inline">Available on:</span>
                     <div className="flex items-center gap-6">
                         <Link href="/home" className="flex items-center gap-2 hover:text-foreground transition-colors duration-300" title="Web">
                             <FontAwesomeIcon icon={faChrome} className="w-5 h-5" />

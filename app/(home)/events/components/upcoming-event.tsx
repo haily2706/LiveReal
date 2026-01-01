@@ -40,8 +40,8 @@ export function UpcomingEvent({
 
     return (
         <div className="text-card-foreground shadow-xs space-y-4 overflow-hidden relative">
-            <div className="absolute bottom-[42px] right-0 p-6 opacity-10">
-                <ThemeIcon className={cn("w-12 h-12", !eventConfig && "text-pink-500")} />
+            <div className="absolute bottom-[18px] right-0 p-6 opacity-10">
+                <ThemeIcon className={cn("w-10 h-10", !eventConfig && "text-pink-500")} />
             </div>
             <div className="flex items-center justify-between relative z-10">
                 <div className="space-y-1">
@@ -110,7 +110,7 @@ export function UpcomingEvent({
                             </div>
                             <div className="pt-2 flex justify-end">
                                 <Button
-                                    className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white"
+                                    className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white cursor-pointer"
                                     type="button"
                                     onClick={() => {
                                         console.log("Start live stream:", upcomingEvent?.id);
