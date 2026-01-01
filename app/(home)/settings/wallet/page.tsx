@@ -118,11 +118,11 @@ export default function WalletPage() {
             <Separator />
 
             {/* Balance Section */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card className="col-span-2 overflow-hidden relative border-none bg-linear-to-br from-primary/10 via-primary/5 to-background shadow-xl group">
                     {/* Background Coin */}
                     <div className="absolute -right-5 -bottom-5 opacity-[0.05] group-hover:opacity-15 transition-all duration-500 rotate-[15deg] group-hover:rotate-0 scale-100 group-hover:scale-110 pointer-events-none">
-                        <Coin className="w-56 h-56 blur-[1px]" />
+                        <Coin className="w-32 h-32 blur-[1px]" />
                     </div>
 
                     <CardHeader className="pb-2 relative z-10">
@@ -131,15 +131,15 @@ export default function WalletPage() {
                     <CardContent className="relative z-10">
                         {loading ? (
                             <div className="flex items-baseline gap-1 mb-1 animate-pulse">
-                                <div className="h-10 w-32 bg-muted rounded"></div>
+                                <div className="h-8 w-24 bg-muted rounded"></div>
                             </div>
                         ) : (
                             <>
                                 <div className="flex items-baseline gap-1 mb-1">
-                                    <div className="text-4xl font-bold tracking-tighter">
+                                    <div className="text-3xl font-bold tracking-tighter">
                                         {balanceData ? parseInt(balanceData.tokenBalance).toLocaleString() : "0"}
                                     </div>
-                                    <div className="text-ms font-normal text-muted-foreground">LREAL</div>
+                                    <div className="text-sm font-normal text-muted-foreground">LREAL</div>
                                 </div>
                                 <div className="text-sm font-medium text-muted-foreground">
                                     ≈ {usdBalance.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
@@ -158,22 +158,22 @@ export default function WalletPage() {
 
                 {/* Actions */}
                 <CashInModal>
-                    <Card className="col-span-1 group flex flex-col justify-center items-center p-6 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/10">
-                        <div className="h-14 w-14 rounded-full bg-green-500/10 group-hover:scale-110 group-hover:bg-green-500 text-background group-hover:text-white flex items-center justify-center mb-4 transition-all duration-300 shadow-sm">
-                            <ArrowDownLeft className="h-7 w-7" />
+                    <Card className="col-span-1 group flex flex-col justify-center items-center p-4 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/10">
+                        <div className="h-10 w-10 rounded-full bg-green-500/10 group-hover:scale-110 group-hover:bg-green-500 text-background group-hover:text-white flex items-center justify-center mb-2 transition-all duration-300 shadow-sm">
+                            <ArrowDownLeft className="h-5 w-5" />
                         </div>
-                        <div className="font-bold text-lg group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">Cash In</div>
-                        <p className="text-xs text-muted-foreground text-center mt-1 group-hover:text-muted-foreground/80">Add funds to your wallet</p>
+                        <div className="font-bold text-base group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">Cash In</div>
+                        <p className="text-[10px] text-muted-foreground text-center mt-1 group-hover:text-muted-foreground/80">Add funds to your wallet</p>
                     </Card>
                 </CashInModal>
 
                 <CashOutModal balance={usdBalance} paymentMethods={paymentMethods}>
-                    <Card className="col-span-1 group flex flex-col justify-center items-center p-6 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-red-500/50 hover:shadow-lg hover:shadow-red-500/10">
-                        <div className="h-14 w-14 rounded-full bg-red-500/10 group-hover:scale-110 group-hover:bg-red-500 text-red-500 group-hover:text-white flex items-center justify-center mb-4 transition-all duration-300 shadow-sm">
-                            <ArrowUpRight className="h-7 w-7" />
+                    <Card className="col-span-1 group flex flex-col justify-center items-center p-4 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-red-500/50 hover:shadow-lg hover:shadow-red-500/10">
+                        <div className="h-10 w-10 rounded-full bg-red-500/10 group-hover:scale-110 group-hover:bg-red-500 text-red-500 group-hover:text-white flex items-center justify-center mb-2 transition-all duration-300 shadow-sm">
+                            <ArrowUpRight className="h-5 w-5" />
                         </div>
-                        <div className="font-bold text-lg group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">Cash Out</div>
-                        <p className="text-xs text-muted-foreground text-center mt-1 group-hover:text-muted-foreground/80">Withdraw funds to bank</p>
+                        <div className="font-bold text-base group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">Cash Out</div>
+                        <p className="text-[10px] text-muted-foreground text-center mt-1 group-hover:text-muted-foreground/80">Withdraw funds to bank</p>
                     </Card>
                 </CashOutModal>
             </div>
@@ -240,14 +240,14 @@ export default function WalletPage() {
                     <h4 className="text-base font-semibold">Recent Activity</h4>
                     <Button variant="link" className="text-xs h-auto p-0">View All</Button>
                 </div>
-                <Card className="border-muted/60">
+                <Card className="border-none shadow-none bg-transparent">
                     <CardContent className="p-0">
                         {transactions.length === 0 ? (
                             <div className="p-8 text-center text-muted-foreground text-sm">
                                 No recent transactions
                             </div>
                         ) : (
-                            <div className="divide-y divide-border/50">
+                            <div className="divide-y divide-border/20">
                                 {transactions.map((tx) => (
                                     <div key={tx.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/10 transition-colors">
                                         <div className="flex items-center gap-3">

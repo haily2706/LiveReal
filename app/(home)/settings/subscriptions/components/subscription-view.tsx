@@ -83,17 +83,17 @@ export const SubscriptionView = ({ subscription, planIdFromUrl }: SubscriptionVi
                     Current Plan
                 </h4>
                 <div className={cn(
-                    "relative rounded-xl border p-8 bg-linear-to-r overflow-hidden",
+                    "relative rounded-xl p-6 bg-linear-to-r overflow-hidden",
                     currentPlanId === "free" && "from-blue-500/5 to-cyan-500/5",
                     currentPlanId === "pro" && "from-pink-500/5 to-purple-500/5",
                     currentPlanId === "creator" && "from-yellow-500/5 to-orange-500/5"
                 )}>
-                    <div className="flex flex-col md:flex-row justify-between gap-6 relative z-10">
-                        <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row justify-between gap-4 relative z-10">
+                        <div className="space-y-3">
                             <div className="flex items-center gap-x-3">
-                                <h2 className="text-3xl font-bold">{currentPlan.name}</h2>
+                                <h2 className="text-2xl font-bold">{currentPlan.name}</h2>
                                 <span className={cn(
-                                    "px-2.5 py-0.5 rounded-full text-white text-xs font-medium",
+                                    "px-2.5 py-0.5 rounded-full text-white text-[10px] font-bold uppercase tracking-wide",
                                     currentPlanId === "free" && "bg-blue-500",
                                     currentPlanId === "pro" && "bg-pink-500",
                                     currentPlanId === "creator" && "bg-orange-500"
@@ -101,46 +101,49 @@ export const SubscriptionView = ({ subscription, planIdFromUrl }: SubscriptionVi
                                     Active
                                 </span>
                             </div>
-                            <p className="text-muted-foreground">
+                            <p className="text-muted-foreground text-sm">
                                 You are currently on the {currentPlan.name.toLowerCase()} plan.
                             </p>
                             <div>
                                 <div className="flex items-baseline gap-x-1">
-                                    <span className="text-3xl font-bold">{currentPlan.price}</span>
-                                    <span className="text-muted-foreground">{currentPlan.period}</span>
+                                    <span className="text-2xl font-bold">{currentPlan.price}</span>
+                                    <span className="text-sm text-muted-foreground">{currentPlan.period}</span>
                                 </div>
                                 {subscription?.stripeCurrentPeriodEnd && (
-                                    <p className="text-sm text-muted-foreground mt-1">
+                                    <p className="text-xs text-muted-foreground mt-1">
                                         Renews on {new Date(subscription.stripeCurrentPeriodEnd).toLocaleDateString()}
                                     </p>
                                 )}
                             </div>
                         </div>
 
-                        <div className="flex items-end gap-2">
-                            {currentPlanId !== PlanId.FREE && (
-                                <Button
-                                    onClick={onManage}
-                                    disabled={loading}
-                                    variant="outline"
-                                    size="sm"
-                                >
-                                    Manage Subscription
-                                </Button>
-                            )}
-                            {subscription?.status === 'active' && !subscription?.cancelAtPeriodEnd && currentPlanId !== PlanId.FREE && (
-                                <Button
-                                    onClick={onCancel}
-                                    disabled={loading}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                                >
-                                    Cancel Subscription
-                                </Button>
-                            )}
+                        <div className="flex flex-col items-end gap-2 justify-center">
+                            <div className="flex items-center gap-2">
+                                {currentPlanId !== PlanId.FREE && (
+                                    <Button
+                                        onClick={onManage}
+                                        disabled={loading}
+                                        variant="outline"
+                                        size="sm"
+                                        className="h-8 text-xs"
+                                    >
+                                        Manage
+                                    </Button>
+                                )}
+                                {subscription?.status === 'active' && !subscription?.cancelAtPeriodEnd && currentPlanId !== PlanId.FREE && (
+                                    <Button
+                                        onClick={onCancel}
+                                        disabled={loading}
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-8 text-xs text-red-500 hover:text-red-600 hover:bg-red-50"
+                                    >
+                                        Cancel
+                                    </Button>
+                                )}
+                            </div>
                             {subscription?.cancelAtPeriodEnd && currentPlanId !== PlanId.FREE && (
-                                <p className="text-xs text-center text-amber-600 font-medium">
+                                <p className="text-xs text-right text-amber-600 font-medium">
                                     Cancels on {new Date(subscription.stripeCurrentPeriodEnd).toLocaleDateString()}
                                 </p>
                             )}
@@ -148,14 +151,14 @@ export const SubscriptionView = ({ subscription, planIdFromUrl }: SubscriptionVi
                     </div>
 
                     {/* Decorative Icon */}
-                    <div className="absolute top-6 right-6">
+                    <div className="absolute -top-2 -right-2 opacity-10 sm:opacity-100 sm:top-6 sm:right-6">
                         <div className={cn(
-                            "rounded-xl p-2.5",
+                            "rounded-xl p-2",
                             currentPlanId === "free" && "bg-blue-500",
                             currentPlanId === "pro" && "bg-pink-500",
                             currentPlanId === "creator" && "bg-orange-500"
                         )}>
-                            <currentPlan.icon className="h-6 w-6 text-white" />
+                            <currentPlan.icon className="h-5 w-5 text-white" />
                         </div>
                     </div>
                 </div>

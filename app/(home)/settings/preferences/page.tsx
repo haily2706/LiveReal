@@ -44,9 +44,9 @@ export default function PreferencesPage() {
             </div>
             <Separator />
 
-            <div className="space-y-4">
+            <div>
                 {/* Theme Setting */}
-                <div className="flex items-center justify-between rounded-lg border p-4">
+                <div className="flex items-center justify-between py-3">
                     <div className="space-y-0.5">
                         <Label className="text-base">Theme Mode</Label>
                         <p className="text-sm text-muted-foreground">
@@ -65,8 +65,9 @@ export default function PreferencesPage() {
                     </Select>
                 </div>
 
+
                 {/* Sidebar Setting */}
-                <div className="flex items-center justify-between rounded-lg border p-4">
+                <div className="flex items-center justify-between py-3">
                     <div className="space-y-0.5">
                         <Label className="text-base">Sidebar View</Label>
                         <p className="text-sm text-muted-foreground">
@@ -79,8 +80,9 @@ export default function PreferencesPage() {
                     />
                 </div>
 
+
                 {/* Premium Balance Setting */}
-                <div className="flex items-center justify-between rounded-lg border p-4">
+                <div className="flex items-center justify-between py-3">
                     <div className="space-y-0.5">
                         <Label className="text-base">Premium Balance</Label>
                         <p className="text-sm text-muted-foreground">

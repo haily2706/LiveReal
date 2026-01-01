@@ -67,7 +67,7 @@ export function ChangePassword() {
     if (!user) return null;
 
     return (
-        <div className="flex items-center justify-between rounded-lg border p-4">
+        <div className="flex items-center justify-between py-3">
             <div className="space-y-0.5">
                 <Label className="text-base">Password</Label>
                 <p className="text-sm text-muted-foreground">
