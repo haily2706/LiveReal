@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/components/auth/use-auth-store";
+import { useEvents, Event } from "../use-events";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,12 +40,14 @@ interface CreateEventModalProps {
     isOpen: boolean;
     onClose: () => void;
     initialEventType?: number | null;
+    eventToEdit?: Event;
 }
 
-export function CreateEventModal({ isOpen, onClose, initialEventType }: CreateEventModalProps) {
+export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdit }: CreateEventModalProps) {
     const supabase = createClient();
-    const { user, setUser } = useAuthStore();
+    const { user } = useAuthStore();
     const router = useRouter();
+    const { createEvent, updateEvent } = useEvents();
 
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -63,32 +66,34 @@ export function CreateEventModal({ isOpen, onClose, initialEventType }: CreateEv
 
     // Initialize/Reset form when opening
     useEffect(() => {
-        if (isOpen && user) {
-            // Load existing data
-            const meta = user.user_metadata || {};
-            setTitle(meta.live_stream_title || "");
-            setDescription(meta.live_stream_description || "");
-            setIsShortStream(meta.is_short_stream || false);
-            setThumbnailUrl(meta.thumbnail_url || "");
+        if (isOpen) {
+            if (eventToEdit) {
+                // Edit Mode
+                setTitle(eventToEdit.title);
+                setDescription(eventToEdit.description || "");
+                setIsShortStream(eventToEdit.isShort || false);
+                setThumbnailUrl(eventToEdit.thumbnailUrl || "");
+                setEventType(eventToEdit.type?.toString() || "1");
+                setIsBirthdayEnabled(eventToEdit.visibility === 'published'); // Mapping visibility to boolean for now
 
-            // For visibility/published status, we reuse birthday_enabled for now based on previous code logic
-            setIsBirthdayEnabled(meta.birthday_enabled || false);
-
-            setBirthdayTime(meta.birthday_time || "");
-            if (meta.live_stream_date) {
-                setLiveStreamDate(new Date(meta.live_stream_date));
+                if (eventToEdit.startTime) {
+                    const date = new Date(eventToEdit.startTime);
+                    setLiveStreamDate(date);
+                    setBirthdayTime(format(date, "HH:mm"));
+                }
             } else {
+                // Create Mode - Reset
+                setTitle("");
+                setDescription("");
+                setIsShortStream(false);
+                setThumbnailUrl("");
+                setEventType(initialEventType?.toString() || "1");
+                setIsBirthdayEnabled(true);
                 setLiveStreamDate(undefined);
-            }
-
-            // Set event type: prefer initial from prop, otherwise fallback to saved
-            if (initialEventType) {
-                setEventType(initialEventType.toString());
-            } else {
-                setEventType(meta.event_type?.toString() || "1");
+                setBirthdayTime("12:00");
             }
         }
-    }, [isOpen, user, initialEventType]);
+    }, [isOpen, eventToEdit, initialEventType]);
 
     const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         try {
@@ -122,29 +127,38 @@ export function CreateEventModal({ isOpen, onClose, initialEventType }: CreateEv
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            const { data, error } = await supabase.auth.updateUser({
-                data: {
-                    live_stream_title: title,
-                    live_stream_description: description,
-                    event_type: parseInt(eventType),
-                    is_short_stream: isShortStream,
-                    thumbnail_url: thumbnailUrl,
-                    birthday_enabled: isBirthdayEnabled, // visibility
-                    live_stream_date: liveStreamDate ? liveStreamDate.toISOString() : null,
-                    birthday_time: birthdayTime,
-                },
-            });
-
-            if (error) throw error;
-
-            if (data.user) {
-                setUser(data.user);
-                toast.success("Event scheduled successfully");
-                router.refresh();
-                onClose();
+            // Construct start time date object
+            let finalDate = liveStreamDate;
+            if (finalDate && birthdayTime) {
+                const [h, m] = birthdayTime.split(":");
+                finalDate.setHours(parseInt(h), parseInt(m), 0, 0);
             }
+
+            const eventData = {
+                title,
+                description,
+                eventType: parseInt(eventType),
+                isShort: isShortStream,
+                thumbnailUrl,
+                visibility: isBirthdayEnabled ? 'published' : 'private',
+                startTime: finalDate,
+            };
+
+            let result;
+
+            if (eventToEdit) {
+                result = await updateEvent(eventToEdit.id, eventData);
+            } else {
+                result = await createEvent(eventData);
+            }
+
+            if (!result.success) throw new Error(result.error);
+
+            toast.success(eventToEdit ? "Event updated successfully" : "Event scheduled successfully");
+            router.refresh();
+            onClose();
         } catch (error: any) {
-            toast.error(error.message || "Failed to schedule event");
+            toast.error(error.message || "Failed to save event");
         } finally {
             setLoading(false);
         }
@@ -162,7 +176,7 @@ export function CreateEventModal({ isOpen, onClose, initialEventType }: CreateEv
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <Video className="h-5 w-5" />
-                        Upcoming Live Stream
+                        {eventToEdit ? "Edit Live Stream" : "Upcoming Live Stream"}
                         {isBirthdayEnabled && <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />}
                     </DialogTitle>
                     <DialogDescription>

@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, boolean, integer, smallint } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
     id: text('id').primaryKey(), // Supabase Auth ID
@@ -67,6 +67,9 @@ export const events = pgTable('events', {
     hashtags: text('hashtags'),
     visibility: text('visibility').default('public'), // public, private, unlisted
     status: text('status').default('draft'), // draft, published, ended
+    views: integer('views').default(0),
+    lreals: integer('lreals').default(0),
+    type: smallint('type'),
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
 });

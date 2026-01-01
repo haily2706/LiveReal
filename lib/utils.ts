@@ -16,3 +16,10 @@ export function formatCurrency(value: number) {
     currency: "USD",
   }).format(value)
 }
+
+export function formatCompactNumber(number: number) {
+  return new Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(number);
+}

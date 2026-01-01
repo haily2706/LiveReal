@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 interface EventCardProps {
     title: string;
     date: string;
-    duration: string;
+    duration?: string;
     thumbnailUrl: string;
     lreal?: string;
     views?: string;
@@ -73,10 +73,12 @@ export function EventCard({
                         <CalendarIcon className="h-3 w-3" />
                         {date}
                     </span>
-                    <span className="flex items-center gap-1">
-                        <VideoIcon className="h-3 w-3" />
-                        {duration}
-                    </span>
+                    {duration && (
+                        <span className="flex items-center gap-1">
+                            <VideoIcon className="h-3 w-3" />
+                            {duration}
+                        </span>
+                    )}
                 </div>
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">

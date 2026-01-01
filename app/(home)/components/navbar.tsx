@@ -11,19 +11,14 @@ import {
     Mic,
     Menu,
     Video,
-    Plus,
+
     Radio,
     PenSquare,
     Compass,
     Calendar,
     Settings,
 } from "lucide-react";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuthModal } from "@/components/auth/use-auth-modal";
@@ -42,14 +37,14 @@ const appLinks = [
 
 const mobileLinks = [
     { name: "Explore", href: "/home", icon: Compass },
-    { name: "My Event", href: "/profile", icon: Calendar },
+    { name: "My Event", href: "/events", icon: Calendar },
     { name: "Settings", href: "/settings", icon: Settings }
 ];
 
 import { useAuthStore } from "@/components/auth/use-auth-store";
 import { UserMenu } from "@/components/auth/user-menu";
 import { EventTypes } from "@/lib/constants";
-import { CreateEventModal } from "./create-event-modal";
+import { ScheduleButton } from "../events/components/schedule-button";
 
 export const categories = [
     "All",
@@ -62,8 +57,7 @@ export function Navbar({ }: NavbarProps) {
     const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSearchFocused, setIsSearchFocused] = useState(false);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [selectedEventType, setSelectedEventType] = useState<number | null>(null);
+
     const { onOpen } = useAuthModal();
     const { user, isLoading } = useAuthStore();
 
@@ -243,40 +237,10 @@ export function Navbar({ }: NavbarProps) {
 
 
                         {user && (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button
-                                        className="flex items-center gap-2 rounded-full bg-muted/50 hover:bg-muted text-foreground border border-input px-3 md:px-4 transition-all"
-                                        variant="ghost"
-                                        size="default"
-                                    >
-                                        <Plus className="h-5 w-5" />
-                                        <span className="font-medium">Schedule</span>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-56 rounded-xl border border-border/50 bg-background/80 backdrop-blur-xl p-2 shadow-xl">
-                                    {EventTypes.map((type) => (
-                                        <DropdownMenuItem
-                                            key={type.value}
-                                            onClick={() => {
-                                                setSelectedEventType(type.value);
-                                                setIsCreateModalOpen(true);
-                                            }}
-                                            className="flex items-center gap-3 p-3 cursor-pointer rounded-lg focus:bg-muted font-medium transition-colors"
-                                        >
-                                            <type.icon className="h-5 w-5" />
-                                            {type.name}
-                                        </DropdownMenuItem>
-                                    ))}
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            <ScheduleButton />
                         )}
 
-                        <CreateEventModal
-                            isOpen={isCreateModalOpen}
-                            onClose={() => setIsCreateModalOpen(false)}
-                            initialEventType={selectedEventType}
-                        />
+
 
 
 

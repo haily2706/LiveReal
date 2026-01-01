@@ -306,7 +306,7 @@ function isActive(pathname: string, href: string) {
 
 const NAV_LINKS = [
     { icon: Compass, label: "Explore", href: "/home", color: "text-blue-400" },
-    { icon: Calendar, label: "My Event", href: "/profile", color: "text-purple-400" },
+    { icon: Calendar, label: "Events", href: "/events", color: "text-purple-400" },
     { icon: Settings, label: "Settings", href: "/settings", color: "text-gray-400" }
 ];
 
