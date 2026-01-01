@@ -43,9 +43,7 @@ import { CreateEventModal } from "./create-event-modal";
 
 export const categories = [
     "All",
-    "Birthday",
-    "Signing",
-    "FanMeet"
+    ...EventTypes.map((type) => type.name),
 ];
 
 interface NavbarProps { }

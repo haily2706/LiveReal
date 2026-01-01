@@ -1,4 +1,4 @@
-import { Cake, Mic, Users } from "lucide-react";
+import { Cake, Mic, Users, Gamepad2 } from "lucide-react";
 
 export const EventTypes = [
     {
@@ -18,5 +18,11 @@ export const EventTypes = [
         value: 3,
         color: "bg-linear-to-r from-orange-500 via-amber-500 to-yellow-400",
         icon: Users
+    },
+    {
+        name: 'Gaming',
+        value: 4,
+        color: "bg-linear-to-r from-purple-500 via-violet-500 to-indigo-500",
+        icon: Gamepad2
     }
 ];
