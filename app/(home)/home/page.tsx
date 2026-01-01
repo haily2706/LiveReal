@@ -1,8 +1,8 @@
-import { birthdayLives, upcomingEvents, finishedEvents, famousPeople, followers, companyAds } from "@/lib/data";
+import { birthdayLives, upcomingEvents, finishedEvents, followers, companyAds } from "@/lib/data";
 import { LiveSection } from "./components/live-section";
 import { UpcomingSection } from "./components/upcoming-section";
 import { JFYSection } from "./components/jfy-section";
-import { FamousSection } from "./components/famous-section";
+
 import { AdsBanner } from "./components/ads-banner";
 import { BackgroundBlobs } from "@/components/ui/background-blobs";
 
@@ -68,8 +68,7 @@ export default async function HomePage({
 
 
 
-                {/* Famous People Section */}
-                <FamousSection people={famousPeople} />
+
             </div>
         </div>
     );

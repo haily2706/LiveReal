@@ -38,7 +38,7 @@ export default async function CashInsPage() {
             user: {
                 id: users.id,
                 email: users.email,
-                fullName: users.fullName,
+                fullName: users.name,
             }
         })
         .from(cashIns)

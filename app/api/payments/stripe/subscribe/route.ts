@@ -6,7 +6,7 @@ import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import { subscriptions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { SUBSCRIPTION_PLANS } from "@/app/(home)/settings/subscriptions/constants";
+import { PLANS } from "@/lib/constants";
 
 /**
  * @swagger
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
             .from(subscriptions)
             .where(eq(subscriptions.userId, user.id));
 
-        const plan = SUBSCRIPTION_PLANS.find((p) => p.id === planId);
+        const plan = PLANS.find((p) => p.id === planId);
 
         let line_item: any;
 

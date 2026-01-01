@@ -19,7 +19,7 @@ export function FamousSection({ people, title = "Famous Streamers" }: FamousSect
     if (people.length === 0) return null;
 
     return (
-        <div className="space-y-6">
+        <section className="space-y-6">
             <div className="flex items-center justify-between px-1">
                 <div className="space-y-1">
                     <h2 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-yellow-400 to-amber-600 w-fit">{title}</h2>
@@ -32,7 +32,7 @@ export function FamousSection({ people, title = "Famous Streamers" }: FamousSect
                     <FamousCard key={person.id} person={person} index={index} />
                 ))}
             </div>
-        </div>
+        </section>
     );
 }
 

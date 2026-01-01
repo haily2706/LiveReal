@@ -6,7 +6,7 @@ import axios from "axios";
 import { Check, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { SUBSCRIPTION_PLANS } from "../constants";
+import { PLANS } from "@/lib/constants";
 import { PlanId } from "@/lib/types";
 
 interface SubscriptionViewProps {
@@ -20,12 +20,12 @@ export const SubscriptionView = ({ subscription, planIdFromUrl }: SubscriptionVi
     // Determine the effective plan ID, prioritizing the one from URL/success redirect
     let currentPlanId = subscription?.planId ?? PlanId.FREE;
 
-    if (planIdFromUrl && SUBSCRIPTION_PLANS.some(p => p.id === planIdFromUrl)) {
+    if (planIdFromUrl && PLANS.some(p => p.id === planIdFromUrl)) {
         currentPlanId = planIdFromUrl;
     }
 
     // Find current plan details
-    const currentPlan = SUBSCRIPTION_PLANS.find(tier => tier.id === currentPlanId) || SUBSCRIPTION_PLANS[0];
+    const currentPlan = PLANS.find(tier => tier.id === currentPlanId) || PLANS[0];
 
     useEffect(() => {
         if (planIdFromUrl) {
@@ -170,7 +170,7 @@ export const SubscriptionView = ({ subscription, planIdFromUrl }: SubscriptionVi
                     Available Plans
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {SUBSCRIPTION_PLANS.map((tier) => {
+                    {PLANS.map((tier) => {
                         const isCurrentPlan = tier.id === currentPlanId;
                         const isPopular = tier.popular;
 

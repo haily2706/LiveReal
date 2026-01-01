@@ -1,17 +1,10 @@
 "use client";
 
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useSidebar } from "@/app/(home)/components/provider";
 import { ChangePassword } from "./_components/change-password";
+import { DeleteAccount } from "./_components/delete-account";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -42,27 +35,20 @@ export default function PreferencesPage() {
                     Customize your experience.
                 </p>
             </div>
-            <Separator />
 
             <div>
                 {/* Theme Setting */}
                 <div className="flex items-center justify-between py-3">
                     <div className="space-y-0.5">
-                        <Label className="text-base">Theme Mode</Label>
+                        <Label className="text-base">Dark Mode</Label>
                         <p className="text-sm text-muted-foreground">
-                            Select your preferred appearance.
+                            Toggle dark mode appearance.
                         </p>
                     </div>
-                    <Select value={theme} onValueChange={setTheme}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select theme" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="light">Light</SelectItem>
-                            <SelectItem value="dark">Dark</SelectItem>
-                            <SelectItem value="system">System</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <Switch
+                        checked={theme === "dark"}
+                        onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+                    />
                 </div>
 
 
@@ -97,6 +83,9 @@ export default function PreferencesPage() {
 
                 {/* Password Setting */}
                 <ChangePassword />
+
+                {/* Delete Account */}
+                <DeleteAccount />
             </div>
         </div>
     );

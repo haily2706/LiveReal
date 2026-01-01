@@ -1,4 +1,4 @@
-import { Cake, Mic, Users, Gamepad2 } from "lucide-react";
+import { Cake, Mic, Users, Gamepad2, Sparkles, Zap, Crown } from "lucide-react";
 
 export const EventTypes = [
     {
@@ -25,4 +25,69 @@ export const EventTypes = [
         color: "bg-linear-to-r from-purple-500 via-violet-500 to-indigo-500",
         icon: Gamepad2
     }
+];
+
+export const PLANS = [
+    {
+        id: "free",
+        name: "Free",
+        icon: Sparkles,
+        price: "$0",
+        period: "forever",
+        description: "Perfect for getting started",
+        platformFee: "20%",
+        features: [
+            "Limited streams",
+            "Up to 1k viewers per stream",
+            "Basic streaming themes",
+            "Standard gift animations"
+        ],
+        cta: "Get Started Free",
+        popular: false,
+        gradient: "from-gray-500 to-slate-500",
+        buttonVariant: "outline" as const,
+        color: "blue",
+    },
+    {
+        id: "pro",
+        stripeProdId: "prod_TbjaLeHjXqA7Xs",
+        name: "Pro",
+        icon: Zap,
+        price: "$9.99",
+        period: "/month",
+        description: "For serious streamers",
+        platformFee: "10%",
+        features: [
+            "Unlimited streams",
+            "Up to 10k viewers per stream",
+            "Pro streaming themes",
+            "Pro gift animations"
+        ],
+        cta: "Start Pro Trial",
+        popular: true,
+        gradient: "from-pink-500 to-purple-500",
+        buttonVariant: "default" as const,
+        color: "pink",
+    },
+    {
+        id: "creator",
+        stripeProdId: "prod_TbjcKCyXxAHoGN",
+        name: "Creator",
+        icon: Crown,
+        price: "$29.99",
+        period: "/month",
+        description: "Maximum earnings potential",
+        platformFee: "5%",
+        features: [
+            "Unlimited streams",
+            "Unlimited viewers per stream",
+            "Premium streaming themes",
+            "Premium gift animations"
+        ],
+        cta: "Go Creator",
+        popular: false,
+        gradient: "from-yellow-500 to-orange-500",
+        buttonVariant: "outline" as const,
+        color: "orange",
+    },
 ];

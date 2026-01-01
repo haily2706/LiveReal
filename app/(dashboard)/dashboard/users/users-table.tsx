@@ -43,6 +43,7 @@ export type UserData = {
     status: string;
     lastActive: string;
     avatar: string;
+    location?: string;
 };
 
 interface UsersTableProps {
@@ -100,6 +101,7 @@ export function UsersTable({ users }: UsersTableProps) {
                                 <TableHead>Name</TableHead>
                                 <TableHead>Role</TableHead>
                                 <TableHead>Status</TableHead>
+                                <TableHead>Location</TableHead>
                                 <TableHead>Last Active</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
@@ -132,7 +134,7 @@ export function UsersTable({ users }: UsersTableProps) {
                                                 onValueChange={(value) => handleRoleChange(user.id, value as UserRole)}
                                                 disabled={isPending}
                                             >
-                                                <SelectTrigger className="w-[110px] h-8">
+                                                <SelectTrigger className="w-[110px] h-8 border-none">
                                                     <SelectValue placeholder="Select role" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -149,6 +151,9 @@ export function UsersTable({ users }: UsersTableProps) {
                                             >
                                                 {user.status}
                                             </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            {user.location || "N/A"}
                                         </TableCell>
                                         <TableCell className="text-muted-foreground text-sm">
                                             {user.lastActive}

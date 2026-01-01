@@ -2,72 +2,9 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Check, Sparkles, Zap, Crown } from "lucide-react";
+import { Check } from "lucide-react";
 
-const tiers = [
-    {
-        name: "Free",
-        icon: Sparkles,
-        price: "$0",
-        period: "forever",
-        description: "Perfect for getting started",
-        platformFee: "20%",
-        features: [
-            "Up to 100 viewers per stream",
-            "Basic birthday themes",
-            "Standard gift animations",
-            "24-hour event planning",
-            "Community support",
-        ],
-        cta: "Get Started Free",
-        popular: false,
-        gradient: "from-gray-500 to-slate-500",
-        buttonVariant: "outline" as const,
-    },
-    {
-        name: "Pro",
-        icon: Zap,
-        price: "$2.99",
-        period: "/month",
-        description: "For serious streamers",
-        platformFee: "10%",
-        features: [
-            "Unlimited viewers",
-            "Premium birthday themes",
-            "Custom gift animations",
-            "Plan events 30 days ahead",
-            "Priority support",
-            "Analytics dashboard",
-            "Custom overlays",
-        ],
-        cta: "Start Pro Trial",
-        popular: true,
-        gradient: "from-pink-500 to-purple-500",
-        buttonVariant: "default" as const,
-    },
-    {
-        name: "Creator",
-        icon: Crown,
-        price: "$9.99",
-        period: "/month",
-        description: "Maximum earnings potential",
-        platformFee: "5%",
-        features: [
-            "Everything in Pro",
-            "Lowest platform fees (5%)",
-            "Custom branding removal",
-            "API access",
-            "Dedicated account manager",
-            "Early access to features",
-            "Revenue analytics",
-            "Multi-stream support",
-        ],
-        cta: "Go Creator",
-        popular: false,
-        gradient: "from-yellow-500 to-orange-500",
-        buttonVariant: "outline" as const,
-    },
-];
+import { PLANS } from "@/lib/constants";
 
 export function PricingSection() {
     return (
@@ -100,7 +37,7 @@ export function PricingSection() {
 
                 {/* Pricing Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-                    {tiers.map((tier, index) => (
+                    {PLANS.map((tier, index) => (
                         <motion.div
                             key={tier.name}
                             initial={{ opacity: 0, y: 30 }}

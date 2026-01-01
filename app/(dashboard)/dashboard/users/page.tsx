@@ -1,4 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { db } from "@/lib/db";
+import { users as usersSchema } from "@/lib/db/schema";
 import { UsersTable, UserData } from "./users-table";
 import { UserRole } from "@/types/role";
 import { formatDistanceToNow, subDays } from "date-fns";
@@ -37,17 +39,25 @@ export default async function UsersPage() {
     // Calculate percentages for "trend" visualization (mocked for demo if no history data)
     // In a real app, you'd compare with historical data.
 
-    const formattedUsers: UserData[] = (users || []).map((user) => ({
-        id: user.id,
-        name: user.user_metadata?.full_name || "Unknown",
-        email: user.email || "",
-        role: (user.app_metadata?.role as UserRole) || UserRole.USER,
-        status: (user as any).banned_until ? "Suspended" : (user.email_confirmed_at ? "Active" : "Pending"),
-        lastActive: user.last_sign_in_at
-            ? `${formatDistanceToNow(new Date(user.last_sign_in_at))} ago`
-            : "Never",
-        avatar: user.user_metadata?.avatar_url || "",
-    }));
+    // Fetch user profiles from database to get additional details like location
+    const dbUsers = await db.select().from(usersSchema);
+    const dbUsersMap = new Map(dbUsers.map((u) => [u.id, u]));
+
+    const formattedUsers: UserData[] = (users || []).map((user) => {
+        const dbUser = dbUsersMap.get(user.id);
+        return {
+            id: user.id,
+            name: user.user_metadata?.full_name || "Unknown",
+            email: user.email || "",
+            role: (user.app_metadata?.role as UserRole) || UserRole.USER,
+            status: (user as any).banned_until ? "Suspended" : (user.email_confirmed_at ? "Active" : "Pending"),
+            lastActive: user.last_sign_in_at
+                ? `${formatDistanceToNow(new Date(user.last_sign_in_at))} ago`
+                : "Never",
+            avatar: user.user_metadata?.avatar_url || "",
+            location: dbUser?.location || "Unknown",
+        };
+    });
 
     return (
         <div className="flex-1 space-y-6">

@@ -3,8 +3,10 @@ import { pgTable, text, timestamp, boolean } from 'drizzle-orm/pg-core';
 export const users = pgTable('users', {
     id: text('id').primaryKey(), // Supabase Auth ID
     email: text('email').notNull(),
-    fullName: text('full_name'),
-    avatarUrl: text('avatar_url'),
+    name: text('name'),
+    avatar: text('avatar'),
+    bio: text('bio'),
+    location: text('location'),
     hbarAccountId: text('hbar_account_id'),
     hbarPrivateKey: text('hbar_private_key'),
     createdAt: timestamp('created_at').defaultNow(),
@@ -67,31 +69,4 @@ export const events = pgTable('events', {
     status: text('status').default('draft'), // draft, published, ended
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
-});
-
-export const conversations = pgTable('conversations', {
-    id: text('id').primaryKey(),
-    createdAt: timestamp('created_at').defaultNow(),
-    updatedAt: timestamp('updated_at').defaultNow(),
-    lastMessageAt: timestamp('last_message_at').defaultNow(),
-    isEncrypted: boolean('is_encrypted').default(true),
-});
-
-export const participants = pgTable('participants', {
-    conversationId: text('conversation_id').notNull().references(() => conversations.id),
-    userId: text('user_id').notNull().references(() => users.id),
-    lastReadAt: timestamp('last_read_at'),
-}, (table) => {
-    return {
-        pk: { columns: [table.conversationId, table.userId] },
-    };
-});
-
-export const messages = pgTable('messages', {
-    id: text('id').primaryKey(),
-    conversationId: text('conversation_id').notNull().references(() => conversations.id),
-    senderId: text('sender_id').notNull().references(() => users.id),
-    content: text('content').notNull(), // Encrypted blob if isEncrypted is true, or plain text
-    type: text('type').default('text'), // text, image, etc.
-    createdAt: timestamp('created_at').defaultNow(),
 });
