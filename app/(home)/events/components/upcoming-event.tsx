@@ -7,6 +7,10 @@ import { EventTypes } from "@/lib/constants";
 import { CalendarIcon, VideoIcon } from "lucide-react";
 import { useEvents } from "../use-events";
 import { cn, formatCompactNumber } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { startStream } from "@/app/actions/events";
+import { toast } from "sonner";
 
 interface UpcomingEventProps {
     birthdayTime: string;
@@ -20,6 +24,8 @@ export function UpcomingEvent({
     onOpenModal
 }: UpcomingEventProps) {
     const upcomingEvent = useEvents(state => state.getUpcomingEvent());
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
 
     const typeId = upcomingEvent?.type;
     const eventConfig = EventTypes.find(t => t.value === typeId);
@@ -37,6 +43,25 @@ export function UpcomingEvent({
 
 
     const hasEvent = !!upcomingEvent;
+
+    const handleStartStream = async () => {
+        if (!upcomingEvent?.id) return;
+        setIsLoading(true);
+        try {
+            const result = await startStream(upcomingEvent.id);
+            if (result.success) {
+                toast.success("Stream started successfully!");
+                router.push(`/live/${upcomingEvent.id}?role=host`);
+            } else {
+                toast.error(result.error || "Failed to start stream");
+            }
+        } catch (error) {
+            toast.error("An unexpected error occurred");
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="text-card-foreground shadow-xs space-y-4 overflow-hidden relative">
@@ -112,12 +137,11 @@ export function UpcomingEvent({
                                 <Button
                                     className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white cursor-pointer"
                                     type="button"
-                                    onClick={() => {
-                                        console.log("Start live stream:", upcomingEvent?.id);
-                                    }}
+                                    onClick={handleStartStream}
+                                    disabled={isLoading}
                                 >
                                     <VideoIcon className="mr-2 h-4 w-4" />
-                                    Start Live Stream
+                                    {isLoading ? "Starting..." : "Start Live Stream"}
                                 </Button>
                             </div>
                         </div>
@@ -145,3 +169,4 @@ export function UpcomingEvent({
         </div>
     );
 }
+

@@ -1,7 +1,7 @@
+"use strict";
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { birthdayLives, LiveStream } from "@/lib/data";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -11,35 +11,112 @@ import {
     ThumbsDown,
     Share2,
     MoreHorizontal,
-    Maximize2,
-    Play,
-    Pause,
-    Volume2,
-    VolumeX,
-    Settings,
     MessageSquare,
-    Scissors,
-    Save
+    VideoIcon,
 } from "lucide-react";
 import { ChatList } from "./chat-list";
 import { BackgroundBlobs } from "@/components/ui/background-blobs";
+import { LiveKitRoom, VideoConference, GridLayout, ParticipantTile, useTracks, RoomAudioRenderer, ControlBar } from "@livekit/components-react";
+import "@livekit/components-styles";
+import { useAuthStore } from "@/components/auth/use-auth-store";
+import { getToken } from "@/app/actions/livekit";
+import { Track } from "livekit-client";
 
-interface LiveClientProps {
-    username: string;
+function HostVideo() {
+    const tracks = useTracks([Track.Source.Camera, Track.Source.ScreenShare], { onlySubscribed: false });
+    return (
+        <div className="relative h-full w-full">
+            <GridLayout tracks={tracks}>
+                <ParticipantTile />
+            </GridLayout>
+            <div className="absolute bottom-2 left-0 right-0 flex justify-center z-50 p-2">
+                <ControlBar
+                    controls={{ microphone: true, camera: true, screenShare: true, chat: false, leave: true }}
+                />
+            </div>
+        </div>
+    );
 }
 
-export function LiveClient({ username }: LiveClientProps) {
-    const [live, setLive] = useState<LiveStream | null>(null);
+function ViewerVideo() {
+    const tracks = useTracks([Track.Source.Camera, Track.Source.ScreenShare]);
+
+    if (tracks.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center h-full w-full bg-background/80 backdrop-blur-sm p-8 text-center">
+                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4 animate-pulse">
+                    <VideoIcon className="w-8 h-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">Waiting for Stream</h3>
+                <p className="text-muted-foreground max-w-md">
+                    The streamer hasn't started broadcasting video yet, or you are connecting.
+                </p>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <GridLayout tracks={tracks}>
+                <ParticipantTile />
+            </GridLayout>
+            <RoomAudioRenderer />
+        </>
+    );
+}
+
+interface LiveClientProps {
+    eventId: string;
+    role?: 'host' | 'viewer';
+    initialData: {
+        title: string;
+        description: string | null;
+        thumbnail: string | null;
+        streamer: {
+            name: string;
+            avatar: string;
+            username: string;
+        };
+    };
+}
+
+export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClientProps) {
+    const { user } = useAuthStore();
+    const [token, setToken] = useState("");
+
+    // UI States from original component
     const [hearts, setHearts] = useState<{ id: number; left: number; color: string }[]>([]);
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [likeTrigger, setLikeTrigger] = useState(0);
     const [isChatOpen, setIsChatOpen] = useState(false);
-    const [isPlaying, setIsPlaying] = useState(true);
-    const [isMuted, setIsMuted] = useState(false);
+
+    // Fetch Token
+    useEffect(() => {
+        if (!eventId) return;
+
+        const isViewer = role === 'viewer';
+        // If user is logged in, use their ID. If not, generate a random ID.
+        // If it's a viewer (even if logged in), append a timestamp/random string to avoid kicking the host if testing with same account.
+        const userId = user?.id || `guest-${Math.random().toString(36).substring(7)}`;
+        const identity = isViewer ? `${userId}-viewer-${Math.random().toString(36).substring(7)}` : userId;
+        const name = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || (isViewer ? "Guest Viewer" : "Streamer");
+
+        getToken(eventId, identity, name, role)
+            .then(setToken)
+            .catch(console.error);
+    }, [user, eventId, role]);
+
+    // Use initialData from server
+    const live = {
+        title: initialData.title,
+        thumbnail: initialData.thumbnail || "https://images.unsplash.com/photo-1516280440614-6697288d5d38?q=80&w=2070",
+        viewers: 0, // In a real app, this should come from LiveKit metadata or a separate endpoint
+        channel: initialData.streamer,
+        description: initialData.description
+    };
 
     const handleLike = () => {
         setLikeTrigger(prev => prev + 1);
-        // Add a burst of hearts
         const newHearts = Array.from({ length: 5 }).map((_, i) => ({
             id: Date.now() + i,
             left: 85 + Math.random() * 10,
@@ -48,29 +125,8 @@ export function LiveClient({ username }: LiveClientProps) {
         setHearts(prev => [...prev, ...newHearts]);
     };
 
+    // Hearts animation effect
     useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
-    useEffect(() => {
-        // Decode username as it might be URL encoded
-        const decodedUsername = decodeURIComponent(username);
-
-        // Find the live stream for this user
-        // We search in birthdayLives for now based on the previous context
-        // In a real app, you'd fetch this from an API
-        const foundLive = birthdayLives.find(l =>
-            l.channel.username === `@${decodedUsername}` ||
-            l.channel.username === decodedUsername
-        );
-
-        if (foundLive) {
-            setLive(foundLive);
-        }
-    }, [username]);
-
-    useEffect(() => {
-        // Simulate incoming hearts
         const interval = setInterval(() => {
             if (Math.random() > 0.7) {
                 const newHeart = {
@@ -92,12 +148,12 @@ export function LiveClient({ username }: LiveClientProps) {
         return () => clearInterval(interval);
     }, []);
 
-    if (!live) {
+    if (!token) {
         return (
             <div className="flex items-center justify-center min-h-screen text-foreground">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                    <p className="text-muted-foreground animate-pulse">Connecting to server...</p>
+                    <p className="text-muted-foreground animate-pulse">Connecting to Live Server...</p>
                 </div>
             </div>
         )
@@ -114,46 +170,36 @@ export function LiveClient({ username }: LiveClientProps) {
                 .heart-float {
                     animation: floatUp 2s ease-out forwards;
                 }
-                @keyframes equalizer {
-                    0%, 100% { height: 4px; }
-                    50% { height: 16px; }
-                }
-                .bar {
-                    width: 3px;
-                    background: currentColor;
-                    border-radius: 999px;
-                    animation: equalizer 1s ease-in-out infinite;
-                }
-                .bar:nth-child(1) { animation-duration: 0.8s; animation-delay: 0.1s; }
-                .bar:nth-child(2) { animation-duration: 1.1s; animation-delay: 0.2s; }
-                .bar:nth-child(3) { animation-duration: 0.9s; animation-delay: 0.3s; }
-                .bar:nth-child(4) { animation-duration: 1.2s; animation-delay: 0.4s; }
             `}</style>
 
             {/* Main Content */}
             <div className="flex-1 w-full overflow-y-visible lg:overflow-y-auto overflow-x-hidden relative scroll-smooth custom-scrollbar">
                 <BackgroundBlobs />
-                {/* Dynamic Background Mesh */}
-                {/* <div className="fixed inset-0 pointer-events-none z-0">
-                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-500/30 dark:bg-purple-900/20 blur-[120px] rounded-full dark:mix-blend-screen animate-pulse" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/30 dark:bg-blue-900/20 blur-[120px] rounded-full dark:mix-blend-screen animate-pulse" style={{ animationDelay: '1s' }} />
-                    <div className="absolute top-[20%] right-[20%] w-[30%] h-[30%] bg-red-500/30 dark:bg-red-900/10 blur-[100px] rounded-full dark:mix-blend-screen animate-pulse" style={{ animationDelay: '2s' }} />
-                </div> */}
 
                 <div className="max-w-[1700px] mx-auto p-4 lg:p-6 relative z-10">
                     {/* Video Player Container */}
                     <div className="relative aspect-video w-full rounded-2xl overflow-hidden group shadow-2xl ring-1 ring-border bg-black backdrop-blur-sm">
+                        {/* LiveKit Video Room */}
+                        <div className="absolute inset-0 z-0">
+                            <LiveKitRoom
+                                token={token}
+                                serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
+                                connect={true}
+                                data-lk-theme="default"
+                                className="h-full w-full"
+                            >
+                                {role === 'host' ? (
+                                    <HostVideo />
+                                ) : (
+                                    <ViewerVideo />
+                                )}
+                            </LiveKitRoom>
+                        </div>
+
                         {/* Video Glow Effect */}
-                        <div className="absolute -inset-1 bg-gradient-to-r from-red-500/20 to-purple-500/20 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-1000" />
+                        <div className="absolute -inset-1 bg-gradient-to-r from-red-500/20 to-purple-500/20 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-1000 pointer-events-none" />
 
-                        <div className="relative h-full w-full bg-black z-10">
-                            <Image
-                                src={live.thumbnail}
-                                alt={live.title}
-                                fill
-                                className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-1000 ease-out"
-                            />
-
+                        <div className="relative h-full w-full z-10 pointer-events-none">
                             {/* Floating Hearts Container */}
                             <div className="absolute bottom-20 right-10 w-32 h-80 pointer-events-none z-20">
                                 {hearts.map(heart => (
@@ -169,85 +215,20 @@ export function LiveClient({ username }: LiveClientProps) {
                                 ))}
                             </div>
 
-                            {/* Overlay Controls */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/60 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-500 flex flex-col justify-between p-6">
+                            {/* Overlay Controls - Only showing Top "LIVE" indicator for now */}
+                            <div className="absolute inset-0 flex flex-col justify-between p-6 pointer-events-none">
                                 {/* Top Controls */}
                                 <div className="flex justify-between items-start">
                                     <div className="flex items-center gap-3">
-                                        <div className="flex items-center gap-2 bg-red-600/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-lg shadow-red-900/20 animate-in fade-in slide-in-from-top-4 duration-500">
+                                        <div className="flex items-center gap-2 bg-red-600/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-lg shadow-red-900/20">
                                             <span className="relative flex h-2 w-2">
                                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
                                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
                                             </span>
                                             LIVE
                                         </div>
-                                        <div className="bg-black/60 backdrop-blur-md border border-white/5 px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 animate-in fade-in slide-in-from-top-4 duration-500 delay-100">
+                                        <div className="bg-black/60 backdrop-blur-md border border-white/5 px-3 py-1.5 rounded-lg text-xs font-medium text-white/90">
                                             {Number(live.viewers).toLocaleString()} watching
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Bottom Controls */}
-                                <div className="space-y-6">
-                                    {/* Now Playing */}
-                                    <div className="flex items-center gap-3 text-white/90 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-                                        <div className="flex items-end gap-1 h-4 text-green-400">
-                                            <div className="bar" />
-                                            <div className="bar" />
-                                            <div className="bar" />
-                                            <div className="bar" />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-[10px] font-bold text-green-400 tracking-wider uppercase">Now Playing</span>
-                                            <span className="text-sm font-medium text-white shadow-black drop-shadow-md">Fransis, RAZZ - Together (feat. Eirik Naess)</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Progress Bar (Fake) */}
-                                    <div className="group/progress h-1 w-full bg-white/20 rounded-full cursor-pointer hover:h-1.5 transition-all animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-                                        <div className="h-full w-[85%] bg-red-600 rounded-full relative">
-                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover/progress:opacity-100 shadow-lg scale-0 group-hover/progress:scale-100 transition-all ring-2 ring-red-600" />
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center justify-between animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-                                        <div className="flex items-center gap-2">
-                                            <Button
-                                                size="icon"
-                                                variant="ghost"
-                                                className="text-white hover:bg-white/10 hover:scale-110 transition-transform"
-                                                onClick={() => setIsPlaying(!isPlaying)}
-                                            >
-                                                {isPlaying ? (
-                                                    <Pause className="w-8 h-8 fill-current" />
-                                                ) : (
-                                                    <Play className="w-8 h-8 fill-current" />
-                                                )}
-                                            </Button>
-                                            <Button
-                                                size="icon"
-                                                variant="ghost"
-                                                className="text-white hover:bg-white/10"
-                                                onClick={() => setIsMuted(!isMuted)}
-                                            >
-                                                {isMuted ? (
-                                                    <VolumeX className="w-6 h-6" />
-                                                ) : (
-                                                    <Volume2 className="w-6 h-6" />
-                                                )}
-                                            </Button>
-                                            <div className="text-sm font-medium ml-2 px-2 py-1 bg-red-600 rounded text-white flex items-center gap-2">
-                                                <span className="w-2 h-2 bg-white rounded-full" />
-                                                LIVE
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <Button size="icon" variant="ghost" className="text-white hover:bg-white/10">
-                                                <Settings className="w-5 h-5" />
-                                            </Button>
-                                            <Button size="icon" variant="ghost" className="text-white hover:bg-white/10">
-                                                <Maximize2 className="w-5 h-5" />
-                                            </Button>
                                         </div>
                                     </div>
                                 </div>
@@ -265,7 +246,6 @@ export function LiveClient({ username }: LiveClientProps) {
                             <div className="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-border">
                                 <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
                                     <div className="relative group cursor-pointer shrink-0">
-                                        <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-200"></div>
                                         <Avatar className="h-10 w-10 sm:h-12 sm:w-12 ring-2 ring-background relative">
                                             <AvatarImage src={live.channel.avatar} />
                                             <AvatarFallback>{live.channel.name[0]}</AvatarFallback>
@@ -287,7 +267,7 @@ export function LiveClient({ username }: LiveClientProps) {
                                             </span>
                                         </h3>
                                         <div className="text-xs text-muted-foreground font-medium">
-                                            856K subscribers
+                                            Subscribers: Hidden
                                         </div>
                                     </div>
                                     <Button
@@ -336,9 +316,12 @@ export function LiveClient({ username }: LiveClientProps) {
                                     <span>Started streaming on {new Date().toLocaleDateString()}</span>
                                 </div>
                                 <div className="text-xs text-muted-foreground leading-relaxed font-medium">
-                                    <p className="text-blue-600 dark:text-blue-400 font-bold mb-2 group-hover/desc:text-blue-500 dark:group-hover/desc:text-blue-300 transition-colors">#BestRelaxHouse #Chillout #Study</p>
-                                    <p className="mb-1">Enjoy the best relax house music! 🎧</p>
-                                    <p>Don't forget to like and subscribe for more content! We stream daily with the best vibes for your workflow.</p>
+                                    {live.description || (
+                                        <>
+                                            <p className="text-blue-600 dark:text-blue-400 font-bold mb-2 group-hover/desc:text-blue-500 dark:group-hover/desc:text-blue-300 transition-colors">#Live #Stream #Event</p>
+                                            <p className="mb-1">Join the conversation!</p>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>

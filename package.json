@@ -49,6 +49,8 @@
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
     "framer-motion": "^12.23.25",
+    "js-confetti": "^0.13.1",
+    "jsonwebtoken": "^9.0.3",
     "livekit-client": "^2.16.1",
     "livekit-server-sdk": "^2.15.0",
     "lucide-react": "^0.555.0",
