@@ -135,7 +135,7 @@ export function Navbar() {
                         <Link href="/home">
                             <Button
                                 variant="ghost"
-                                className="hover:text-pink-500 hover:bg-pink-500/10 active:scale-95 transition-all"
+                                className="hover:text-pink-500 hover:bg-pink-500/10 active:scale-95 transition-all cursor-pointer"
                             >
                                 Home
                             </Button>
