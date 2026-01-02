@@ -6,7 +6,7 @@ import {
   useMediaDeviceSelect,
   useRoomContext,
 } from "@livekit/components-react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Mic, MicOff, Video, VideoOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -55,13 +55,13 @@ export function MediaDeviceSettings() {
           variant="ghost"
           onClick={() => setMicEnabled(!micEnabled)}
           className={cn(
-            "rounded-r-none border border-r-0 border-white/10 backdrop-blur-md transition-all px-3 min-w-[50px]",
+            "rounded-r-none border border-r-0 border-white/10 backdrop-blur-md transition-all h-10 w-10 p-0",
             micEnabled
               ? "bg-black/40 hover:bg-black/60 text-white"
               : "bg-red-500/80 hover:bg-red-600/80 text-white border-red-500/50"
           )}
         >
-          Mic {micEnabled ? "On" : "Off"}
+          {micEnabled ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild disabled={!micEnabled}>
@@ -69,7 +69,7 @@ export function MediaDeviceSettings() {
               variant="ghost"
               size="sm"
               className={cn(
-                "rounded-l-none px-2 border border-l-0 border-white/10 backdrop-blur-md transition-all",
+                "rounded-l-none px-2 border border-l-0 border-white/10 backdrop-blur-md transition-all h-10",
                 micEnabled
                   ? "bg-black/40 hover:bg-black/60 text-white"
                   : "bg-red-500/80 hover:bg-red-600/80 text-white border-red-500/50"
@@ -99,13 +99,13 @@ export function MediaDeviceSettings() {
           variant="ghost"
           onClick={() => setCamEnabled(!camEnabled)}
           className={cn(
-            "rounded-r-none border border-r-0 border-white/10 backdrop-blur-md transition-all px-3 min-w-[50px]",
+            "rounded-r-none border border-r-0 border-white/10 backdrop-blur-md transition-all h-10 w-10 p-0",
             camEnabled
               ? "bg-black/40 hover:bg-black/60 text-white"
               : "bg-red-500/80 hover:bg-red-600/80 text-white border-red-500/50"
           )}
         >
-          Cam {camEnabled ? "On" : "Off"}
+          {camEnabled ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild disabled={!camEnabled}>
@@ -113,7 +113,7 @@ export function MediaDeviceSettings() {
               variant="ghost"
               size="sm"
               className={cn(
-                "rounded-l-none px-2 border border-l-0 border-white/10 backdrop-blur-md transition-all",
+                "rounded-l-none px-2 border border-l-0 border-white/10 backdrop-blur-md transition-all h-10",
                 camEnabled
                   ? "bg-black/40 hover:bg-black/60 text-white"
                   : "bg-red-500/80 hover:bg-red-600/80 text-white border-red-500/50"

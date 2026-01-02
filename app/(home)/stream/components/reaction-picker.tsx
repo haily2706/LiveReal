@@ -33,29 +33,35 @@ const REACTIONS = [
 export function ReactionPicker({ onSelect, onGiftSelect, className }: ReactionPickerProps) {
 
     return (
-        <div className={cn("flex gap-1 overflow-x-auto no-scrollbar mask-gradient", className)}>
-            <TooltipProvider delayDuration={0}>
-                {REACTIONS.map(({ emoji, label }) => (
-                    <Tooltip key={label}>
-                        <TooltipTrigger asChild>
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-9 w-9 text-xl hover:bg-muted/50 rounded-full transition-transform hover:scale-110 shrink-0"
-                                onClick={() => onSelect(emoji)}
-                            >
-                                {emoji}
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">
-                            {label}
-                        </TooltipContent>
-                    </Tooltip>
-                ))}
+        <div className={cn("flex items-center justify-between w-full", className)}>
+            <div className="flex gap-1 overflow-x-auto no-scrollbar mask-gradient flex-1 min-w-0">
+                <TooltipProvider delayDuration={0}>
+                    {REACTIONS.map(({ emoji, label }) => (
+                        <Tooltip key={label}>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-9 w-9 text-xl hover:bg-muted/50 rounded-full transition-transform hover:scale-110 shrink-0"
+                                    onClick={() => onSelect(emoji)}
+                                >
+                                    {emoji}
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                                {label}
+                            </TooltipContent>
+                        </Tooltip>
+                    ))}
+                </TooltipProvider>
+            </div>
 
-                <div className="mx-1.5 w-px h-5 bg-zinc-200 dark:bg-zinc-800 self-center" />
-                <GiftedButton onGiftSelect={onGiftSelect} />
-            </TooltipProvider>
+            <div className="flex items-center pl-2 shrink-0">
+                <div className="mr-2 w-px h-5 bg-zinc-200 dark:bg-zinc-800" />
+                <TooltipProvider delayDuration={0}>
+                    <GiftedButton onGiftSelect={onGiftSelect} />
+                </TooltipProvider>
+            </div>
         </div>
     );
 }

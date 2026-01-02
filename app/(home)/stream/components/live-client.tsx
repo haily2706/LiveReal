@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     DropdownMenu,
@@ -19,6 +19,7 @@ import {
     MessageSquare,
     VideoIcon,
     Flag,
+    Play,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Chat } from "./chat";
@@ -62,6 +63,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [likeTrigger, setLikeTrigger] = useState(0);
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const [entered, setEntered] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -198,6 +200,8 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                                     <StreamPlayer isHost={role === 'host'} />
                                 </div>
 
+                                {/* Pre-Join Overlay */}
+
                                 <div className="relative h-full w-full z-10 pointer-events-none">
                                     {/* Floating Hearts Container - Replaced by ReactionBar logic via StreamPlayer (Confetti) or we can keep this for local effect */}
                                     {/* For strict "WatchPage" parity, we might want to use ReactionBar instead. 
@@ -212,7 +216,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                             <div className="mt-6 grid grid-cols-1 lg:grid-cols-[1fr,350px] gap-6">
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-border">
-                                        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+                                        <div className="flex items-center gap-3 w-full sm:w-auto justify-start sm:justify-start">
                                             <div className="relative group cursor-pointer shrink-0">
                                                 <Avatar className="h-10 w-10 sm:h-12 sm:w-12 ring-2 ring-background relative">
                                                     <AvatarImage src={live.channel.avatar} />
@@ -310,14 +314,14 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                     </div>
 
                     {/* Desktop Chat Sidebar */}
-                    <Chat className="hidden lg:flex sticky top-[80px] h-[calc(100vh-96px)] mr-4" />
+                    <Chat className="hidden lg:flex sticky top-[80px] h-[calc(100vh-96px)] mr-4 mt-4" />
 
                     {/* Mobile Chat Button & Sheet */}
                     <div className="lg:hidden">
                         <Sheet open={isChatOpen} onOpenChange={setIsChatOpen}>
                             <SheetTrigger asChild>
                                 <Button
-                                    className="fixed bottom-6 right-6 z-50 rounded-full h-10 w-10 shadow-2xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white transition-all hover:scale-110 active:scale-95 ring-offset-2 ring-offset-background ring-2 ring-indigo-500 animate-in fade-in zoom-in slide-in-from-bottom-10 duration-500"
+                                    className="fixed bottom-24 right-6 z-50 rounded-full h-10 w-10 shadow-2xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white transition-all hover:scale-110 active:scale-95 ring-offset-2 ring-offset-background ring-2 ring-indigo-500 animate-in fade-in zoom-in slide-in-from-bottom-10 duration-500"
                                     size="icon"
                                 >
                                     <MessageSquare className="w-7 h-7 fill-current drop-shadow-md animate-[bounce_2s_infinite]" />
@@ -329,6 +333,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                                 </Button>
                             </SheetTrigger>
                             <SheetContent side="bottom" className="h-[85vh] p-0 border-t-0 rounded-t-3xl overflow-hidden bg-background">
+                                <SheetTitle className="sr-only">Live Chat</SheetTitle>
                                 <div className="h-full w-full">
                                     <Chat className="h-full w-full border-0" onClose={() => setIsChatOpen(false)} />
                                 </div>

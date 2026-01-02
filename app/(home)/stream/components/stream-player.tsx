@@ -13,7 +13,7 @@ import {
   useTracks,
   StartAudio,
 } from "@livekit/components-react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LogOut, Power, VolumeX } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -310,7 +310,7 @@ export function StreamPlayer({ isHost = false }) {
           </div>
         )}
         {roomState === ConnectionState.Connected && (
-          <div className="flex gap-1 items-center backdrop-blur-md px-2">
+          <div className="flex gap-1 items-center px-2">
             <div className="rounded-full bg-red-500 w-2 h-2 animate-pulse" />
             <span className="text-xs uppercase font-medium text-red-500">
               Live
@@ -346,31 +346,30 @@ export function StreamPlayer({ isHost = false }) {
 
       {/* Bottom Center Controls (Host) */}
       {roomName && canHost && (
-        <div className="absolute bottom-2 sm:bottom-2 left-0 w-full z-30 flex justify-center items-center gap-2 pointer-events-none px-2">
-          <div className="flex-1"></div>
-          <div className="pointer-events-auto flex items-center gap-2">
+        <div className="absolute bottom-0 sm:bottom-0 left-0 w-full z-30 flex flex-col justify-center items-center gap-2 pointer-events-none px-2">
+          <div className="pointer-events-auto flex items-center justify-center gap-2">
             <MediaDeviceSettings />
             {(roomMetadata?.creator_identity !== localParticipant.identity) && (
-              <Button size="sm" onClick={onLeaveStage} variant="destructive" className="h-8">
-                Leave
+              <Button size="sm" onClick={onLeaveStage} variant="destructive" className="h-10 w-10 p-0">
+                <LogOut className="h-5 w-5" />
               </Button>
             )}
             {(roomMetadata?.creator_identity === localParticipant.identity) && (
-              <Button size="sm" onClick={onEndStream} variant="destructive" className="h-8">
-                End
+              <Button size="sm" onClick={onEndStream} variant="destructive" className="h-10 w-10 p-0">
+                <Power className="h-5 w-5" />
               </Button>
             )}
           </div>
           {/* Badge for Host View */}
           <div className="flex-1"></div>
-          {isLocalHost && (
+          {/* {isLocalHost && (
             <div className="pointer-events-auto">
               <Badge variant="secondary" className="bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 h-8 flex items-center gap-1">
                 <span className="truncate max-w-[80px] sm:max-w-[150px]">{localParticipant.name ?? localParticipant.identity}</span>
                 (you)
               </Badge>
             </div>
-          )}
+          )} */}
         </div>
       )}
 

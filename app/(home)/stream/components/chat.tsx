@@ -12,15 +12,7 @@ import { RoomMetadata } from "../lib/controller";
 import { ReactionPicker } from "./reaction-picker";
 import { toAvatarURL } from "@/lib/constants";
 
-const COLORS = ["text-yellow-500", "text-blue-500", "text-red-500", "text-green-500", "text-purple-500", "text-orange-500", "text-pink-500", "text-cyan-500", "text-blue-400", "text-red-400"];
 
-const getColorForIdentity = (identity: string) => {
-  let hash = 0;
-  for (let i = 0; i < identity.length; i++) {
-    hash = identity.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return COLORS[Math.abs(hash) % COLORS.length];
-};
 
 interface ChatProps {
   className?: string;
@@ -79,7 +71,7 @@ export function Chat({ className, onClose }: ChatProps) {
   };
 
   return (
-    <div className={cn("flex flex-col h-full bg-white dark:bg-[#0f0f0f] text-zinc-950 dark:text-white rounded-xl border border-zinc-200 dark:border-zinc-800 w-full lg:w-[400px] shrink-0 relative overflow-hidden pb-20 md:pb-0 font-sans", className)}>
+    <div className={cn("flex flex-col h-full bg-white dark:bg-[#0f0f0f] text-zinc-950 dark:text-white rounded-xl border border-zinc-200 dark:border-zinc-800 w-full lg:w-[350px] shrink-0 relative overflow-hidden pb-20 md:pb-0 font-sans", className)}>
 
       {/* Header */}
       <div className="flex items-center justify-between px-2 py-2 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0f0f0f] relative z-10 shrink-0 h-14">
@@ -117,7 +109,7 @@ export function Chat({ className, onClose }: ChatProps) {
               >
                 <Avatar className="h-6 w-6 rounded-full shrink-0 ring-0 ring-transparent">
                   <AvatarImage src={toAvatarURL(message.from?.identity)} />
-                  <AvatarFallback className={`text-[10px] font-bold ${nameColor} ${getColorForIdentity(message.from?.identity || "")} bg-zinc-100 dark:bg-zinc-800`}>
+                  <AvatarFallback className={`text-[10px] font-bold ${nameColor} bg-zinc-100 dark:bg-zinc-800`}>
                     <User className="h-3.5 w-3.5" />
                   </AvatarFallback>
                 </Avatar>

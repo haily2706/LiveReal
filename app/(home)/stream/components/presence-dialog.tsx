@@ -233,7 +233,7 @@ export function PresenceDialog({
 
       <DialogContent className="sm:max-w-[450px]">
         <DialogTitle className="flex justify-between items-center">
-          Who&rsquo;s here
+          Participants ({participants.length})
         </DialogTitle>
         <div className="flex flex-col gap-4 mt-4">
           {hosts.length > 0 && (
