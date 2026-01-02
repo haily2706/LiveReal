@@ -23,3 +23,11 @@ export function formatCompactNumber(number: number) {
     maximumFractionDigits: 1,
   }).format(number);
 }
+
+export function safeJsonParse(data: any, fallback: any) {
+  try {
+    return JSON.parse(data);
+  } catch {
+    return fallback;
+  }
+}

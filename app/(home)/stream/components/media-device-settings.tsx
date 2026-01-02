@@ -52,15 +52,29 @@ export function MediaDeviceSettings() {
       <div className="flex">
         <Button
           size="sm"
-          variant={micEnabled ? "secondary" : "outline"}
+          variant="ghost"
           onClick={() => setMicEnabled(!micEnabled)}
-          className="rounded-r-none border-r-0"
+          className={cn(
+            "rounded-r-none border border-r-0 border-white/10 backdrop-blur-md transition-all px-3 min-w-[50px]",
+            micEnabled
+              ? "bg-black/40 hover:bg-black/60 text-white"
+              : "bg-red-500/80 hover:bg-red-600/80 text-white border-red-500/50"
+          )}
         >
           Mic {micEnabled ? "On" : "Off"}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild disabled={!micEnabled}>
-            <Button variant="secondary" size="sm" className="rounded-l-none px-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "rounded-l-none px-2 border border-l-0 border-white/10 backdrop-blur-md transition-all",
+                micEnabled
+                  ? "bg-black/40 hover:bg-black/60 text-white"
+                  : "bg-red-500/80 hover:bg-red-600/80 text-white border-red-500/50"
+              )}
+            >
               <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -82,15 +96,29 @@ export function MediaDeviceSettings() {
       <div className="flex">
         <Button
           size="sm"
-          variant={camEnabled ? "secondary" : "outline"}
+          variant="ghost"
           onClick={() => setCamEnabled(!camEnabled)}
-          className="rounded-r-none border-r-0"
+          className={cn(
+            "rounded-r-none border border-r-0 border-white/10 backdrop-blur-md transition-all px-3 min-w-[50px]",
+            camEnabled
+              ? "bg-black/40 hover:bg-black/60 text-white"
+              : "bg-red-500/80 hover:bg-red-600/80 text-white border-red-500/50"
+          )}
         >
           Cam {camEnabled ? "On" : "Off"}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild disabled={!camEnabled}>
-            <Button variant="secondary" size="sm" className="rounded-l-none px-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "rounded-l-none px-2 border border-l-0 border-white/10 backdrop-blur-md transition-all",
+                camEnabled
+                  ? "bg-black/40 hover:bg-black/60 text-white"
+                  : "bg-red-500/80 hover:bg-red-600/80 text-white border-red-500/50"
+              )}
+            >
               <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>

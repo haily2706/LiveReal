@@ -310,3 +310,7 @@ body {
 .animate-wiggle {
   animation: wiggle 1s ease-in-out infinite;
 }
+
+.mask-gradient {
+  mask-image: linear-gradient(to right, transparent, black 20px, black calc(100% - 20px), transparent);
+}

@@ -91,3 +91,6 @@ export const PLANS = [
         color: "orange",
     },
 ];
+
+
+export const toAvatarURL = (userId?: string) => `https://ujybiburokztfpqtrxcn.supabase.co/storage/v1/object/public/avatars/${userId}`;

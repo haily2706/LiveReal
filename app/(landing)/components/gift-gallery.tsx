@@ -4,6 +4,17 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 
 import { Coin } from "@/components/ui/coin";
+import { cn } from "@/lib/utils";
+
+export interface Gift {
+    emoji: string;
+    name: string;
+    coins: number;
+    value: string;
+    color: string;
+    hoverColor: string;
+}
+
 
 const gifts = [
     {
@@ -56,8 +67,45 @@ const gifts = [
     },
 ];
 
-export function GiftGallery() {
+
+interface GiftGalleryProps {
+    onSelect?: (gift: Gift) => void;
+    variant?: "landing" | "picker";
+}
+
+export function GiftGallery({ onSelect, variant = "landing" }: GiftGalleryProps) {
     const [hoveredGift, setHoveredGift] = useState<string | null>(null);
+
+    const isPicker = variant === "picker";
+
+    if (isPicker) {
+        return (
+            <div className="grid grid-cols-3 gap-3 p-1">
+                {gifts.map((gift, index) => (
+                    <motion.div
+                        key={gift.name}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => onSelect?.(gift)}
+                        onMouseEnter={() => setHoveredGift(gift.name)}
+                        onMouseLeave={() => setHoveredGift(null)}
+                        className={cn(
+                            "glass rounded-xl p-3 text-center cursor-pointer transition-all duration-300 border border-transparent",
+                            gift.hoverColor,
+                            hoveredGift === gift.name && "border-opacity-50 bg-white/5"
+                        )}
+                    >
+                        <div className="text-4xl mb-2">{gift.emoji}</div>
+                        <div className="text-xs font-semibold mb-1 truncate">{gift.name}</div>
+                        <div className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-linear-to-r ${gift.color} text-[10px]`}>
+                            <span>{gift.coins}</span>
+                            <Coin className="w-3 h-3" />
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+        );
+    }
 
     return (
         <section id="gifts" className="py-24 px-4 relative overflow-hidden">

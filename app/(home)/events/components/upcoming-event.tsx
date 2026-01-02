@@ -51,7 +51,7 @@ export function UpcomingEvent({
             const result = await startStream(upcomingEvent.id);
             if (result.success) {
                 toast.success("Stream started successfully!");
-                router.push(`/live/${upcomingEvent.id}?role=host`);
+                router.push(`/stream/${upcomingEvent.id}?role=host`);
             } else {
                 toast.error(result.error || "Failed to start stream");
             }

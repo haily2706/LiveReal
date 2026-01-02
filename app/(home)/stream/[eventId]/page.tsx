@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { events, users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { LiveClient } from "./components/live-client";
+import { LiveClient } from "@/app/(home)/stream/components/live-client";
 
 interface PageProps {
     params: Promise<{ eventId: string }>;

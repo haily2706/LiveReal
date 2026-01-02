@@ -33,7 +33,7 @@ export function StreamCard({ stream, type, index, rank, showRemindMe = false, is
         >
             {/* Stream/Event Card */}
             <div className={`relative rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group-hover:-translate-y-1 ring-1 ring-white/10 w-full ${isVertical ? 'aspect-[9/16]' : 'aspect-video'}`}>
-                <Link href={`/live/${stream.id}`} className="absolute inset-0 block">
+                <Link href={`/stream/${'K30d938OpuOOpgP5wtQaQ'}`} className="absolute inset-0 block">
                     <Image
                         src={stream.thumbnail}
                         alt={stream.title}
