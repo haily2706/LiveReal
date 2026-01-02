@@ -43,6 +43,7 @@ interface LiveClientProps {
         description: string | null;
         thumbnail: string | null;
         streamer: {
+            id: string;
             name: string;
             avatar: string;
             username: string;
@@ -197,7 +198,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                             <div className="relative aspect-video w-full rounded-xl overflow-hidden group shadow-2xl ring-1 ring-border bg-black backdrop-blur-sm">
                                 {/* LiveKit Video Room */}
                                 <div className="absolute inset-0 z-0 h-full w-full">
-                                    <StreamPlayer isHost={role === 'host'} />
+                                    <StreamPlayer isHost={role === 'host'} thumbnailUrl={live.thumbnail} streamerId={live.channel.id} streamerName={live.channel.name} />
                                 </div>
 
                                 {/* Pre-Join Overlay */}

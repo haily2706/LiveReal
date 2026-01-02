@@ -45,6 +45,7 @@ export default async function LivePage({ params, searchParams }: PageProps) {
                 description: event.description,
                 thumbnail: event.thumbnailUrl,
                 streamer: {
+                    id: event.userId,
                     name: event.user?.name || "Streamer",
                     avatar: event.user?.avatar || "",
                     username: event.user?.email ? event.user.email.split('@')[0] : "streamer"

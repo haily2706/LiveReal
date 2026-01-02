@@ -301,10 +301,21 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
 @keyframes wiggle {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(3px); }
-  75% { transform: translateX(-3px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(3px);
+  }
+
+  75% {
+    transform: translateX(-3px);
+  }
 }
 
 .animate-wiggle {
@@ -313,4 +324,23 @@ body {
 
 .mask-gradient {
   mask-image: linear-gradient(to right, transparent, black 20px, black calc(100% - 20px), transparent);
+}
+
+/* Sound Bar Animation */
+@keyframes music-bar {
+  0% {
+    height: 20%;
+  }
+
+  50% {
+    height: 100%;
+  }
+
+  100% {
+    height: 20%;
+  }
+}
+
+.animate-music-bar {
+  animation: music-bar 1s ease-in-out infinite;
 }

@@ -11,7 +11,6 @@ import {
   useParticipants,
   useRoomContext,
   useTracks,
-  StartAudio,
 } from "@livekit/components-react";
 import { Eye, EyeOff, LogOut, Power, VolumeX } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -31,6 +30,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MediaDeviceSettings } from "./media-device-settings";
+import { CustomStartAudio } from "./custom-start-audio";
 import { PresenceDialog } from "./presence-dialog";
 import { useAuthToken } from "./token-context";
 import { toAvatarURL } from "@/lib/constants";
@@ -40,40 +40,52 @@ function ActiveStagePlayer({
   localParticipant,
   localMetadata,
   showBadge = true,
+  large = false,
 }: {
   localParticipant: LocalParticipant;
   localMetadata: ParticipantMetadata;
   showBadge?: boolean;
+  large?: boolean;
 }) {
   const { isCameraEnabled } = useLocalParticipant();
   const tracks = useTracks([Track.Source.Camera]);
   const localVideoTrack = tracks.find((t) => t.participant.identity === localParticipant.identity);
 
   return (
-    <div className="relative w-full h-full">
-      {/* Fallback Avatar */}
-      <div className="absolute inset-0 flex items-center justify-center bg-zinc-900">
-        <Avatar className="h-1/2 w-1/2 max-h-32 max-w-32">
-          <AvatarImage src={toAvatarURL(localParticipant.identity)} />
-          <AvatarFallback className="text-2xl">
-            {localParticipant.name?.[0] ?? localParticipant.identity?.[0] ?? ""}
-          </AvatarFallback>
-        </Avatar>
-      </div>
+    <div className="relative w-full h-full bg-transparent overflow-hidden">
+      {/* Fallback Avatar Overlay - Only show if camera is off */}
+      {!isCameraEnabled && (
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <div className="relative">
+            <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
+            <Avatar className={cn(
+              "border-white/10 shadow-2xl relative z-20",
+              large ? "h-24 w-24 sm:h-32 sm:w-32 border-4" : "h-12 w-12 border-2"
+            )}>
+              <AvatarImage src={toAvatarURL(localParticipant.identity)} />
+              <AvatarFallback className={cn(
+                "bg-zinc-900 text-white",
+                large ? "text-4xl" : "text-xl"
+              )}>
+                {localParticipant.name?.[0] ?? localParticipant.identity?.[0] ?? "?"}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+        </div>
+      )}
 
       {/* Video */}
       {isCameraEnabled && localVideoTrack && (
         <VideoTrack
           trackRef={localVideoTrack}
-          className="absolute inset-0 w-full h-full object-cover -scale-x-100"
+          className="absolute inset-0 w-full h-full object-cover -scale-x-100 z-20"
         />
       )}
 
       {/* Badge */}
-      {/* Badge */}
       {showBadge && (
-        <div className="absolute bottom-2 right-2 z-10">
-          <Badge variant="secondary" className="bg-black/50 backdrop-blur-sm text-white hover:bg-black/70">
+        <div className="absolute bottom-2 right-2 z-30">
+          <Badge variant="secondary" className="bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 border-none">
             {localParticipant.name ?? localParticipant.identity} (you)
           </Badge>
         </div>
@@ -82,7 +94,7 @@ function ActiveStagePlayer({
   );
 }
 
-export function StreamPlayer({ isHost = false }) {
+export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streamerName }: { isHost?: boolean; thumbnailUrl?: string; streamerId?: string; streamerName?: string }) {
   const room = useRoomContext();
   const { metadata, name: roomName, state: roomState } = room;
   const [ticker, setTicker] = useState(0);
@@ -180,9 +192,27 @@ export function StreamPlayer({ isHost = false }) {
     ? remoteVideoTracks.find(t => t.participant.identity === creatorIdentity)
     : undefined;
 
+  const isHostCameraEnabled = isLocalHost
+    ? localParticipant.isCameraEnabled
+    : hostParticipant?.isCameraEnabled;
+
 
   return (
     <div className="relative h-full w-full bg-zinc-950 overflow-hidden">
+      {/* Background Thumbnail */}
+      {thumbnailUrl && (
+        <div className="absolute inset-0 z-0 transition-opacity duration-1000">
+          <img
+            src={thumbnailUrl}
+            alt="Stream Background"
+            className={cn(
+              "w-full h-full object-cover transition-all duration-1000",
+              isHostCameraEnabled ? "opacity-30 blur-xl" : "opacity-60 blur-md"
+            )}
+          />
+          <div className="absolute inset-0 bg-black/20" />
+        </div>
+      )}
 
       {/* === PRIMARY LAYER (Host) === */}
       <div className="absolute inset-0 w-full h-full">
@@ -192,32 +222,46 @@ export function StreamPlayer({ isHost = false }) {
             localParticipant={localParticipant}
             localMetadata={localMetadata}
             showBadge={false}
+            large
           />
         ) : hostParticipant ? (
           // Layout: Remote Host (Connected)
           <div className="relative w-full h-full">
-            {/* Avatar Fallback */}
-            <div className="absolute inset-0 flex items-center justify-center bg-zinc-900">
-              <Avatar className="h-48 w-48">
-                <AvatarImage src={toAvatarURL(hostParticipant.identity)} />
-                <AvatarFallback className="text-4xl">{hostParticipant.name?.[0] ?? "?"}</AvatarFallback>
-              </Avatar>
-            </div>
+            {/* Avatar Fallback - Only show if camera is off */}
+            {!isHostCameraEnabled && (
+              <div className="absolute inset-0 flex items-center justify-center z-10 transition-all">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                  <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
+                    <AvatarImage src={toAvatarURL(hostParticipant.identity)} />
+                    <AvatarFallback className="text-4xl bg-zinc-900 text-white">
+                      {hostParticipant.name?.[0] ?? hostParticipant.identity?.[0] ?? "?"}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              </div>
+            )}
             {/* Video Track Overlay */}
-            {hostRemoteTrack && (
+            {isHostCameraEnabled && hostRemoteTrack && (
               <VideoTrack
                 trackRef={hostRemoteTrack}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover z-20"
               />
             )}
           </div>
         ) : (
           // Layout: Host Offline or Unknown
-          <div className="flex items-center justify-center w-full h-full text-muted-foreground bg-zinc-900">
+          <div className="flex items-center justify-center w-full h-full text-muted-foreground bg-transparent">
             <div className="flex flex-col items-center gap-4">
-              <Avatar className="h-24 w-24">
-                <AvatarFallback>?</AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
+                  <AvatarImage src={toAvatarURL(streamerId)} />
+                  <AvatarFallback className="text-4xl bg-zinc-900 text-white">
+                    {streamerName?.[0] || "?"}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
               <p className="font-medium animate-pulse">Stream is offline or connecting...</p>
             </div>
           </div>
@@ -248,10 +292,12 @@ export function StreamPlayer({ isHost = false }) {
               className="pointer-events-auto w-32 sm:w-48 aspect-video rounded-lg overflow-hidden ring-1 ring-white/10 shadow-xl bg-zinc-900 relative group"
             >
               {/* Avatar Fallback */}
-              <div className="absolute inset-0 flex items-center justify-center bg-zinc-800">
-                <Avatar className="h-10 w-10">
+              <div className="absolute inset-0 flex items-center justify-center bg-zinc-900">
+                <Avatar className="h-12 w-12 border-2 border-white/10 shadow-xl">
                   <AvatarImage src={toAvatarURL(p.identity)} />
-                  <AvatarFallback>{p.name?.[0] ?? "?"}</AvatarFallback>
+                  <AvatarFallback className="text-xl bg-zinc-900 text-white">
+                    {p.name?.[0] ?? p.identity?.[0] ?? "?"}
+                  </AvatarFallback>
                 </Avatar>
               </div>
 
@@ -285,10 +331,8 @@ export function StreamPlayer({ isHost = false }) {
       <FlyingGifts onGiftReceived={(gift) => setTotalCoins(prev => prev + gift.coins)} />
 
       {/* === START AUDIO PROMPT === */}
-      <StartAudio
-        label="Click to unmute"
-        className="absolute bottom-20 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/60 hover:bg-black/80 backdrop-blur-sm text-white rounded-full z-50 cursor-pointer text-sm font-medium transition-all"
-      />
+      {/* === START AUDIO PROMPT === */}
+      <CustomStartAudio />
 
       {/* === CONTROLS & INFO === */}
 

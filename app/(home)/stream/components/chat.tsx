@@ -71,7 +71,7 @@ export function Chat({ className, onClose }: ChatProps) {
   };
 
   return (
-    <div className={cn("flex flex-col h-full bg-white dark:bg-[#0f0f0f] text-zinc-950 dark:text-white rounded-xl border border-zinc-200 dark:border-zinc-800 w-full lg:w-[350px] shrink-0 relative overflow-hidden pb-20 md:pb-0 font-sans", className)}>
+    <div className={cn("flex flex-col h-full bg-white dark:bg-[#0f0f0f] text-zinc-950 dark:text-white rounded-xl border border-zinc-200 dark:border-zinc-800 w-full lg:w-[350px] shrink-0 relative overflow-hidden font-sans", className)}>
 
       {/* Header */}
       <div className="flex items-center justify-between px-2 py-2 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0f0f0f] relative z-10 shrink-0 h-14">

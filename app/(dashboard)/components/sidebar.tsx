@@ -69,7 +69,7 @@ export function Sidebar() {
                 "transition-all duration-500 cubic-bezier(0.25, 1, 0.5, 1)",
                 "bg-background/80 dark:bg-background/20 backdrop-blur-xl supports-backdrop-filter:bg-background/80",
                 "shadow-[5px_0_30px_0_rgba(0,0,0,0.1)] dark:shadow-[5px_0_30px_0_rgba(0,0,0,0.3)]",
-                isCollapsed ? "w-[90px]" : "w-[240px]"
+                isCollapsed ? "w-[70px]" : "w-[240px]"
             )}
         >
             {/* Ambient Background Gradient */}
