@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Wallet, Coins, ArrowRightLeft, CreditCard, ShieldCheck, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Coin } from "@/components/ui/coin";
 import Image from "next/image";
 
 const CoinIcon = ({ className }: { className?: string }) => (
@@ -27,7 +28,7 @@ const features = [
     },
     {
         icon: CoinIcon,
-        title: "LiveReal Coin Integration",
+        title: "LiveReal Coin",
         description: "Hold and transact with LiveReal coin, the native currency of our ecosystem.",
         color: "text-brand-blue",
         gradient: "from-brand-blue/20 to-cyan-500/20",
@@ -115,12 +116,17 @@ export function HBarWalletSection() {
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
                                 className="group"
                             >
-                                <div className="glass p-6 rounded-2xl h-full hover:border-brand-blue/30 transition-all duration-300 hover:translate-y-[-5px]">
-                                    <div className={`w-12 h-12 rounded-xl bg-linear-to-br ${feature.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                                <div className="glass p-6 rounded-2xl h-full hover:border-brand-blue/30 transition-all duration-300 hover:translate-y-[-5px] relative overflow-hidden">
+                                    {feature.title === "Personal Wallet" && (
+                                        <div className="absolute -right-5 -top-5 opacity-[0.05] group-hover:opacity-15 transition-all duration-500 rotate-15 group-hover:rotate-0 scale-100 group-hover:scale-110 pointer-events-none">
+                                            <Coin className="w-32 h-32 blur-[1px]" />
+                                        </div>
+                                    )}
+                                    <div className={`relative z-10 w-12 h-12 rounded-xl bg-linear-to-br ${feature.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                                         <feature.icon className={`w-6 h-6 ${feature.color}`} />
                                     </div>
-                                    <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                                    <p className="text-sm text-muted-foreground">
+                                    <h3 className="relative z-10 text-lg font-semibold mb-2">{feature.title}</h3>
+                                    <p className="relative z-10 text-sm text-muted-foreground">
                                         {feature.description}
                                     </p>
                                 </div>

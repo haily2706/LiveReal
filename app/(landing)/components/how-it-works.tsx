@@ -6,8 +6,8 @@ import { Calendar, Video, Wallet } from "lucide-react";
 const steps = [
     {
         icon: Calendar,
-        title: "Create Event",
-        description: "Plan your event date and customize your stream with themes and overlays",
+        title: "Schedule Event",
+        description: "Plan your event date and customize your stream with themes",
         color: "from-pink-500 to-rose-500",
         bgColor: "bg-pink-500/10",
         iconColor: "text-pink-600 dark:text-pink-500",
@@ -74,6 +74,7 @@ export function HowItWorks() {
                             className="relative z-10"
                         >
                             <div className="glass rounded-2xl p-8 text-center hover:scale-105 transition-transform duration-300">
+
                                 {/* Step Number */}
                                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-linear-to-r from-pink-500 to-purple-500 flex items-center justify-center text-sm font-bold">
                                     {index + 1}

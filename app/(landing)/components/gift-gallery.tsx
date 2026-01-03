@@ -22,7 +22,7 @@ const gifts = [
         name: "Balloon",
         coins: 10,
         value: "$0.10",
-        color: "from-red-500/20 to-pink-500/20",
+        color: "from-red-500/30 to-pink-500/20",
         hoverColor: "hover:border-red-400/50",
     },
     {

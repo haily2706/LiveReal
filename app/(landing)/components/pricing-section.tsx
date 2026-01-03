@@ -49,7 +49,7 @@ export function PricingSection() {
                             {/* Popular Badge */}
                             {tier.popular && (
                                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                                    <span className="px-4 py-1 rounded-full bg-linear-to-r from-pink-500 to-purple-500 text-sm font-semibold">
+                                    <span className="text-white px-4 py-1 rounded-full bg-linear-to-r from-pink-500 to-purple-500 text-sm font-semibold">
                                         Most Popular
                                     </span>
                                 </div>

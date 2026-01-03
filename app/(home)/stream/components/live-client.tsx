@@ -80,8 +80,6 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
     const pathname = usePathname();
 
 
-
-
     useEffect(() => {
         setMounted(true);
         window.scrollTo(0, 0);
