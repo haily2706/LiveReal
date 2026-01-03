@@ -343,7 +343,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
 
                 {/* Chat Components */}
                 {/* Desktop Chat Sidebar */}
-                <Chat className="hidden lg:flex sticky top-[80px] h-[calc(100vh-96px)] mr-4 mt-4" />
+                <Chat className="hidden lg:flex sticky top-[76px] h-[calc(100vh-96px)] mr-4 mt-4" />
 
                 {/* Mobile Chat Button & Sheet */}
                 <div className="lg:hidden">

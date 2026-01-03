@@ -5,6 +5,42 @@ import { db } from "@/lib/db";
 import { cashIns } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 
+/**
+ * @swagger
+ * /api/wallet/transactions:
+ *   get:
+ *     summary: Get wallet transactions
+ *     description: Retrieves the list of recent transactions (cash-ins) for the authenticated user's wallet.
+ *     tags:
+ *       - Wallet
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of transactions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   userId:
+ *                     type: string
+ *                   amount:
+ *                     type: number
+ *                   status:
+ *                     type: string
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal Error
+ */
 export async function GET(req: NextRequest) {
     try {
         const supabase = await createClient();

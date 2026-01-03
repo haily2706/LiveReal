@@ -37,7 +37,7 @@ export function Navbar() {
 
     return (
         <header className={cn(
-            "sticky top-0 z-50 w-full h-14",
+            "sticky top-0 z-50 w-full h-15",
             "bg-background/80 backdrop-blur-2xl border-b border-border",
             "transition-all duration-300"
         )}>
@@ -95,7 +95,7 @@ export function Navbar() {
                         </Link>
                     </div>
                     <div className="flex items-center gap-1 border-r border-border pr-3 mr-1">
-                       
+
                         <div className="hover:bg-accent rounded-full transition-colors">
                             <ModeToggle />
                         </div>

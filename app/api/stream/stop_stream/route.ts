@@ -1,7 +1,18 @@
 import { Controller, getSessionFromReq } from "@/app/(home)/stream/lib/controller";
 
-// TODO: validate request with Zod
 
+/**
+ * @swagger
+ * /api/stream/stop_stream:
+ *   post:
+ *     summary: Stop a stream
+ *     tags: [Stream]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Stream stopped successfully
+ */
 export async function POST(req: Request) {
   const controller = new Controller();
 

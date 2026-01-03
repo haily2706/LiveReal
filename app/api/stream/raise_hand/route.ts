@@ -1,7 +1,18 @@
 import { Controller, getSessionFromReq } from "@/app/(home)/stream/lib/controller";
 
-// TODO: validate request with Zod
 
+/**
+ * @swagger
+ * /api/stream/raise_hand:
+ *   post:
+ *     summary: Raise hand to join the stage
+ *     tags: [Stream]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Hand raised successfully
+ */
 export async function POST(req: Request) {
   const controller = new Controller();
 

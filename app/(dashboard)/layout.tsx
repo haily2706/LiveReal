@@ -27,7 +27,7 @@ export default async function DashboardLayout({
             <div className="flex min-h-screen bg-transparent text-foreground">
                 <Sidebar />
                 <div className="flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out">
-                    <Suspense fallback={<div className="h-16 border-b border-border/50 bg-background/80" />}>
+                    <Suspense fallback={<div className="h-14 border-b border-border/50 bg-background/80" />}>
                         <Navbar />
                     </Suspense>
                     <main className="flex-1 p-4 md:p-6 overflow-y-auto">

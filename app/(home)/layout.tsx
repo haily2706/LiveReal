@@ -28,7 +28,7 @@ export default async function HomeLayout({
                     <Sidebar />
                     <MobileBottomNav />
                     <div className="flex-1 flex flex-col min-w-0">
-                        <Suspense fallback={<div className="h-16 border-b border-border/50" />}>
+                        <Suspense fallback={<div className="h-14 border-b border-border/50" />}>
                             <Navbar />
                         </Suspense>
                         <main className="flex-1 pb-20 md:pb-0">

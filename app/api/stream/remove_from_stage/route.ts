@@ -4,8 +4,28 @@ import {
   getSessionFromReq,
 } from "@/app/(home)/stream/lib/controller";
 
-// TODO: validate request with Zod
 
+/**
+ * @swagger
+ * /api/stream/remove_from_stage:
+ *   post:
+ *     summary: Remove a participant from the stage
+ *     tags: [Stream]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               identity:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Participant removed from stage successfully
+ */
 export async function POST(req: Request) {
   const controller = new Controller();
 

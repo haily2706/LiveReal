@@ -8,6 +8,22 @@ import {
     handleSubscriptionUpdatedOrDeleted
 } from "./handlers";
 
+/**
+ * @swagger
+ * /api/payments/stripe/webhook:
+ *   post:
+ *     summary: Stripe Webhook Handler
+ *     description: Processes incoming Stripe webhook events for checkout sessions, invoices, and subscriptions.
+ *     tags:
+ *       - Payments
+ *     responses:
+ *       200:
+ *         description: Webhook processed successfully
+ *       400:
+ *         description: Webhook Error or Client Error
+ *       500:
+ *         description: Internal Server Error
+ */
 export async function POST(req: Request) {
     const body = await req.text();
     const signature = (await headers()).get("Stripe-Signature") as string;

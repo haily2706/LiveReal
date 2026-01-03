@@ -1,9 +1,38 @@
-
-
-// TODO: validate request with Zod
-
 import { Controller, CreateIngressParams } from "@/app/(home)/stream/lib/controller";
 
+/**
+ * @swagger
+ * /api/stream/create_ingress:
+ *   post:
+ *     summary: Create a new ingress (RTMP/WHIP)
+ *     tags: [Stream]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               room_name:
+ *                 type: string
+ *               ingress_type:
+ *                 type: string
+ *                 enum: [rtmp, whip]
+ *               name:
+ *                 type: string
+ *               metadata:
+ *                 type: object
+ *                 properties:
+ *                   creator_identity:
+ *                     type: string
+ *                   enable_chat:
+ *                     type: boolean
+ *                   allow_participation:
+ *                     type: boolean
+ *     responses:
+ *       200:
+ *         description: Ingress created successfully
+ */
 export async function POST(req: Request) {
   const controller = new Controller();
 

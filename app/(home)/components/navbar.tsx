@@ -89,7 +89,7 @@ export function Navbar({ }: NavbarProps) {
             <header
                 className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-backdrop-filter:bg-background/80"
             >
-                <div className="flex h-16 items-center justify-between px-6 relative z-10 gap-4">
+                <div className="flex h-15 items-center justify-between px-6 relative z-10 gap-4">
                     <div className="flex items-center gap-2">
                         <div className="md:hidden">
                             <Sheet>
