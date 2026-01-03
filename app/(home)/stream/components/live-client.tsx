@@ -193,12 +193,6 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                     <div className="flex flex-col items-center gap-4">
                         <h2 className="text-2xl font-bold">Stream Ended</h2>
                         <p className="text-muted-foreground">The broadcast has finished.</p>
-                        <Button
-                            variant="outline"
-                            onClick={() => window.location.reload()}
-                        >
-                            Reload Page
-                        </Button>
                     </div>
                 </div>
             );
