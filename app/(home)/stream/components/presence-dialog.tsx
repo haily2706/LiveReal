@@ -108,8 +108,8 @@ function ParticipantListItem({
         );
       } else if (participantMetadata.invited_to_stage) {
         return (
-          <Button size="sm" variant="outline" disabled>
-            Pending
+          <Button size="sm" variant="outline" onClick={onCancel}>
+            Remove
           </Button>
         );
       } else if (!participantMetadata.invited_to_stage) {

@@ -229,10 +229,11 @@ export default function WalletPage() {
                             <div className="p-8 flex flex-col items-center gap-4 text-center text-muted-foreground">
                                 <p>No cashout methods added yet.</p>
                                 <AddPaymentMethodModal onAddMethod={handleAddMethod}>
-                                    <Button variant="outline" size="sm" className="h-9 gap-1 rounded-full px-4 hover:border-primary/50 hover:text-primary transition-colors">
+                                    {!loading && <Button variant="outline" size="sm" className="h-9 gap-1 rounded-full px-4 hover:border-primary/50 hover:text-primary transition-colors">
                                         <Plus className="h-4 w-4" />
                                         Add New
                                     </Button>
+                                    }
                                 </AddPaymentMethodModal>
                             </div>
                         ) : (

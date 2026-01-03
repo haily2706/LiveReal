@@ -84,10 +84,10 @@ function ActiveStagePlayer({
 
       {/* Badge */}
       {showBadge && (
-        <div className="absolute bottom-2 right-2 z-30">
-          <Badge variant="secondary" className="bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 border-none">
+        <div className="absolute bottom-0 right-1 z-30">
+          <span className="text-[9px] font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
             {localParticipant.name ?? localParticipant.identity} (you)
-          </Badge>
+          </span>
         </div>
       )}
     </div>
@@ -275,7 +275,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
 
         {/* Local Guest (Me on Stage) */}
         {canHost && !isLocalHost && (
-          <div className="pointer-events-auto w-32 sm:w-48 aspect-video rounded-lg overflow-hidden ring-1 ring-white/10 shadow-xl bg-zinc-900 relative group">
+          <div className="pointer-events-auto w-26 sm:w-42 aspect-video rounded-lg overflow-hidden ring-1 ring-white/10 shadow-xl bg-zinc-900 relative group">
             <ActiveStagePlayer
               localParticipant={localParticipant}
               localMetadata={localMetadata}
@@ -289,7 +289,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
           return (
             <div
               key={p.identity}
-              className="pointer-events-auto w-32 sm:w-48 aspect-video rounded-lg overflow-hidden ring-1 ring-white/10 shadow-xl bg-zinc-900 relative group"
+              className="pointer-events-auto w-26 sm:w-42 aspect-video rounded-lg overflow-hidden ring-1 ring-white/10 shadow-xl bg-zinc-900 relative group"
             >
               {/* Avatar Fallback */}
               <div className="absolute inset-0 flex items-center justify-center bg-zinc-900">
@@ -310,10 +310,10 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
               )}
 
               {/* Name Badge */}
-              <div className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Badge variant="secondary" className="text-[10px] h-5 px-1.5 bg-black/60 text-white backdrop-blur-md">
+              <div className="absolute bottom-0 right-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                <span className="text-[9px] font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                   {p.name ?? p.identity}
-                </Badge>
+                </span>
               </div>
             </div>
           );

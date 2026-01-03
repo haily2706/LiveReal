@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { startStream } from "@/app/actions/events";
 import { toast } from "sonner";
+import { ScheduleButton } from "./schedule-button";
 
 interface UpcomingEventProps {
     birthdayTime: string;
@@ -147,7 +148,7 @@ export function UpcomingEvent({
                         </div>
                     </div>
                 ) : (
-                    <div className="py-8 text-center space-y-3">
+                    <div className="py-8 text-center space-y-3 flex flex-col items-center">
                         <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto">
                             <CalendarIcon className="h-6 w-6 text-muted-foreground" />
                         </div>
@@ -155,14 +156,6 @@ export function UpcomingEvent({
                             <p className="font-medium">No upcoming event scheduled</p>
                             <p className="text-sm text-muted-foreground">Get ready for your big day by scheduling a stream!</p>
                         </div>
-                        <Button
-                            onClick={onOpenModal}
-                            className="bg-linear-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
-                            type="button"
-                        >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            Schedule Now
-                        </Button>
                     </div>
                 )}
             </div>

@@ -1,30 +1,24 @@
 "use client";
 
-import { Separator } from "@/components/ui/separator";
 import { Sidebar } from "./components/sidebar";
-import { User, Wallet, CreditCard, Settings } from "lucide-react";
+import { User, Calendar } from "lucide-react";
 import { useSidebar } from "@/app/(home)/components/provider";
 import { cn } from "@/lib/utils";
 
 const sidebarNavItems = [
     {
-        title: "Wallet",
-        href: "/settings/wallet",
-        icon: <Wallet className="w-4 h-4" />,
+        title: "Profile",
+        href: "/profile",
+        icon: <User className="w-4 h-4" />,
     },
     {
-        title: "Subscriptions",
-        href: "/settings/subscriptions",
-        icon: <CreditCard className="w-4 h-4" />,
-    },
-    {
-        title: "Preferences",
-        href: "/settings/preferences",
-        icon: <Settings className="w-4 h-4" />,
+        title: "Events",
+        href: "/events",
+        icon: <Calendar className="w-4 h-4" />,
     },
 ]
 
-export default function SettingsLayout({ children }: { children: React.ReactNode }) {
+export default function EventsLayout({ children }: { children: React.ReactNode }) {
     const { isCollapsed } = useSidebar();
 
     return (
@@ -36,10 +30,10 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
                 <div className="flex flex-col flex-1 space-y-6">
                     <div className="hidden md:flex flex-col gap-2 mb-6">
                         <h2 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-pink-500 to-purple-500 w-fit">
-                            Settings
+                            Events
                         </h2>
                         <p className="text-muted-foreground text-sm">
-                            Manage your account settings and profile preferences.
+                            Manage your events and profile settings.
                         </p>
                     </div>
 

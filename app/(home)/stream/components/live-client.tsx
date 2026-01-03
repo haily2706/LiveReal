@@ -30,6 +30,7 @@ import { useAuthStore } from "@/components/auth/use-auth-store";
 
 import { TokenContext } from "./token-context";
 import { StreamPlayer } from "./stream-player";
+import { StreamInviteAlert } from "./stream-invite-alert";
 
 import { JoinStreamResponse } from "../lib/controller";
 import { useTheme } from "next-themes";
@@ -57,6 +58,9 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
     const [authToken, setAuthToken] = useState("");
     const [wsUrl, setWsUrl] = useState(process.env.NEXT_PUBLIC_LIVEKIT_URL || "");
 
+    // Stable guest identity
+    const guestIdentity = useState(`guest-${Math.random().toString(36).substring(7)}-viewer-${Math.random().toString(36).substring(7)}`)[0];
+
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
@@ -76,9 +80,9 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
         if (!eventId) return;
 
         const isViewer = role === 'viewer';
-        const userId = user?.id || `guest-${Math.random().toString(36).substring(7)}`;
-        const identity = isViewer ? `${userId}-viewer-${Math.random().toString(36).substring(7)}` : userId;
-        const name = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || (isViewer ? "Guest" : "Streamer");
+        // If user is logged in, use their ID. If not, use stable guest ID.
+        const identity = (user && user.id) ? user.id : guestIdentity;
+        const name = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || (isViewer ? "Guest Viewer" : "Streamer");
 
         if (role === 'viewer') {
             // For viewers, use join_stream to get ws_url and auth_token
@@ -188,6 +192,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                     data-lk-theme={mounted && resolvedTheme === 'dark' ? "default" : undefined}
                     className="flex flex-col lg:flex-row w-full relative"
                 >
+                    <StreamInviteAlert />
 
 
                     {/* Main Content */}

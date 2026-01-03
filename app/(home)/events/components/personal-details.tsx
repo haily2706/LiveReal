@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
 import {
     Popover,
     PopoverContent,
@@ -39,21 +38,6 @@ export function PersonalDetails({
 
     return (
         <div className="text-card-foreground rounded-xl shadow-xs space-y-4">
-            <div className="flex items-center justify-between gap-4">
-                <div className="space-y-2">
-                    <h3 className="font-semibold leading-none tracking-tight">Personal Details</h3>
-                    <p className="text-sm text-muted-foreground">Manage how you appear to others.</p>
-                </div>
-                <Button
-                    type="submit"
-                    size="sm"
-                    className="w-[130px] font-medium bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all hover:-translate-y-0.5 cursor-pointer"
-                    disabled={loading}
-                >
-                    {loading ? "Saving..." : "Save Changes"}
-                </Button>
-            </div>
-            <Separator />
             <div className="grid gap-4">
                 <div className="grid grid-cols-1 sm:grid-cols-[1fr_240px] gap-4">
                     <div className="grid gap-2">
@@ -137,7 +121,7 @@ export function PersonalDetails({
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
                         placeholder="Tell us a little bit about yourself"
-                        className="bg-transparent resize-none h-24"
+                        className="bg-transparent resize-none h-36"
                     />
                 </div>
             </div>

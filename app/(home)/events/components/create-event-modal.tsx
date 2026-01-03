@@ -155,7 +155,7 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
             if (!result.success) throw new Error(result.error);
 
             toast.success(eventToEdit ? "Event updated successfully" : "Event scheduled successfully");
-            router.refresh();
+            router.push("/events/list");
             onClose();
         } catch (error: any) {
             toast.error(error.message || "Failed to save event");

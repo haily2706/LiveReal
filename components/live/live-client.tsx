@@ -81,7 +81,7 @@ interface LiveClientProps {
 }
 
 export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClientProps) {
-    const { user } = useAuthStore();
+    const { user, isLoading } = useAuthStore();
     const [token, setToken] = useState("");
 
     // UI States from original component
@@ -92,19 +92,18 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
 
     // Fetch Token
     useEffect(() => {
-        if (!eventId) return;
+        if (!eventId || isLoading) return;
 
         const isViewer = role === 'viewer';
         // If user is logged in, use their ID. If not, generate a random ID.
-        // If it's a viewer (even if logged in), append a timestamp/random string to avoid kicking the host if testing with same account.
         const userId = user?.id || `guest-${Math.random().toString(36).substring(7)}`;
-        const identity = isViewer ? `${userId}-viewer-${Math.random().toString(36).substring(7)}` : userId;
+        const identity = isViewer && !user ? `${userId}-viewer-${Math.random().toString(36).substring(7)}` : userId;
         const name = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || (isViewer ? "Guest Viewer" : "Streamer");
 
         getToken(eventId, identity, name, role)
             .then(setToken)
             .catch(console.error);
-    }, [user, eventId, role]);
+    }, [user, eventId, role, isLoading]);
 
     // Use initialData from server
     const live = {
