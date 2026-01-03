@@ -62,7 +62,8 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
         setWsUrl,
         setStreamInfo,
         setVideoContainerRef,
-        streamInfo
+        streamInfo,
+        hasLeft
     } = useStreamContext()!;
 
     // Stable guest identity
@@ -94,6 +95,8 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
         if (streamInfo?.eventId === eventId && token) {
             return;
         }
+
+        if (hasLeft) return;
 
         const isViewer = role === 'viewer';
         // If user is logged in, use their ID. If not, use stable guest ID.
@@ -167,7 +170,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
             };
             createStream();
         }
-    }, [user, eventId, role, getDisplayName, streamInfo?.eventId, token]);
+    }, [user, eventId, role, getDisplayName]);
 
     // Use initialData from server
     const live = {
@@ -184,6 +187,23 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
     };
 
     if (!token) {
+        if (hasLeft) {
+            return (
+                <div className="flex items-center justify-center min-h-screen text-foreground bg-background">
+                    <div className="flex flex-col items-center gap-4">
+                        <h2 className="text-2xl font-bold">Stream Ended</h2>
+                        <p className="text-muted-foreground">The broadcast has finished.</p>
+                        <Button
+                            variant="outline"
+                            onClick={() => window.location.reload()}
+                        >
+                            Reload Page
+                        </Button>
+                    </div>
+                </div>
+            );
+        }
+
         return (
             <div className="flex items-center justify-center min-h-screen text-foreground bg-background">
                 <div className="flex flex-col items-center gap-4">
@@ -343,7 +363,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
 
                 {/* Chat Components */}
                 {/* Desktop Chat Sidebar */}
-                <Chat className="hidden lg:flex sticky top-[76px] h-[calc(100vh-96px)] mr-4 mt-4" />
+                <Chat className="hidden lg:flex sticky top-[76px] h-[calc(100vh-92px)] mr-4 mt-4" />
 
                 {/* Mobile Chat Button & Sheet */}
                 <div className="lg:hidden">

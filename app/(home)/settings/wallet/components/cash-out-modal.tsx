@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, ArrowUpRight, DollarSign, Wallet, CreditCard } from "lucide-react";
+import { Loader2, ArrowUpRight, Wallet, CreditCard } from "lucide-react";
+import { Coin } from "@/components/ui/coin";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -50,7 +51,7 @@ export function CashOutModal({ children, balance, paymentMethods }: CashOutModal
         if (numVal > balance) {
             setError("Insufficient funds");
         } else if (numVal < 10) {
-            setError("Minimum withdrawal is $10.00");
+            setError("Minimum withdrawal is 10 LREAL");
         } else {
             setError("");
         }
@@ -78,7 +79,7 @@ export function CashOutModal({ children, balance, paymentMethods }: CashOutModal
             const result = await requestCashout(numVal, linkedAccount.id);
 
             if (result.success) {
-                toast.success(`Successfully initiated withdrawal of $${numVal.toFixed(2)}`);
+                toast.success(`Successfully initiated withdrawal of ${numVal.toLocaleString()} LREAL`);
                 setIsOpen(false);
                 setAmount("");
             } else {
@@ -139,16 +140,20 @@ export function CashOutModal({ children, balance, paymentMethods }: CashOutModal
                     <div className="flex items-center justify-between">
                         <div className="space-y-3">
                             <p className="text-sm font-medium text-muted-foreground">Available Balance</p>
-                            <p className="text-2xl font-bold">${balance.toFixed(2)}</p>
+                            <p className="text-2xl font-bold">{balance.toLocaleString()}
+                                <span className="text-xs text-muted-foreground pl-1">LREAL</span>
+                            </p>
                         </div>
                         <Wallet className="h-8 w-8 text-muted-foreground/30" />
                     </div>
 
                     <div className="space-y-4">
                         <div className="flex flex-col gap-4">
-                            <Label>Withdrawal Amount</Label>
+                            <Label>Withdrawal Amount (LREAL)</Label>
                             <div className="relative">
-                                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                                    <Coin size={16} />
+                                </div>
                                 <Input
                                     className="pl-9"
                                     placeholder="0.00"

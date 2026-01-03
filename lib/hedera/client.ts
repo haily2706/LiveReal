@@ -110,3 +110,68 @@ export async function transferToken(toAccountId: string, amount: number) {
 
     return receipt.status.toString();
 }
+
+export async function transferTokenFromUser(fromAccountId: string, fromPrivateKey: string, toAccountId: string, amount: number) {
+    const client = getClient();
+    const tokenId = process.env.LIVEREAL_TOKEN_ID;
+
+    if (!tokenId) {
+        throw new Error("Missing LIVEREAL_TOKEN_ID");
+    }
+
+    const transaction = await new TransferTransaction()
+        .addTokenTransfer(tokenId, fromAccountId, -amount)
+        .addTokenTransfer(tokenId, toAccountId, amount)
+        .freezeWith(client);
+
+    // Sign with sender key
+    const signTx = await transaction.sign(PrivateKey.fromString(fromPrivateKey));
+
+    // Execute
+    const txResponse = await signTx.execute(client);
+
+    // Get receipt to verify
+    const receipt = await txResponse.getReceipt(client);
+
+    return {
+        status: receipt.status.toString(),
+        transactionId: txResponse.transactionId.toString(),
+    };
+}
+
+export async function getTransactionInfo(transactionId: string) {
+    // SDK format: 0.0.123@1234567890.123456789
+    // Mirror Node format: 0.0.123-1234567890-123456789
+
+    let mirrorNodeId = transactionId;
+    if (transactionId.includes('@')) {
+        const [account, time] = transactionId.split('@');
+        const [seconds, nanos] = time.split('.');
+        mirrorNodeId = `${account}-${seconds}-${nanos}`;
+    }
+
+    const baseUrl = HEDERA_NETWORK === 'mainnet'
+        ? 'https://mainnet-public.mirrornode.hedera.com'
+        : 'https://testnet.mirrornode.hedera.com';
+
+    try {
+        const response = await fetch(`${baseUrl}/api/v1/transactions/${mirrorNodeId}`);
+        if (!response.ok) {
+            throw new Error(`Mirror node error: ${response.statusText}`);
+        }
+        const data = await response.json();
+
+        // The mirror node returns a list of transactions (could be duplicates for child transactions, usually we want the first one or success one)
+        const transaction = data.transactions?.find((tx: any) => tx.result === 'SUCCESS') || data.transactions?.[0];
+
+        if (!transaction) {
+            return null;
+        }
+
+        return transaction;
+    } catch (error) {
+        console.error("Error fetching transaction from mirror node:", error);
+        return null; // Return null instead of throwing to avoid crashing UI
+    }
+}
+

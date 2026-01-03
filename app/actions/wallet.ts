@@ -123,10 +123,10 @@ export async function requestCashout(amount: number, paymentMethodId: string) {
             const balances = await getAccountBalance(userRecord.hbarAccountId);
             const balance = Number(balances.tokenBalance);
 
-            // Amount requested is in dollars, convert to cents
-            const amountInCents = Math.round(amount * 100);
+            // Amount requested is in LREAL (base units)
+            const amountInLReal = amount;
 
-            if (balance < amountInCents) {
+            if (balance < amountInLReal) {
                 return { success: false, error: "Insufficient funds" };
             }
 
@@ -134,7 +134,7 @@ export async function requestCashout(amount: number, paymentMethodId: string) {
             await db.insert(cashOuts).values({
                 id: crypto.randomUUID(),
                 userId: user.id,
-                amount: amountInCents.toString(),
+                amount: amountInLReal.toString(),
                 status: 0,
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -189,4 +189,201 @@ export async function getCashOutTransactions() {
         console.error("Error fetching cash out transactions:", error);
         return [];
     }
+}
+
+export async function searchUser(email: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return null;
+
+    try {
+        const foundUser = await db.query.users.findFirst({
+            where: eq(users.email, email),
+            columns: {
+                id: true,
+                name: true,
+                email: true,
+                avatar: true,
+            }
+        });
+
+        if (foundUser?.id === user.id) {
+            return null; // Cannot transfer to self
+        }
+
+        return foundUser || null;
+    } catch (error) {
+        console.error("Error searching user:", error);
+        return null;
+    }
+}
+
+import { transfers } from "@/lib/db/schema";
+import { transferTokenFromUser } from "@/lib/hedera/client";
+
+export async function transferCoins(formData: FormData) {
+    const amount = parseFloat(formData.get("amount") as string);
+    const recipientId = formData.get("recipientId") as string;
+
+    if (!amount || amount <= 0) {
+        return { success: false, error: "Invalid amount" };
+    }
+
+    if (!recipientId) {
+        return { success: false, error: "Invalid recipient" };
+    }
+
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    try {
+        // 1. Get sender details (need private key)
+        const sender = await db.query.users.findFirst({
+            where: eq(users.id, user.id),
+        });
+
+        if (!sender || !sender.hbarAccountId || !sender.hbarPrivateKey) {
+            return { success: false, error: "Sender wallet not configured" };
+        }
+
+        // 2. Get recipient details
+        const recipient = await db.query.users.findFirst({
+            where: eq(users.id, recipientId),
+        });
+
+        if (!recipient || !recipient.hbarAccountId) {
+            return { success: false, error: "Recipient wallet not configured" };
+        }
+
+        // 3. Check balance
+        const balanceData = await getAccountBalance(sender.hbarAccountId);
+        const tokenBalance = parseInt(balanceData.tokenBalance); // in base units? NO, getAccountBalance returns string, likely base unit? 
+        // Let's check getAccountBalance implementation. 
+        // It returns balance.tokens?.get(tokenId)?.toString(). This is base unit (cents).
+        // amount is in USD (e.g., 10.50). 
+        // Token has 2 decimals (implied by /100 in page.tsx).
+        // So amount * 100 = cents.
+
+        const amountInLReal = amount;
+
+        if (tokenBalance < amountInLReal) {
+            return { success: false, error: "Insufficient balance" };
+        }
+
+        // 4. Execute Hedera Transfer
+        try {
+            const hederaResult = await transferTokenFromUser(
+                sender.hbarAccountId,
+                sender.hbarPrivateKey,
+                recipient.hbarAccountId,
+                amountInLReal
+            );
+
+            if (hederaResult.status !== "SUCCESS") {
+                return { success: false, error: "Hedera transfer failed" };
+            }
+
+            // 5. Record Transaction in DB
+            const transferId = crypto.randomUUID();
+
+            // Insert into transfers
+            await db.insert(transfers).values({
+                id: transferId,
+                fromUserId: user.id,
+                toUserId: recipientId,
+                amount: amountInLReal.toString(),
+                status: 'succeeded',
+                transaction: {
+                    hederaTransactionId: hederaResult.transactionId,
+                    amountUSD: amount,
+                    fee: 0, // Calculate fee if needed
+                    timestamp: new Date().toISOString()
+                },
+                createdAt: new Date(),
+            });
+
+            // Revalidate
+            revalidatePath("/settings/wallet");
+
+            return { success: true };
+
+        } catch (error: any) {
+            console.error("Hedera transfer error:", error);
+            return { success: false, error: error.message || "Failed to execute transfer" };
+        }
+
+    } catch (error) {
+        console.error("Transfer error:", error);
+        return { success: false, error: "Internal server error" };
+    }
+}
+
+export async function getTransfers() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return [];
+
+    try {
+        const sentTransfers = await db.query.transfers.findMany({
+            where: eq(transfers.fromUserId, user.id),
+            orderBy: [desc(transfers.createdAt)],
+        });
+
+        const receivedTransfers = await db.query.transfers.findMany({
+            where: eq(transfers.toUserId, user.id),
+            orderBy: [desc(transfers.createdAt)],
+        });
+
+        const allTransfers = [...sentTransfers, ...receivedTransfers].sort((a, b) =>
+            new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
+        );
+
+        // Fetch user details manually since relations were removed
+        const userIds = new Set<string>();
+        allTransfers.forEach(tx => {
+            if (tx.fromUserId !== user.id) userIds.add(tx.fromUserId);
+            if (tx.toUserId !== user.id) userIds.add(tx.toUserId);
+        });
+
+        let usersMap: Record<string, any> = {};
+
+        if (userIds.size > 0) {
+            const usersList = await db.query.users.findMany({
+                where: (users, { inArray }) => inArray(users.id, Array.from(userIds)),
+                columns: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    avatar: true,
+                }
+            });
+
+            usersList.forEach(u => {
+                usersMap[u.id] = u;
+            });
+        }
+
+        return allTransfers.map(tx => ({
+            ...tx,
+            fromUser: tx.fromUserId === user.id ? { id: user.id } : usersMap[tx.fromUserId],
+            toUser: tx.toUserId === user.id ? { id: user.id } : usersMap[tx.toUserId]
+        }));
+
+    } catch (error) {
+        console.error("Error fetching transfers:", error);
+        return [];
+    }
+}
+
+import { getTransactionInfo } from "@/lib/hedera/client";
+
+export async function fetchHederaTransaction(transactionId: string) {
+    if (!transactionId) return null;
+    return await getTransactionInfo(transactionId);
 }

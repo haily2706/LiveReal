@@ -138,6 +138,7 @@ export interface LiveStream {
     viewers: number;
     isBirthday: boolean;
     isVertical?: boolean;
+    isBackend?: boolean;
 }
 
 export const recommendedVideos: Video[] = [

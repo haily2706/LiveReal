@@ -1,4 +1,5 @@
 import { pgTable, text, timestamp, boolean, integer, smallint, json } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
 
 export const users = pgTable('users', {
     id: text('id').primaryKey(), // Supabase Auth ID
@@ -83,3 +84,24 @@ export const events = pgTable('events', {
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
 });
+
+export const transfers = pgTable('transfers', {
+    id: text('id').primaryKey(),
+    fromUserId: text('from_user_id').notNull().references(() => users.id),
+    toUserId: text('to_user_id').notNull().references(() => users.id),
+    amount: text('amount').notNull(),
+    status: text('status').notNull(),
+    transaction: json('transaction'),
+    createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const usersRelations = relations(users, ({ many }) => ({
+    events: many(events),
+}));
+
+export const eventsRelations = relations(events, ({ one }) => ({
+    user: one(users, {
+        fields: [events.userId],
+        references: [users.id],
+    }),
+}));

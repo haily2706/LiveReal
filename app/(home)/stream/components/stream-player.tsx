@@ -12,6 +12,7 @@ import {
   useRoomContext,
   useTracks,
 } from "@livekit/components-react";
+import { useStreamContext } from "@/app/(home)/components/stream-manager";
 import { Eye, EyeOff, LogOut, Power, VolumeX, PictureInPicture } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -207,16 +208,17 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
     });
   };
 
+  useEffect(() => {
+    // No cleanup required here as StreamManager handles it.
+  }, []);
+
   const router = useRouter();
+  const { leaveStream } = useStreamContext()!;
+
   const onEndStream = async () => {
     try {
-      await fetch("/api/stream/stop_stream", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${authToken} `,
-        },
-      });
+      // Use the manager's leaveStream to handle API call and state cleanup synchronously
+      leaveStream(true);
       router.push("/events/list");
     } catch (error) {
       console.error("Failed to end stream", error);

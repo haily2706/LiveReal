@@ -83,6 +83,7 @@ export async function GET(request: Request) {
         try {
             const balances = await getAccountBalance(accountId!);
             return NextResponse.json({
+                userId: user.id,
                 accountId: accountId,
                 hbarBalance: balances.hbarBalance,
                 tokenBalance: balances.tokenBalance

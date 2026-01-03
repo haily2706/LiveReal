@@ -12,7 +12,9 @@ import { CashInModal } from "./components/cash-in-modal";
 import { CashOutModal } from "./components/cash-out-modal";
 import { AddPaymentMethodModal } from "./components/add-payment-method-modal";
 import { Badge } from "@/components/ui/badge";
-import { getCashoutPaymentMethod, deleteCashoutPaymentMethod, getCashInTransactions, getCashOutTransactions } from "@/app/actions/wallet";
+import { getCashoutPaymentMethod, deleteCashoutPaymentMethod, getCashInTransactions, getCashOutTransactions, getTransfers } from "@/app/actions/wallet";
+import { TransferModal } from "./components/transfer-modal";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import {
@@ -57,45 +59,46 @@ const getCashOutStatusLabel = (status: number) => {
 
 export default function WalletPage() {
     const [balanceData, setBalanceData] = useState<{
+        userId: string;
         hbarBalance: string;
         tokenBalance: string;
         accountId: string;
     } | null>(null);
     const [cashInTransactions, setCashInTransactions] = useState<any[]>([]);
     const [cashOutTransactions, setCashOutTransactions] = useState<any[]>([]);
+    const [transfers, setTransfers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [balanceRes, cashIns, cashOuts, paymentMethodData] = await Promise.all([
-                    fetch('/api/wallet/balance'),
-                    getCashInTransactions(),
-                    getCashOutTransactions(),
-                    getCashoutPaymentMethod()
-                ]);
+    const fetchData = async () => {
+        try {
+            const [balanceRes, cashIns, cashOuts, paymentMethodData, transferData] = await Promise.all([
+                fetch('/api/wallet/balance'),
+                getCashInTransactions(),
+                getCashOutTransactions(),
+                getCashoutPaymentMethod(),
+                getTransfers()
+            ]);
 
-                if (balanceRes.ok) {
-                    const data = await balanceRes.json();
-                    setBalanceData(data);
-                }
-
-                setCashInTransactions(cashIns);
-                setCashOutTransactions(cashOuts);
-
-                if (paymentMethodData) {
-                    setPaymentMethods([paymentMethodData]);
-                } else {
-                    setPaymentMethods([]);
-                }
-            } catch (error) {
-                console.error("Failed to fetch wallet data", error);
-            } finally {
-                setLoading(false);
+            if (balanceRes.ok) {
+                const data = await balanceRes.json();
+                setBalanceData(data);
             }
-        };
 
+            setCashInTransactions(cashIns);
+            setCashOutTransactions(cashOuts);
+            setTransfers(transferData);
+
+            // This line correctly handles both cases: if paymentMethodData is null/undefined, it sets an empty array; otherwise, it sets an array with the method.
+            setPaymentMethods(paymentMethodData ? [paymentMethodData] : []);
+        } catch (error) {
+            console.error("Failed to fetch wallet data", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchData();
     }, []);
 
@@ -152,7 +155,7 @@ export default function WalletPage() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                 <Card className="col-span-2 overflow-hidden relative border-none bg-linear-to-br from-primary/10 via-primary/5 to-background shadow-xl group">
                     {/* Background Coin */}
-                    <div className="absolute -right-5 -bottom-5 opacity-[0.05] group-hover:opacity-15 transition-all duration-500 rotate-[15deg] group-hover:rotate-0 scale-100 group-hover:scale-110 pointer-events-none">
+                    <div className="absolute -right-5 -bottom-5 opacity-[0.05] group-hover:opacity-15 transition-all duration-500 rotate-15 group-hover:rotate-0 scale-100 group-hover:scale-110 pointer-events-none">
                         <Coin className="w-32 h-32 blur-[1px]" />
                     </div>
 
@@ -191,7 +194,7 @@ export default function WalletPage() {
                     </Card>
                 </CashInModal>
 
-                <CashOutModal balance={usdBalance} paymentMethods={paymentMethods}>
+                <CashOutModal balance={balanceData ? parseInt(balanceData.tokenBalance) : 0} paymentMethods={paymentMethods}>
                     <Card className="col-span-1 group flex flex-col justify-center items-center p-4 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-red-500/50 hover:shadow-lg hover:shadow-red-500/10">
                         <div className="h-10 w-10 rounded-full bg-red-500/10 group-hover:scale-110 group-hover:bg-red-500 text-red-500 group-hover:text-white flex items-center justify-center mb-2 transition-all duration-300 shadow-sm">
                             <ArrowUpRight className="h-5 w-5" />
@@ -201,16 +204,17 @@ export default function WalletPage() {
                     </Card>
                 </CashOutModal>
 
-                <Card
-                    className="col-span-1 group flex flex-col justify-center items-center p-4 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10"
-                    onClick={() => toast.info("Transfer feature coming soon")}
-                >
-                    <div className="h-10 w-10 rounded-full bg-blue-500/10 group-hover:scale-110 group-hover:bg-blue-500 text-blue-500 group-hover:text-white flex items-center justify-center mb-2 transition-all duration-300 shadow-sm">
-                        <ArrowRightLeft className="h-5 w-5" />
-                    </div>
-                    <div className="font-bold text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Transfer</div>
-                    <p className="text-[10px] text-muted-foreground text-center mt-1 group-hover:text-muted-foreground/80">Send funds to others</p>
-                </Card>
+                <TransferModal balance={balanceData ? parseInt(balanceData.tokenBalance) : 0} onTransferSuccess={fetchData}>
+                    <Card
+                        className="col-span-1 group flex flex-col justify-center items-center p-4 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10"
+                    >
+                        <div className="h-10 w-10 rounded-full bg-blue-500/10 group-hover:scale-110 group-hover:bg-blue-500 text-blue-500 group-hover:text-white flex items-center justify-center mb-2 transition-all duration-300 shadow-sm">
+                            <ArrowRightLeft className="h-5 w-5" />
+                        </div>
+                        <div className="font-bold text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Transfer</div>
+                        <p className="text-[10px] text-muted-foreground text-center mt-1 group-hover:text-muted-foreground/80">Send funds to others</p>
+                    </Card>
+                </TransferModal>
             </div>
 
             {/* Cashout Methods */}
@@ -353,14 +357,17 @@ export default function WalletPage() {
                                                 </div>
                                                 <div className="text-right">
                                                     <div className="font-bold text-sm leading-none mb-1">
-                                                        +{formatCurrency(tx.amount, tx.currency)}
+                                                        +{parseInt(tx.amount).toLocaleString()} <span className="text-[9px] text-muted-foreground">LREAL</span>
                                                     </div>
-                                                    <Badge variant="outline" className={`h-5 px-1.5 text-[10px] capitalize ${tx.status === 'succeeded' ? 'border-green-500/20 text-green-600' :
-                                                        tx.status === 'failed' ? 'border-red-500/20 text-red-600' :
-                                                            'border-orange-500/20 text-orange-600'
-                                                        }`}>
-                                                        {tx.status}
-                                                    </Badge>
+                                                    <div className="flex items-center gap-2 justify-end">
+                                                        <div className={`w-1.5 h-1.5 rounded-full ${tx.status === 'succeeded' ? 'bg-green-500' :
+                                                            tx.status === 'failed' ? 'bg-red-500' :
+                                                                'bg-orange-500'
+                                                            }`} />
+                                                        <span className="text-xs text-muted-foreground capitalize">
+                                                            {tx.status}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}
@@ -396,14 +403,17 @@ export default function WalletPage() {
                                                 </div>
                                                 <div className="text-right">
                                                     <div className="font-bold text-sm leading-none mb-1">
-                                                        -{formatCurrency(tx.amount, 'USD')}
+                                                        -{parseInt(tx.amount).toLocaleString()} <span className="text-[9px] text-muted-foreground">LREAL</span>
                                                     </div>
-                                                    <Badge variant="outline" className={`h-5 px-1.5 text-[10px] capitalize ${tx.status === 3 ? 'border-green-500/20 text-green-600' :
-                                                        tx.status === 2 ? 'border-red-500/20 text-red-600' :
-                                                            'border-orange-500/20 text-orange-600'
-                                                        }`}>
-                                                        {getCashOutStatusLabel(tx.status)}
-                                                    </Badge>
+                                                    <div className="flex items-center gap-2 justify-end">
+                                                        <div className={`w-1.5 h-1.5 rounded-full ${tx.status === 3 ? 'bg-green-500' :
+                                                            tx.status === 2 ? 'bg-red-500' :
+                                                                'bg-orange-500'
+                                                            }`} />
+                                                        <span className="text-xs text-muted-foreground capitalize">
+                                                            {getCashOutStatusLabel(tx.status)}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}
@@ -415,8 +425,51 @@ export default function WalletPage() {
 
                     <TabsContent value="transfers">
                         <Card className="border-none shadow-none bg-transparent">
-                            <CardContent className="p-8 text-center text-muted-foreground text-sm">
-                                Transfer history coming soon
+                            <CardContent className="p-0">
+                                {transfers.length === 0 ? (
+                                    <div className="p-8 text-center text-muted-foreground text-sm">
+                                        No recent transfers
+                                    </div>
+                                ) : (
+                                    <div className="divide-y divide-border/20">
+                                        {transfers.map((tx) => {
+                                            const isSender = tx.fromUserId === balanceData?.userId;
+                                            const otherUser = isSender ? tx.toUser : tx.fromUser;
+
+                                            return (
+                                                <div key={tx.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/10 transition-colors">
+                                                    <div className="flex items-center gap-3">
+                                                        <Avatar className="h-9 w-9 border">
+                                                            <AvatarImage src={otherUser?.avatar || ""} />
+                                                            <AvatarFallback>{otherUser?.name?.[0] || otherUser?.email?.[0] || "?"}</AvatarFallback>
+                                                        </Avatar>
+                                                        <div className="overflow-hidden">
+                                                            <div className="font-medium text-sm leading-none truncate max-w-[150px] sm:max-w-xs">
+                                                                {otherUser?.name || otherUser?.email || "Unknown User"}
+                                                            </div>
+                                                            <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
+                                                                <span>{isSender ? "Sent to" : "Received from"}</span>
+                                                                <span className="hidden sm:inline">•</span>
+                                                                <span className="truncate">{new Date(tx.createdAt).toLocaleDateString()} • {new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <div className="font-bold text-sm leading-none mb-1">
+                                                            {tx.fromUserId === balanceData?.userId ? "-" : "+"}{parseInt(tx.amount).toLocaleString()} <span className="text-[9px] text-muted-foreground">LREAL</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2 justify-end">
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                                                            <span className="text-xs text-muted-foreground capitalize">
+                                                                {tx.status}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
                     </TabsContent>

@@ -36,6 +36,8 @@ interface StreamContextType {
     setWsUrl: (url: string) => void;
     videoContainerRef: HTMLElement | null;
     setVideoContainerRef: (ref: HTMLElement | null) => void;
+    leaveStream: (stopRoom?: boolean) => void;
+    hasLeft: boolean;
 }
 
 const StreamContext = createContext<StreamContextType | undefined>(undefined);
@@ -55,17 +57,45 @@ export function StreamManager({ children }: { children: React.ReactNode }) {
     const [mounted, setMounted] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
+    const [hasLeft, setHasLeft] = useState(false);
 
     // Use refs to keep the event listener stable and synchronized with latest state
     const streamInfoRef = useRef(streamInfo);
     const pathnameRef = useRef(pathname);
     const routerRef = useRef(router);
+    const authTokenRef = useRef(authToken);
+    const isStoppingRef = useRef(false);
 
     useEffect(() => {
         streamInfoRef.current = streamInfo;
         pathnameRef.current = pathname;
         routerRef.current = router;
-    }, [streamInfo, pathname, router]);
+        authTokenRef.current = authToken;
+    }, [streamInfo, pathname, router, authToken]);
+
+    const stopHostStream = async () => {
+        const info = streamInfoRef.current;
+        const token = authTokenRef.current;
+
+        if (info?.role === 'host' && token && !isStoppingRef.current) {
+            console.log("Stopping stream from manager...");
+            isStoppingRef.current = true;
+            try {
+                await fetch("/api/stream/stop_stream", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Token ${token} `,
+                    },
+                    keepalive: true
+                });
+            } catch (error) {
+                console.error("Failed to stop stream", error);
+                // Reset flag on error so we can retry if needed, though for "Room does not exist" it usually means it's done.
+                isStoppingRef.current = false;
+            }
+        }
+    };
 
     useEffect(() => setMounted(true), []);
 
@@ -76,15 +106,35 @@ export function StreamManager({ children }: { children: React.ReactNode }) {
         setWsUrl("");
     };
 
+    const leaveStream = (stopRoom = false) => {
+        setHasLeft(true);
+        if (stopRoom) {
+            stopHostStream();
+        }
+        closeStream();
+    };
+
+    // Reset hasLeft when pathname changes (new navigation)
+    useEffect(() => {
+        setHasLeft(false);
+    }, [pathname]);
+
     // Keep alive only if in PiP when navigating away
     useEffect(() => {
         if (token && streamInfo && pathname) {
-            const isOnStreamPage = pathname.includes(streamInfo.eventId);
+            const isOnStreamPage = pathname === `/stream/${streamInfo.eventId}` || pathname.startsWith(`/stream/${streamInfo.eventId}/`);
             if (!isOnStreamPage && !document.pictureInPictureElement) {
-                closeStream();
+                leaveStream(true);
             }
         }
     }, [pathname, token, streamInfo]);
+
+    // Cleanup on unmount (e.g. tab close)
+    useEffect(() => {
+        return () => {
+            stopHostStream();
+        };
+    }, []);
 
     // Handle PiP exit (Back to Tab or Close button)
     useEffect(() => {
@@ -160,7 +210,9 @@ export function StreamManager({ children }: { children: React.ReactNode }) {
             wsUrl,
             setWsUrl,
             videoContainerRef,
-            setVideoContainerRef
+            setVideoContainerRef,
+            leaveStream,
+            hasLeft
         }}>
             <TokenContext.Provider value={authToken}>
                 {!token ? (
@@ -192,10 +244,12 @@ export function StreamManager({ children }: { children: React.ReactNode }) {
                         />
 
                         {/* Persistent Player */}
-                        <PersistentPlayerWrapper
-                            containerRef={videoContainerRef}
-                            streamInfo={streamInfo!}
-                        />
+                        {streamInfo && (
+                            <PersistentPlayerWrapper
+                                containerRef={videoContainerRef}
+                                streamInfo={streamInfo}
+                            />
+                        )}
 
                         {children}
                     </LiveKitRoom>

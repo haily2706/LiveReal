@@ -14,7 +14,10 @@ import {
     ChevronDown,
     ChevronRight,
     CreditCard,
-    Banknote
+    Banknote,
+    ArrowRightLeft,
+    ArrowDownLeft,
+    ArrowUpRight
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/components/auth/use-auth-store";
@@ -93,9 +96,10 @@ export function Sidebar() {
             href: "#transactions", // Virtual href for grouping
             color: "text-purple-400",
             children: [
-                { icon: Banknote, label: "Cash Ins", href: "/dashboard/cash-ins", color: "text-green-400" },
-                { icon: CreditCard, label: "Cash Outs", href: "/dashboard/cash-outs", color: "text-orange-400" },
-                { icon: Zap, label: "Subscriptions", href: "/dashboard/subscriptions", color: "text-yellow-400" },
+                { icon: ArrowDownLeft, label: "Cash Ins", href: "/dashboard/cash-ins", color: "text-green-400" },
+                { icon: ArrowUpRight, label: "Cash Outs", href: "/dashboard/cash-outs", color: "text-orange-400" },
+                { icon: ArrowRightLeft, label: "Transfers", href: "/dashboard/transfers", color: "text-cyan-400" },
+                { icon: Sparkles, label: "Subscriptions", href: "/dashboard/subscriptions", color: "text-yellow-400" },
             ]
         },
         { icon: Settings, label: "Settings", href: "/dashboard/settings", color: "text-gray-400" }

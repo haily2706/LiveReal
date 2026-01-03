@@ -1,4 +1,8 @@
 import { Controller, getSessionFromReq } from "@/app/(home)/stream/lib/controller";
+import { db } from "@/lib/db";
+import { events } from "@/lib/db/schema";
+import { log } from "console";
+import { eq } from "drizzle-orm";
 
 
 /**
@@ -15,17 +19,28 @@ import { Controller, getSessionFromReq } from "@/app/(home)/stream/lib/controlle
  */
 export async function POST(req: Request) {
   const controller = new Controller();
-
+  let session;
   try {
-    const session = getSessionFromReq(req);
+    session = getSessionFromReq(req);
+    console.log("Session: ", session?.room_name);
     await controller.stopStream(session);
-
     return Response.json({});
   } catch (err) {
-    if (err instanceof Error) {
-      return new Response(err.message, { status: 500 });
-    }
+    // if (err instanceof Error) {
+    //   return new Response(err.message, { status: 500 });
+    // }
 
-    return new Response(null, { status: 500 });
+    // return new Response(null, { status: 500 });
+     return Response.json({});
+  } finally {
+    if (session?.room_name) {
+      // Update event status in database
+      await db.update(events)
+        .set({
+          isLive: false,
+          endTime: new Date()
+        })
+        .where(eq(events.id, session.room_name));
+    }
   }
 }

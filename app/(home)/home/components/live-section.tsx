@@ -8,8 +8,38 @@ interface LiveSectionProps {
     title?: string;
 }
 
+import { getLiveEvents } from "@/app/actions/event";
+import { useEffect, useState } from "react";
+
 export function LiveSection({ lives, title = "Birthday Live" }: LiveSectionProps) {
-    if (lives.length === 0) return null;
+    const [mergedLives, setMergedLives] = useState<LiveStream[]>(lives);
+
+    useEffect(() => {
+        const fetchLives = async () => {
+            const { success, data } = await getLiveEvents();
+            if (success && data) {
+                const backendLives: LiveStream[] = data.map((event: any) => ({
+                    id: event.id,
+                    title: event.title,
+                    thumbnail: event.thumbnailUrl || "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=2670&auto=format&fit=crop",
+                    channel: {
+                        id: event.user.id,
+                        name: event.user.name || "Unknown",
+                        username: `@${event.user.name?.replace(/\s+/g, '').toLowerCase() || 'user'}`,
+                        avatar: event.user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${event.user.id}`,
+                    },
+                    viewers: event.views || 0,
+                    isBirthday: false,
+                    isVertical: event.isShort || false,
+                    isBackend: true,
+                }));
+                setMergedLives([...backendLives, ...lives]);
+            }
+        };
+        fetchLives();
+    }, [lives]);
+
+    if (mergedLives.length === 0) return null;
 
     return (
         <div className="space-y-6">
@@ -21,7 +51,7 @@ export function LiveSection({ lives, title = "Birthday Live" }: LiveSectionProps
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 grid-flow-dense auto-rows-auto">
-                {lives.map((live, index) => (
+                {mergedLives.slice(0, 5).map((live, index) => (
                     <StreamCard
                         key={live.id}
                         stream={live}

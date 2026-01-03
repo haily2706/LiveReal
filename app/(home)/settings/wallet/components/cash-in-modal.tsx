@@ -84,7 +84,7 @@ export function CashInModal({ children }: CashInModalProps) {
                             </CardHeader>
                             <CardContent className="grow">
                                 <div className="text-2xl font-bold">
-                                    {plan.lrealAmount} <span className="text-sm font-normal text-muted-foreground">LREAL</span>
+                                    {plan.lrealAmount.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">LREAL</span>
                                 </div>
                             </CardContent>
                             <CardFooter>

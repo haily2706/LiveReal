@@ -124,3 +124,21 @@ export async function updateEvent(eventId: string, inputs: {
         return { success: false, error: "Failed to update event" };
     }
 }
+
+export async function getLiveEvents() {
+    try {
+        const liveEvents = await db.query.events.findMany({
+            where: eq(events.isLive, true),
+            with: {
+                user: true,
+            },
+            orderBy: [desc(events.createdAt)],
+        });
+
+        return { success: true, data: liveEvents };
+    } catch (error) {
+        console.error("Error fetching live events:", error);
+        return { success: false, error: "Failed to fetch live events" };
+    }
+}
+

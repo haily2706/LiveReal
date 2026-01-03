@@ -1,4 +1,7 @@
 import { Controller, CreateStreamParams } from "@/app/(home)/stream/lib/controller";
+import { db } from "@/lib/db";
+import { events } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 
 /**
@@ -36,9 +39,17 @@ export async function POST(req: Request) {
 
   try {
     const reqBody = await req.json();
-    const response = await controller.createStream(
-      reqBody as CreateStreamParams
-    );
+    const params = reqBody as CreateStreamParams;
+
+    const response = await controller.createStream(params);
+
+    if (params.room_name) {
+      await db.update(events)
+        .set({
+          isLive: true
+        })
+        .where(eq(events.id, params.room_name));
+    }
 
     return Response.json(response);
   } catch (err) {

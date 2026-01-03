@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { LiveStream, UpcomingEvent } from "@/lib/data";
+import { formatCompactNumber } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, Signal, Bell, Crown, Award } from "lucide-react";
 import { motion } from "framer-motion";
@@ -23,6 +24,9 @@ export function StreamCard({ stream, type, index, rank, showRemindMe = false, is
     const isVertical = propIsVertical ?? stream.isVertical;
     const scheduledFor = (stream as UpcomingEvent).scheduledFor;
 
+    const isBackend = (stream as LiveStream).isBackend;
+    const streamId = isBackend ? stream.id : 'K30d938OpuOOpgP5wtQaQ';
+
     return (
         <motion.div
             className={`group relative flex flex-col gap-3 ${isVertical ? 'row-span-2' : 'col-span-1'}`}
@@ -33,7 +37,7 @@ export function StreamCard({ stream, type, index, rank, showRemindMe = false, is
         >
             {/* Stream/Event Card */}
             <div className={`relative rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group-hover:-translate-y-1 ring-1 ring-white/10 w-full ${isVertical ? 'aspect-[9/16]' : 'aspect-video'}`}>
-                <Link href={`/stream/${'K30d938OpuOOpgP5wtQaQ'}`} className="absolute inset-0 block">
+                <Link href={`/stream/${streamId}`} className="absolute inset-0 block">
                     <Image
                         src={stream.thumbnail}
                         alt={stream.title}
@@ -105,7 +109,7 @@ export function StreamCard({ stream, type, index, rank, showRemindMe = false, is
                             {type === 'live' ? (
                                 <div className="flex items-center gap-1.5 text-white/90 text-xs font-medium bg-black/40 backdrop-blur-md px-2 py-1 rounded-full">
                                     <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                                    {stream.viewers.toLocaleString()} watching
+                                    {formatCompactNumber(stream.viewers)} watching
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-1.5 text-white/90 text-xs font-medium bg-black/40 backdrop-blur-md px-2 py-1 rounded-full">
@@ -130,7 +134,7 @@ export function StreamCard({ stream, type, index, rank, showRemindMe = false, is
                                     {type === 'live' ? (
                                         <div className="flex items-center gap-1.5 text-white/90 text-xs font-medium bg-black/40 backdrop-blur-md px-2 py-1 rounded-full">
                                             <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                                            {stream.viewers.toLocaleString()}
+                                            {formatCompactNumber(stream.viewers)}
                                         </div>
                                     ) : (
                                         <div className="flex items-center gap-1.5 text-white/90 text-xs font-medium bg-black/40 backdrop-blur-md px-2 py-1 rounded-full">
@@ -175,35 +179,37 @@ export function StreamCard({ stream, type, index, rank, showRemindMe = false, is
                         </div>
                     )}
                 </Link>
-            </div>
+            </div >
 
             {/* Horizontal Layout Info (Below) */}
-            {!isVertical && (
-                <div className="flex gap-3 px-1">
-                    <Link href={`/channel/${stream.channel.username}`} className="shrink-0 relative">
-                        <div className={`p-0.5 rounded-full ${type === 'live' ? 'bg-linear-to-tr from-orange-500 to-red-600' : 'bg-linear-to-tr from-blue-500 to-purple-600'}`}>
-                            <Avatar className="h-9 w-9 border-2 border-background">
-                                <AvatarImage src={stream.channel.avatar} />
-                                <AvatarFallback>{stream.channel.name[0]}</AvatarFallback>
-                            </Avatar>
-                        </div>
-                        {type === 'live' && (
-                            <span className="absolute -bottom-0.5 -right-0.5 block h-2.5 w-2.5 rounded-full ring-2 ring-background bg-green-500" />
-                        )}
-                    </Link>
+            {
+                !isVertical && (
+                    <div className="flex gap-3 px-1">
+                        <Link href={`/channel/${stream.channel.username}`} className="shrink-0 relative">
+                            <div className={`p-0.5 rounded-full ${type === 'live' ? 'bg-linear-to-tr from-orange-500 to-red-600' : 'bg-linear-to-tr from-blue-500 to-purple-600'}`}>
+                                <Avatar className="h-9 w-9 border-2 border-background">
+                                    <AvatarImage src={stream.channel.avatar} />
+                                    <AvatarFallback>{stream.channel.name[0]}</AvatarFallback>
+                                </Avatar>
+                            </div>
+                            {type === 'live' && (
+                                <span className="absolute -bottom-0.5 -right-0.5 block h-2.5 w-2.5 rounded-full ring-2 ring-background bg-green-500" />
+                            )}
+                        </Link>
 
-                    <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <h3 className="font-semibold text-base line-clamp-1 leading-tight group-hover:text-primary transition-colors">
-                            {stream.title}
-                        </h3>
-                        <div className="flex items-center gap-2 mt-1">
-                            <Link href={`/channel/${stream.channel.username}`} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                                {stream.channel.name}
-                            </Link>
+                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                            <h3 className="font-semibold text-base line-clamp-1 leading-tight group-hover:text-primary transition-colors">
+                                {stream.title}
+                            </h3>
+                            <div className="flex items-center gap-2 mt-1">
+                                <Link href={`/channel/${stream.channel.username}`} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                                    {stream.channel.name}
+                                </Link>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </motion.div>
+                )
+            }
+        </motion.div >
     );
 }
