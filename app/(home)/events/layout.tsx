@@ -8,12 +8,12 @@ import { cn } from "@/lib/utils";
 const sidebarNavItems = [
     {
         title: "Profile",
-        href: "/profile",
+        href: "/events/profile",
         icon: <User className="w-4 h-4" />,
     },
     {
         title: "Events",
-        href: "/events",
+        href: "/events/list",
         icon: <Calendar className="w-4 h-4" />,
     },
 ]

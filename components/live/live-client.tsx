@@ -13,7 +13,9 @@ import {
     MoreHorizontal,
     MessageSquare,
     VideoIcon,
+    PictureInPicture,
 } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { Chat } from "@/app/(home)/stream/components/chat";
 import { BackgroundBlobs } from "@/components/ui/background-blobs";
 import { LiveKitRoom, VideoConference, GridLayout, ParticipantTile, useTracks, RoomAudioRenderer, ControlBar } from "@livekit/components-react";
@@ -89,6 +91,50 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [likeTrigger, setLikeTrigger] = useState(0);
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const pathname = usePathname();
+
+    // PiP Handler
+    const togglePiP = async () => {
+        try {
+            const videoEl = document.querySelector("video");
+            if (!videoEl) return;
+
+            if (document.pictureInPictureElement) {
+                await document.exitPictureInPicture();
+            } else {
+                await videoEl.requestPictureInPicture();
+            }
+        } catch (error) {
+            console.error("Failed to toggle PiP:", error);
+        }
+    };
+
+    // Auto-PiP on navigation
+    useEffect(() => {
+        // If pathname changes implies we are navigating away.
+        // We try to trigger PiP. Check if we are still mounted? 
+        // Note: Navigate away unmounts component -> closes PiP usually.
+        // But let's try to trigger it.
+        const handleNavigation = async () => {
+            const videoEl = document.querySelector("video");
+            if (videoEl && !document.pictureInPictureElement && videoEl.readyState >= 1) {
+                try {
+                    await videoEl.requestPictureInPicture();
+                } catch (e) {
+                    // Auto-PiP often blocked without user activation
+                    console.log("Auto-PiP blocked or failed:", e);
+                }
+            }
+        };
+
+        // This effect runs when pathname changes.
+        // But if LiveClient is unmounted immediately, this might not run or be too late.
+        // Usually, we compare previous path.
+        // However, standard useEffect dependency on pathname works for client-side nav updates.
+        if (pathname && !pathname.includes(eventId)) {
+            handleNavigation();
+        }
+    }, [pathname, eventId]);
 
     // Fetch Token
     useEffect(() => {
@@ -196,7 +242,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                             </div>
 
                             {/* Video Glow Effect */}
-                            <div className="absolute -inset-1 bg-gradient-to-r from-red-500/20 to-purple-500/20 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-1000 pointer-events-none" />
+                            <div className="absolute -inset-1 bg-linear-to-r from-red-500/20 to-purple-500/20 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-1000 pointer-events-none" />
 
                             <div className="relative h-full w-full z-10 pointer-events-none">
                                 {/* Floating Hearts Container */}
@@ -238,7 +284,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                         {/* Info Section */}
                         <div className="mt-6 grid grid-cols-1 lg:grid-cols-[1fr,350px] gap-6">
                             <div className="space-y-4">
-                                <h1 className="text-2xl font-bold leading-tight tracking-tight bg-gradient-to-r from-foreground via-foreground to-foreground/50 bg-clip-text text-transparent drop-shadow-sm">
+                                <h1 className="text-2xl font-bold leading-tight tracking-tight bg-linear-to-r from-foreground via-foreground to-foreground/50 bg-clip-text text-transparent drop-shadow-sm">
                                     {live.title}
                                 </h1>
 
@@ -296,6 +342,17 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                                                 <ThumbsDown className="w-4 h-4" />
                                             </Button>
                                         </div>
+
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={togglePiP}
+                                            className="rounded-full bg-card/80 backdrop-blur-xl border border-border hover:bg-muted text-foreground h-9 w-9 shadow-lg transition-all"
+                                            title="Picture in Picture"
+                                        >
+                                            <PictureInPicture className="w-4 h-4" />
+                                        </Button>
+
                                         <Button variant="ghost" className="rounded-full bg-card/80 backdrop-blur-xl border border-border hover:bg-muted text-foreground gap-2 px-4 h-9 text-sm font-medium shadow-lg hover:scale-105 transition-all">
                                             <Share2 className="w-4 h-4" />
                                             Share
@@ -336,7 +393,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                     <Sheet open={isChatOpen} onOpenChange={setIsChatOpen}>
                         <SheetTrigger asChild>
                             <Button
-                                className="fixed bottom-6 right-6 z-50 rounded-full h-10 w-10 shadow-2xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white transition-all hover:scale-110 active:scale-95 ring-offset-2 ring-offset-background ring-2 ring-indigo-500 animate-in fade-in zoom-in slide-in-from-bottom-10 duration-500"
+                                className="fixed bottom-6 right-6 z-50 rounded-full h-10 w-10 shadow-2xl bg-linear-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white transition-all hover:scale-110 active:scale-95 ring-offset-2 ring-offset-background ring-2 ring-indigo-500 animate-in fade-in zoom-in slide-in-from-bottom-10 duration-500"
                                 size="icon"
                             >
                                 <MessageSquare className="w-7 h-7 fill-current drop-shadow-md animate-[bounce_2s_infinite]" />

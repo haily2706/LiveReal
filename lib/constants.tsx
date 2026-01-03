@@ -40,7 +40,8 @@ export const PLANS = [
             "Limited streams",
             "Up to 1k viewers per stream",
             "Basic streaming themes",
-            "Standard gift animations"
+            "Standard gift animations",
+            "Standard stream quality"
         ],
         cta: "Get Started Free",
         popular: false,
@@ -61,7 +62,8 @@ export const PLANS = [
             "Unlimited streams",
             "Up to 10k viewers per stream",
             "Pro streaming themes",
-            "Pro gift animations"
+            "Pro gift animations",
+            "Premium HD stream"
         ],
         cta: "Start Pro Trial",
         popular: true,
@@ -82,7 +84,8 @@ export const PLANS = [
             "Unlimited streams",
             "Unlimited viewers per stream",
             "Premium streaming themes",
-            "Premium gift animations"
+            "Premium gift animations",
+            "Premium HD stream"
         ],
         cta: "Go Creator",
         popular: false,

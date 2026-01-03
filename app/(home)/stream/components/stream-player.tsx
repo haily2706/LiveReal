@@ -12,10 +12,11 @@ import {
   useRoomContext,
   useTracks,
 } from "@livekit/components-react";
-import { Eye, EyeOff, LogOut, Power, VolumeX } from "lucide-react";
+import { Eye, EyeOff, LogOut, Power, VolumeX, PictureInPicture } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { FlyingReactions } from "./flying-reactions";
 import { FlyingGifts } from "./flying-gifts";
 import {
@@ -67,7 +68,7 @@ function ActiveStagePlayer({
                 "bg-zinc-900 text-white",
                 large ? "text-4xl" : "text-xl"
               )}>
-                {localParticipant.name?.[0] ?? localParticipant.identity?.[0] ?? "?"}
+                {localParticipant.name?.[0] ?? localParticipant.identity?.[0] ?? ""}
               </AvatarFallback>
             </Avatar>
           </div>
@@ -78,6 +79,7 @@ function ActiveStagePlayer({
       {isCameraEnabled && localVideoTrack && (
         <VideoTrack
           trackRef={localVideoTrack}
+          id="main-video-player"
           className="absolute inset-0 w-full h-full object-cover -scale-x-100 z-20"
         />
       )}
@@ -100,6 +102,53 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
   const [ticker, setTicker] = useState(0);
   const [reactionCount, setReactionCount] = useState(0);
   const [totalCoins, setTotalCoins] = useState(0);
+  const [isInPip, setIsInPip] = useState(false);
+
+  // Handle PiP state
+  useEffect(() => {
+    const onEnterPiP = () => setIsInPip(true);
+    const onLeavePiP = () => setIsInPip(false);
+
+    // Attach to window with capture to catch non-bubbling events from any video element
+    window.addEventListener('enterpictureinpicture', onEnterPiP, { capture: true });
+    window.addEventListener('leavepictureinpicture', onLeavePiP, { capture: true });
+
+    return () => {
+      window.removeEventListener('enterpictureinpicture', onEnterPiP, { capture: true });
+      window.removeEventListener('leavepictureinpicture', onLeavePiP, { capture: true });
+    }
+  }, []);
+
+  const togglePiP = async () => {
+    try {
+      // Try to find the specific main video player
+      let videoEl = document.getElementById("main-video-player") as HTMLElement | null;
+
+      // If the element found is not a video tag (e.g. wrapper), look inside
+      if (videoEl && !(videoEl instanceof HTMLVideoElement)) {
+        videoEl = videoEl.querySelector("video");
+      }
+
+      // Fallback: try finding the first video element in the document
+      if (!videoEl) {
+        videoEl = document.querySelector("video");
+      }
+
+      if (!videoEl || !(videoEl instanceof HTMLVideoElement)) {
+        toast.error("No active stream video found");
+        return;
+      }
+
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+      } else {
+        await videoEl.requestPictureInPicture();
+      }
+    } catch (error) {
+      console.error("Failed to toggle PiP:", error);
+      toast.error("Failed to enter Picture-in-Picture");
+    }
+  };
 
   useEffect(() => {
     const handleParticipantMetadataChanged = () => {
@@ -168,7 +217,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
           Authorization: `Token ${authToken} `,
         },
       });
-      router.push("/events");
+      router.push("/events/list");
     } catch (error) {
       console.error("Failed to end stream", error);
     }
@@ -235,7 +284,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
                   <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
                     <AvatarImage src={toAvatarURL(hostParticipant.identity)} />
                     <AvatarFallback className="text-4xl bg-zinc-900 text-white">
-                      {hostParticipant.name?.[0] ?? hostParticipant.identity?.[0] ?? "?"}
+                      {hostParticipant.name?.[0] ?? hostParticipant.identity?.[0] ?? ""}
                     </AvatarFallback>
                   </Avatar>
                 </div>
@@ -245,6 +294,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
             {isHostCameraEnabled && hostRemoteTrack && (
               <VideoTrack
                 trackRef={hostRemoteTrack}
+                id="main-video-player"
                 className="absolute inset-0 w-full h-full object-cover z-20"
               />
             )}
@@ -258,7 +308,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
                 <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
                   <AvatarImage src={toAvatarURL(streamerId)} />
                   <AvatarFallback className="text-4xl bg-zinc-900 text-white">
-                    {streamerName?.[0] || "?"}
+                    {streamerName?.[0] || ""}
                   </AvatarFallback>
                 </Avatar>
               </div>
@@ -266,16 +316,38 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
             </div>
           </div>
         )}
+
+        {/* PiP Fallback Overlay - Shows when video is popped out */}
+        {isInPip && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-zinc-950/90 backdrop-blur-sm">
+            <div className="flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-300">
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
+                  <AvatarImage src={toAvatarURL(isLocalHost ? localParticipant.identity : hostParticipant?.identity ?? streamerId)} />
+                  <AvatarFallback className="text-4xl bg-zinc-900 text-white">
+                    {isLocalHost ? (localParticipant.name?.[0] ?? 'Y') : (hostParticipant?.name?.[0] ?? streamerName?.[0] ?? "S")}
+                  </AvatarFallback>
+                </Avatar>
+                {/* PiP Badge */}
+                <div className="absolute -bottom-2 -right-2 bg-indigo-500 text-white text-[10px] px-2 py-0.5 rounded-full border-2 border-zinc-950 font-bold shadow-lg flex items-center gap-1">
+                  <PictureInPicture className="w-3 h-3" />
+                  In PiP
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
       </div>
 
 
       {/* === OVERLAY LAYER (Guests) === */}
-      {/* Top Center Row (User modified to flex-col) */}
-      <div className="absolute top-2 left-[-6px] w-full flex flex-col justify-center gap-3 z-20 px-4 pointer-events-none">
-
+      {/* Top Left Stage Corner */}
+      <div className="absolute top-2 left-2 flex flex-col items-start gap-2 z-30 pointer-events-none">
         {/* Local Guest (Me on Stage) */}
         {canHost && !isLocalHost && (
-          <div className="pointer-events-auto w-26 sm:w-42 aspect-video rounded-lg overflow-hidden ring-1 ring-white/10 shadow-xl bg-zinc-900 relative group">
+          <div className="pointer-events-auto w-24 sm:w-36 aspect-video rounded-lg overflow-hidden ring-1 ring-white/10 shadow-xl bg-zinc-900 relative group transition-all duration-300">
             <ActiveStagePlayer
               localParticipant={localParticipant}
               localMetadata={localMetadata}
@@ -289,14 +361,14 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
           return (
             <div
               key={p.identity}
-              className="pointer-events-auto w-26 sm:w-42 aspect-video rounded-lg overflow-hidden ring-1 ring-white/10 shadow-xl bg-zinc-900 relative group"
+              className="pointer-events-auto w-24 sm:w-36 aspect-video rounded-lg overflow-hidden ring-1 ring-white/10 shadow-xl bg-zinc-900 relative group transition-all duration-300"
             >
               {/* Avatar Fallback */}
               <div className="absolute inset-0 flex items-center justify-center bg-zinc-900">
-                <Avatar className="h-12 w-12 border-2 border-white/10 shadow-xl">
+                <Avatar className="h-10 w-10 border-2 border-white/10 shadow-xl">
                   <AvatarImage src={toAvatarURL(p.identity)} />
-                  <AvatarFallback className="text-xl bg-zinc-900 text-white">
-                    {p.name?.[0] ?? p.identity?.[0] ?? "?"}
+                  <AvatarFallback className="text-lg bg-zinc-900 text-white">
+                    {p.name?.[0] ?? p.identity?.[0] ?? ""}
                   </AvatarFallback>
                 </Avatar>
               </div>
@@ -310,7 +382,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
               )}
 
               {/* Name Badge */}
-              <div className="absolute bottom-0 right-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              <div className="absolute bottom-0 left-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                 <span className="text-[9px] font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                   {p.name ?? p.identity}
                 </span>
@@ -318,6 +390,20 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
             </div>
           );
         })}
+      </div>
+
+      {/* Bottom Right Actions */}
+      <div className="absolute bottom-2 right-2 flex flex-col items-end gap-3 z-30 pointer-events-none">
+        {/* PiP Toggle Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={togglePiP}
+          className="pointer-events-auto rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60 text-white h-9 w-9 shadow-lg transition-all"
+          title="Picture in Picture"
+        >
+          <PictureInPicture className="w-4 h-4" />
+        </Button>
       </div>
 
 

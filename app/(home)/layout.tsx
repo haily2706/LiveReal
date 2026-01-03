@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 
 import { cookies } from "next/headers";
 import { BackgroundBlobs } from "@/components/ui/background-blobs";
+import { StreamManager } from "./components/stream-manager";
 
 export default async function HomeLayout({
     children,
@@ -21,19 +22,21 @@ export default async function HomeLayout({
 
     return (
         <HomeProvider defaultCollapsed={defaultCollapsed}>
-            <BackgroundBlobs />
-            <div className="flex min-h-screen">
-                <Sidebar />
-                <MobileBottomNav />
-                <div className="flex-1 flex flex-col min-w-0">
-                    <Suspense fallback={<div className="h-16 border-b border-border/50" />}>
-                        <Navbar />
-                    </Suspense>
-                    <main className="flex-1 pb-20 md:pb-0">
-                        {children}
-                    </main>
+            <StreamManager>
+                <BackgroundBlobs />
+                <div className="flex min-h-screen">
+                    <Sidebar />
+                    <MobileBottomNav />
+                    <div className="flex-1 flex flex-col min-w-0">
+                        <Suspense fallback={<div className="h-16 border-b border-border/50" />}>
+                            <Navbar />
+                        </Suspense>
+                        <main className="flex-1 pb-20 md:pb-0">
+                            {children}
+                        </main>
+                    </div>
                 </div>
-            </div>
+            </StreamManager>
         </HomeProvider>
     );
 }
