@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Loader2, Landmark } from "lucide-react";
 import { toast } from "sonner";
+import { updateCashoutPaymentMethod } from "@/app/actions/wallet";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,9 +21,10 @@ import { Label } from "@/components/ui/label";
 interface AddPaymentMethodModalProps {
     children: React.ReactNode;
     onAddMethod: (method: any) => void;
+    existingMethod?: any;
 }
 
-export function AddPaymentMethodModal({ children, onAddMethod }: AddPaymentMethodModalProps) {
+export function AddPaymentMethodModal({ children, onAddMethod, existingMethod }: AddPaymentMethodModalProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -30,7 +32,7 @@ export function AddPaymentMethodModal({ children, onAddMethod }: AddPaymentMetho
     const [formData, setFormData] = useState({
         accountName: "",
         accountNumber: "",
-        bankName: "",
+        bankName: existingMethod?.title || "",
         routingNumber: "",
     });
 
@@ -44,20 +46,24 @@ export function AddPaymentMethodModal({ children, onAddMethod }: AddPaymentMetho
         setIsLoading(true);
 
         try {
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-
             const newMethod = {
-                id: Math.random().toString(36).substr(2, 9),
+                id: existingMethod?.id || Math.random().toString(36).substr(2, 9),
                 type: 'bank',
                 title: formData.bankName,
                 description: `Checking ending in ${formData.accountNumber.slice(-4)}`,
                 last4: formData.accountNumber.slice(-4),
-                isDefault: false,
+                isDefault: true,
+                expiry: 'Never'
             };
 
+            const result = await updateCashoutPaymentMethod(newMethod);
+
+            if (!result.success) {
+                throw new Error(result.error);
+            }
+
             onAddMethod(newMethod);
-            toast.success("Payment method added successfully");
+            toast.success(existingMethod ? "Payment method updated successfully" : "Payment method added successfully");
             setIsOpen(false);
 
             // Reset form
@@ -84,10 +90,10 @@ export function AddPaymentMethodModal({ children, onAddMethod }: AddPaymentMetho
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-2xl">
                         <Landmark className="h-6 w-6 text-primary" />
-                        Add Cashout Method
+                        {existingMethod ? "Update Cashout Method" : "Add Cashout Method"}
                     </DialogTitle>
                     <DialogDescription>
-                        Link a new bank account to withdraw your earnings efficiently.
+                        {existingMethod ? "Update your linked bank account details." : "Link a new bank account to withdraw your earnings efficiently."}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -104,6 +110,17 @@ export function AddPaymentMethodModal({ children, onAddMethod }: AddPaymentMetho
                         />
                     </div>
                     <div className="space-y-2">
+                        <Label htmlFor="accountNumber">Account Number</Label>
+                        <Input
+                            id="accountNumber"
+                            name="accountNumber"
+                            placeholder="0000000000"
+                            value={formData.accountNumber}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </div>
+                    <div className="space-y-2">
                         <Label htmlFor="bankName">Bank Name</Label>
                         <Input
                             id="bankName"
@@ -114,36 +131,23 @@ export function AddPaymentMethodModal({ children, onAddMethod }: AddPaymentMetho
                             required
                         />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="routingNumber">Routing Number</Label>
-                            <Input
-                                id="routingNumber"
-                                name="routingNumber"
-                                placeholder="000000000"
-                                value={formData.routingNumber}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="accountNumber">Account Number</Label>
-                            <Input
-                                id="accountNumber"
-                                name="accountNumber"
-                                placeholder="0000000000"
-                                value={formData.accountNumber}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="routingNumber">Routing Number</Label>
+                        <Input
+                            id="routingNumber"
+                            name="routingNumber"
+                            placeholder="000000000"
+                            value={formData.routingNumber}
+                            onChange={handleInputChange}
+                            required
+                        />
                     </div>
 
                     <DialogFooter className="pt-4">
                         <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
                         <Button type="submit" disabled={isLoading}>
                             {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                            Add Method
+                            {existingMethod ? "Update Method" : "Add Method"}
                         </Button>
                     </DialogFooter>
                 </form>

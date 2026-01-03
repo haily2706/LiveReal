@@ -11,10 +11,12 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+
 import { Search } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toAvatarURL, PLANS } from "@/lib/constants";
 
 export interface SubscriptionData {
     id: string;
@@ -88,13 +90,30 @@ export const SubscriptionTable = ({ subscriptions }: SubscriptionTableProps) => 
                             filteredSubs.map((sub) => (
                                 <TableRow key={sub.id}>
                                     <TableCell>
-                                        <div className="flex flex-col">
-                                            <span className="font-medium">{sub.user.email}</span>
-                                            <span className="text-xs text-muted-foreground">{sub.user.id}</span>
+                                        <div className="flex items-center gap-3">
+                                            <Avatar>
+                                                <AvatarImage src={toAvatarURL(sub.user.id)} />
+                                                <AvatarFallback>{sub.user.name?.[0]?.toUpperCase() ?? "U"}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">{sub.user.name}</span>
+                                                <span className="text-xs text-muted-foreground">{sub.user.email}</span>
+                                            </div>
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant="outline">{sub.plan.name}</Badge>
+                                        <div className="flex items-center gap-2">
+                                            {(() => {
+                                                const planDetails = PLANS.find(p => p.name === sub.plan.name) || PLANS[0];
+                                                const Icon = planDetails.icon;
+                                                return (
+                                                    <>
+                                                        <Icon className={cn("h-4 w-4", `text-${planDetails.color}-500`)} />
+                                                        <span className="font-medium whitespace-nowrap">{sub.plan.name}</span>
+                                                    </>
+                                                );
+                                            })()}
+                                        </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex flex-col">
@@ -103,12 +122,16 @@ export const SubscriptionTable = ({ subscriptions }: SubscriptionTableProps) => 
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge
-                                            variant={sub.status === "active" ? "default" : "secondary"}
-                                            className="opacity-80"
-                                        >
-                                            {sub.status || "Unknown"}
-                                        </Badge>
+                                        <div className="flex items-center gap-2">
+                                            <div className={cn(
+                                                "h-2 w-2 rounded-full",
+                                                sub.status === "active" ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" :
+                                                    "bg-gray-500 shadow-[0_0_8px_rgba(107,114,128,0.4)]"
+                                            )} />
+                                            <span className="capitalize text-sm font-medium">
+                                                {sub.status || "Unknown"}
+                                            </span>
+                                        </div>
                                     </TableCell>
                                     <TableCell className="text-muted-foreground text-sm">
                                         {sub.currentPeriodEnd

@@ -11,7 +11,9 @@ import {
     Users,
     Zap,
     Sparkles,
-    Crown,
+    ChevronDown,
+    ChevronRight,
+    CreditCard,
     Banknote
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -22,6 +24,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSidebar } from "./provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
@@ -31,6 +41,7 @@ export function Sidebar() {
     const router = useRouter();
     const { isCollapsed, toggleSidebar } = useSidebar();
     const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+    const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({ "Transactions": true }); // Default open for better visibility
     const subscription = "Creator" as "Free" | "Pro" | "Creator"; // Mock Data
 
     const supabase = createClient();
@@ -62,6 +73,34 @@ export function Sidebar() {
         router.push("/");
     };
 
+    const toggleGroup = (label: string) => {
+        if (isCollapsed) {
+            toggleSidebar(); // Auto expand sidebar if clicking a group
+            setTimeout(() => {
+                setOpenGroups(prev => ({ ...prev, [label]: !prev[label] }));
+            }, 100);
+        } else {
+            setOpenGroups(prev => ({ ...prev, [label]: !prev[label] }));
+        }
+    };
+
+    const menuItems = [
+        { icon: CircleGauge, label: "Dashboard", href: "/dashboard", color: "text-blue-400" },
+        { icon: Users, label: "Users", href: "/dashboard/users", color: "text-pink-400" },
+        {
+            icon: Wallet,
+            label: "Transactions",
+            href: "#transactions", // Virtual href for grouping
+            color: "text-purple-400",
+            children: [
+                { icon: Banknote, label: "Cash Ins", href: "/dashboard/cash-ins", color: "text-green-400" },
+                { icon: CreditCard, label: "Cash Outs", href: "/dashboard/cash-outs", color: "text-orange-400" },
+                { icon: Zap, label: "Subscriptions", href: "/dashboard/subscriptions", color: "text-yellow-400" },
+            ]
+        },
+        { icon: Settings, label: "Settings", href: "/dashboard/settings", color: "text-gray-400" }
+    ];
+
     return (
         <aside
             className={cn(
@@ -88,20 +127,6 @@ export function Sidebar() {
                 >
                     <Menu className="h-6 w-6" />
                 </Button>
-                {/* <Badge
-                    variant="outline"
-                    className={cn(
-                        "border-0 uppercase text-[10px] h-5 px-1.5 font-bold tracking-wider gap-1",
-                        subscription === "Free" && "bg-muted text-muted-foreground",
-                        subscription === "Pro" && "bg-blue-500/15 text-blue-600 dark:text-blue-400",
-                        subscription === "Creator" && "bg-linear-to-r from-[#FF3B5C] to-[#EF233C] text-white shadow-[0_2px_10px_rgba(255,59,92,0.3)]"
-                    )}
-                >
-                    {subscription === "Free" && <Sparkles className="w-3 h-3" />}
-                    {subscription === "Pro" && <Zap className="w-3 h-3 fill-current" />}
-                    {subscription === "Creator" && <Crown className="w-3 h-3 fill-current" />}
-                    {subscription}
-                </Badge> */}
             </div>
 
             <div className=" mt-4 flex flex-col flex-1 h-full overflow-y-auto custom-scrollbar relative z-10 px-2 space-y-2 pb-4 gap-4">
@@ -174,21 +199,17 @@ export function Sidebar() {
                     {!isCollapsed && (
                         <h3 className="px-2 text-xs font-bold text-muted-foreground uppercase tracking-widest mb-3 pl-4">Menu</h3>
                     )}
-                    <div className="space-y-2" onMouseLeave={() => setHoveredLink(null)}>
-                        {[
-                            { icon: CircleGauge, label: "Dashboard", href: "/dashboard", color: "text-blue-400" },
-                            { icon: Users, label: "Users", href: "/dashboard/users", color: "text-pink-400" },
-                            { icon: Banknote, label: "Cash Ins", href: "/dashboard/cash-ins", color: "text-green-400" },
-                            { icon: Zap, label: "Subscriptions", href: "/dashboard/subscriptions", color: "text-yellow-400" },
-                            { icon: Settings, label: "Settings", href: "/dashboard/settings", color: "text-gray-400" }
-                        ].map((link) => (
-                            <SidebarLink
-                                key={link.href}
-                                link={link}
+                    <div className="space-y-1" onMouseLeave={() => setHoveredLink(null)}>
+                        {menuItems.map((item) => (
+                            <SidebarItem
+                                key={item.label}
+                                item={item}
                                 pathname={pathname}
                                 isCollapsed={isCollapsed}
-                                isHovered={hoveredLink === link.href}
-                                onHover={() => setHoveredLink(link.href)}
+                                isHovered={hoveredLink === item.label}
+                                onHover={() => setHoveredLink(item.label)}
+                                isOpen={openGroups[item.label]}
+                                toggleOpen={() => toggleGroup(item.label)}
                             />
                         ))}
                     </div>
@@ -214,20 +235,218 @@ export function Sidebar() {
     );
 }
 
+function SidebarItem({
+    item,
+    pathname,
+    isCollapsed,
+    isHovered,
+    onHover,
+    isOpen,
+    toggleOpen
+}: {
+    item: any,
+    pathname: string,
+    isCollapsed: boolean,
+    isHovered: boolean,
+    onHover: () => void,
+    isOpen?: boolean,
+    toggleOpen?: () => void
+}) {
+    // Check if this item or any of its children are active
+    const isActiveLink = (href: string) => {
+        if (href === "/dashboard") return pathname === href;
+        return pathname === href || pathname?.startsWith(`${href}/`);
+    };
+
+    const isChildActive = item.children?.some((child: any) => isActiveLink(child.href));
+    const active = isActiveLink(item.href) || isChildActive;
+
+    if (item.children) {
+        if (isCollapsed) {
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <div
+                            onMouseEnter={onHover}
+                            className={cn(
+                                "relative flex items-center transition-all duration-300 group rounded-2xl mx-auto overflow-hidden cursor-pointer select-none justify-center w-12 h-12 px-0 py-3",
+                                active && "bg-linear-to-r from-[#FF3B5C]/10 via-purple-500/5 to-transparent"
+                            )}
+                        >
+                            {/* Active Indicator Bar (Parent) */}
+                            {active && (
+                                <motion.div
+                                    layoutId="active-indicator-parent"
+                                    className="absolute left-0 w-[3px] h-6 bg-[#FF3B5C] rounded-r-full shadow-[0_0_10px_#FF3B5C]"
+                                    initial={{ opacity: 0, scaleY: 0.5 }}
+                                    animate={{ opacity: 1, scaleY: 1 }}
+                                    transition={{ duration: 0.2 }}
+                                />
+                            )}
+
+                            {/* Hover BG */}
+                            {!active && isHovered && (
+                                <motion.div
+                                    layoutId="hover-nav-bg"
+                                    className="absolute inset-0 bg-muted/50 rounded-2xl"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                />
+                            )}
+
+                            <div className={cn(
+                                "relative z-10 flex items-center justify-center transition-all duration-300",
+                                active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                            )}>
+                                <item.icon className={cn(
+                                    "h-[22px] w-[22px] transition-all duration-300",
+                                    active ? "text-[#FF3B5C] drop-shadow-[0_0_8px_rgba(255,59,92,0.5)]" : "",
+                                    !active && isHovered ? item.color : "",
+                                    "group-hover:scale-110"
+                                )} />
+                            </div>
+                        </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent side="right" align="start" sideOffset={10} className="w-[200px] ml-2 backdrop-blur-xl bg-background/80">
+                        <DropdownMenuLabel>{item.label}</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {item.children.map((child: any) => (
+                            <DropdownMenuItem key={child.href} asChild>
+                                <Link href={child.href} className="cursor-pointer flex items-center gap-2">
+                                    <child.icon className={cn("h-4 w-4", child.color)} />
+                                    <span>{child.label}</span>
+                                </Link>
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        }
+
+        return (
+            <div className="space-y-1">
+                <div
+                    onClick={toggleOpen}
+                    onMouseEnter={onHover}
+                    className={cn(
+                        "relative flex items-center transition-all duration-300 group px-3 py-3 rounded-2xl mx-2 overflow-hidden cursor-pointer select-none",
+                        isCollapsed ? "justify-center px-0 w-12 h-12 mx-auto" : "w-auto justify-between",
+                        active && !isOpen && "bg-linear-to-r from-[#FF3B5C]/10 via-purple-500/5 to-transparent"
+                    )}
+                >
+                    {/* Active Indicator Bar (Parent) only if closed and active child */}
+                    {active && !isOpen && (
+                        <motion.div
+                            layoutId="active-indicator-parent"
+                            className="absolute left-0 w-[3px] h-6 bg-[#FF3B5C] rounded-r-full shadow-[0_0_10px_#FF3B5C]"
+                            initial={{ opacity: 0, scaleY: 0.5 }}
+                            animate={{ opacity: 1, scaleY: 1 }}
+                            transition={{ duration: 0.2 }}
+                        />
+                    )}
+
+                    {/* Hover BG */}
+                    {!active && isHovered && (
+                        <motion.div
+                            layoutId="hover-nav-bg"
+                            className="absolute inset-0 bg-muted/50 rounded-2xl"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        />
+                    )}
+
+                    <div className={cn(
+                        "relative z-10 flex items-center transition-all duration-300",
+                        isCollapsed ? "justify-center" : "gap-4",
+                        active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                    )}>
+                        <item.icon className={cn(
+                            "h-[22px] w-[22px] transition-all duration-300",
+                            active ? "text-[#FF3B5C] drop-shadow-[0_0_8px_rgba(255,59,92,0.5)]" : "",
+                            !active && isHovered ? item.color : "",
+                            "group-hover:scale-110"
+                        )} />
+
+                        {!isCollapsed && (
+                            <span className={cn(
+                                "text-sm font-medium tracking-wide transition-all duration-300",
+                                active ? "font-bold" : ""
+                            )}>
+                                {item.label}
+                            </span>
+                        )}
+                    </div>
+
+                    {!isCollapsed && (
+                        <div className="relative z-10 text-muted-foreground">
+                            {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        </div>
+                    )}
+                </div>
+
+                <AnimatePresence>
+                    {isOpen && !isCollapsed && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                        >
+                            <div className="flex flex-col space-y-1 ml-4 border-l border-border/50 pl-2">
+                                {item.children.map((child: any) => (
+                                    <SidebarLink
+                                        key={child.href}
+                                        link={child}
+                                        pathname={pathname}
+                                        isCollapsed={isCollapsed}
+                                        isHovered={false} // No hover effect from parent
+                                        onHover={() => { }} // No hover logic needed for children for now or can implement individual hover
+                                        isChild={true}
+                                    />
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        );
+    }
+
+    return (
+        <SidebarLink
+            link={item}
+            pathname={pathname}
+            isCollapsed={isCollapsed}
+            isHovered={isHovered}
+            onHover={onHover}
+        />
+    );
+}
+
 function SidebarLink({
     link,
     pathname,
     isCollapsed,
     isHovered,
-    onHover
+    onHover,
+    isChild = false
 }: {
     link: any,
     pathname: string,
     isCollapsed: boolean,
     isHovered: boolean,
-    onHover: () => void
+    onHover: () => void,
+    isChild?: boolean
 }) {
-    const active = isActive(pathname, link.href);
+    const isActiveLink = (href: string) => {
+        if (href === "/dashboard") return pathname === href;
+        return pathname === href || pathname?.startsWith(`${href}/`);
+    };
+
+    const active = isActiveLink(link.href);
 
     return (
         <Link
@@ -237,7 +456,8 @@ function SidebarLink({
         >
             <div
                 className={cn(
-                    "relative flex items-center transition-all duration-300 group px-3 py-3 rounded-2xl mx-2 overflow-hidden",
+                    "relative flex items-center transition-all duration-300 group rounded-2xl overflow-hidden",
+                    isChild ? "px-3 py-2 mx-1" : "px-3 py-3 mx-2",
                     isCollapsed ? "justify-center px-0 w-12 h-12 mx-auto" : "w-auto",
                     active && "bg-linear-to-r from-[#FF3B5C]/10 via-purple-500/5 to-transparent"
                 )}
@@ -246,8 +466,11 @@ function SidebarLink({
                 {/* Active Indicator Bar */}
                 {active && (
                     <motion.div
-                        layoutId="active-indicator"
-                        className="absolute left-0 w-[3px] h-6 bg-[#FF3B5C] rounded-r-full shadow-[0_0_10px_#FF3B5C]"
+                        layoutId={`active-indicator-${link.href}`}
+                        className={cn(
+                            "absolute left-0 bg-[#FF3B5C] rounded-r-full shadow-[0_0_10px_#FF3B5C]",
+                            isChild ? "w-[2px] h-4" : "w-[3px] h-6"
+                        )}
                         initial={{ opacity: 0, scaleY: 0.5 }}
                         animate={{ opacity: 1, scaleY: 1 }}
                         transition={{ duration: 0.2 }}
@@ -272,7 +495,8 @@ function SidebarLink({
                     active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                 )}>
                     <link.icon className={cn(
-                        "h-[22px] w-[22px] transition-all duration-300",
+                        "transition-all duration-300",
+                        isChild ? "h-[18px] w-[18px]" : "h-[22px] w-[22px]",
                         active ? "text-[#FF3B5C] drop-shadow-[0_0_8px_rgba(255,59,92,0.5)]" : "",
                         !active && isHovered ? link.color : "",
                         isCollapsed ? "" : "",
@@ -281,7 +505,8 @@ function SidebarLink({
 
                     {!isCollapsed && (
                         <span className={cn(
-                            "text-sm font-medium tracking-wide transition-all duration-300",
+                            "font-medium tracking-wide transition-all duration-300",
+                            isChild ? "text-xs" : "text-sm",
                             active ? "font-bold" : ""
                         )}>
                             {link.label}
@@ -293,9 +518,3 @@ function SidebarLink({
     );
 }
 
-function isActive(pathname: string, href: string) {
-    if (href === "/dashboard") {
-        return pathname === href;
-    }
-    return pathname === href || pathname?.startsWith(`${href}/`);
-}

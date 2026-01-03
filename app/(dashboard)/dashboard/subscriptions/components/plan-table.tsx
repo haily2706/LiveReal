@@ -9,26 +9,19 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Search, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, cn } from "@/lib/utils";
 import { Plan } from "@/lib/types";
+import { PLANS } from "@/lib/constants";
 
 interface PlansTableProps {
     plans: Plan[];
 }
 
 export const PlansTable = ({ plans }: PlansTableProps) => {
-    const [searchQuery, setSearchQuery] = useState("");
     const [isExpanded, setIsExpanded] = useState(false);
-
-    const filteredPlans = plans.filter((plan) =>
-        plan.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        plan.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
 
     return (
         <div className="flex flex-col gap-8">
@@ -42,17 +35,6 @@ export const PlansTable = ({ plans }: PlansTableProps) => {
                             </CardDescription>
                         </div>
                         <div className="flex items-center gap-4">
-                            {isExpanded && (
-                                <div className="relative w-full max-w-sm">
-                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                        placeholder="Search plans..."
-                                        className="pl-8"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                    />
-                                </div>
-                            )}
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -79,19 +61,27 @@ export const PlansTable = ({ plans }: PlansTableProps) => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredPlans.length === 0 ? (
+                                {plans.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={4} className="h-24 text-center">
                                             No plans found.
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    filteredPlans.map((plan) => (
+                                    plans.map((plan) => (
                                         <TableRow key={plan.id}>
                                             <TableCell>
-                                                <div className="flex flex-col">
-                                                    <span className="font-medium">{plan.name}</span>
-
+                                                <div className="flex items-center gap-2">
+                                                    {(() => {
+                                                        const planDetails = PLANS.find(p => p.name === plan.name) || PLANS[0];
+                                                        const Icon = planDetails.icon;
+                                                        return (
+                                                            <>
+                                                                <Icon className={cn("h-4 w-4", `text-${planDetails.color}-500`)} />
+                                                                <span className="font-medium">{plan.name}</span>
+                                                            </>
+                                                        );
+                                                    })()}
                                                 </div>
                                             </TableCell>
                                             <TableCell>
@@ -109,12 +99,15 @@ export const PlansTable = ({ plans }: PlansTableProps) => {
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <Badge
-                                                    variant={plan.active ? "default" : "secondary"}
-                                                    className="opacity-80"
-                                                >
-                                                    {plan.active ? "Active" : "Inactive"}
-                                                </Badge>
+                                                <div className="flex items-center gap-2">
+                                                    <div className={cn(
+                                                        "h-2 w-2 rounded-full",
+                                                        plan.active ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" : "bg-gray-500"
+                                                    )} />
+                                                    <span className="text-sm font-medium">
+                                                        {plan.active ? "Active" : "Inactive"}
+                                                    </span>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))

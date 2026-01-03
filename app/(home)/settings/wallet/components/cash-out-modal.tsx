@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, ArrowUpRight, DollarSign, Wallet } from "lucide-react";
+import { Loader2, ArrowUpRight, DollarSign, Wallet, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -16,8 +16,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
 
 // Define locally to avoid dependency issues for now, can be imported if shared
 interface PaymentMethod {
@@ -38,8 +36,10 @@ export function CashOutModal({ children, balance, paymentMethods }: CashOutModal
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [amount, setAmount] = useState("");
-    const [selectedMethod, setSelectedMethod] = useState("");
     const [error, setError] = useState("");
+
+    // Identify the single linked account
+    const linkedAccount = paymentMethods[0];
 
     const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
@@ -57,29 +57,38 @@ export function CashOutModal({ children, balance, paymentMethods }: CashOutModal
     };
 
     const handleCashOut = async () => {
-        if (!amount || !selectedMethod) {
-            setError("Please fill in all fields");
+        if (!amount || !linkedAccount) {
+            setError("Please ensure you have a valid account linked and entered an amount");
             return;
         }
 
-        if (parseFloat(amount) > balance) {
+        const numVal = parseFloat(amount);
+        if (numVal > balance) {
             setError("Insufficient funds");
             return;
         }
 
         setIsLoading(true);
+        setError("");
 
         try {
-            // Simulate API Request
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            // Import dynamically
+            const { requestCashout } = await import("@/app/actions/wallet");
 
-            toast.success(`Successfully initiated withdrawal of $${parseFloat(amount).toFixed(2)}`);
-            setIsOpen(false);
-            setAmount("");
-            setSelectedMethod("");
+            const result = await requestCashout(numVal, linkedAccount.id);
+
+            if (result.success) {
+                toast.success(`Successfully initiated withdrawal of $${numVal.toFixed(2)}`);
+                setIsOpen(false);
+                setAmount("");
+            } else {
+                setError(result.error || "Failed to process withdrawal");
+                toast.error(result.error || "Failed to process withdrawal");
+            }
         } catch (error) {
             console.error(error);
             toast.error("Failed to process withdrawal");
+            setError("An unexpected error occurred");
         } finally {
             setIsLoading(false);
         }
@@ -102,8 +111,33 @@ export function CashOutModal({ children, balance, paymentMethods }: CashOutModal
                 </DialogHeader>
 
                 <div className="space-y-6 pt-4">
-                    <div className="bg-muted/50 p-4 rounded-lg flex items-center justify-between border">
-                        <div>
+                    {/* CashOut Account Display (Moved to Top) */}
+                    <div className="flex flex-col gap-4">
+                        <Label>Cash Out To</Label>
+                        {linkedAccount ? (
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-background p-2 rounded-full border">
+                                        <CreditCard className="h-4 w-4 text-muted-foreground" />
+                                    </div>
+                                    <div>
+                                        <p className="font-medium text-sm">{linkedAccount.title}</p>
+                                        <p className="text-xs text-muted-foreground">{linkedAccount.description}</p>
+                                    </div>
+                                </div>
+                                {linkedAccount.last4 && (
+                                    <span className="text-xs font-mono text-muted-foreground">•••• {linkedAccount.last4}</span>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="p-4 border border-dashed rounded-lg text-center text-muted-foreground bg-muted/20">
+                                <p className="text-sm">No payment method connected</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                        <div className="space-y-3">
                             <p className="text-sm font-medium text-muted-foreground">Available Balance</p>
                             <p className="text-2xl font-bold">${balance.toFixed(2)}</p>
                         </div>
@@ -111,7 +145,7 @@ export function CashOutModal({ children, balance, paymentMethods }: CashOutModal
                     </div>
 
                     <div className="space-y-4">
-                        <div className="space-y-2">
+                        <div className="flex flex-col gap-4">
                             <Label>Withdrawal Amount</Label>
                             <div className="relative">
                                 <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -127,28 +161,6 @@ export function CashOutModal({ children, balance, paymentMethods }: CashOutModal
                             </div>
                             {error && <p className="text-xs text-red-500">{error}</p>}
                         </div>
-
-                        <div className="space-y-2">
-                            <Label>Destination</Label>
-                            <Select onValueChange={setSelectedMethod} value={selectedMethod}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select account" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {paymentMethods.length > 0 ? (
-                                        paymentMethods.map((method) => (
-                                            <SelectItem key={method.id} value={method.id}>
-                                                <span className="font-medium indent-1">{method.title}</span> - <span className="text-muted-foreground text-xs">{method.description}</span>
-                                            </SelectItem>
-                                        ))
-                                    ) : (
-                                        <div className="p-2 text-sm text-center text-muted-foreground">
-                                            No payment methods added. Please add one first.
-                                        </div>
-                                    )}
-                                </SelectContent>
-                            </Select>
-                        </div>
                     </div>
 
                     <DialogFooter>
@@ -156,7 +168,7 @@ export function CashOutModal({ children, balance, paymentMethods }: CashOutModal
                         <Button
                             className="bg-red-600 hover:bg-red-700 text-white"
                             onClick={handleCashOut}
-                            disabled={isLoading || !!error || !amount || !selectedMethod}
+                            disabled={isLoading || !!error || !amount || !linkedAccount}
                         >
                             {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Confirm Cash Out"}
                         </Button>

@@ -15,6 +15,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Search, Plus, MoreHorizontal } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { toAvatarURL } from "@/lib/constants";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -22,14 +24,12 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { useState, useTransition } from "react";
 import { updateUserRole } from "./actions";
 import { toast } from "sonner";
@@ -97,9 +97,7 @@ export function UsersTable({ users }: UsersTableProps) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[80px]">Avatar</TableHead>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Role</TableHead>
+                                <TableHead>User</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead>Location</TableHead>
                                 <TableHead>Last Active</TableHead>
@@ -117,43 +115,40 @@ export function UsersTable({ users }: UsersTableProps) {
                                 filteredUsers.map((user) => (
                                     <TableRow key={user.id}>
                                         <TableCell>
-                                            <Avatar className="h-9 w-9">
-                                                <AvatarImage src={user.avatar} alt={user.name} />
-                                                <AvatarFallback>{user.name[0]}</AvatarFallback>
-                                            </Avatar>
+                                            <div className="flex items-center gap-3">
+                                                <Avatar className="h-9 w-9">
+                                                    <AvatarImage src={toAvatarURL(user.id)} alt={user.name} />
+                                                    <AvatarFallback>{user.name[0]}</AvatarFallback>
+                                                </Avatar>
+                                                <div className="flex flex-col">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-medium">{user.name}</span>
+                                                        {user.role !== UserRole.USER && (
+                                                            <span className="text-[6px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium uppercase tracking-wider">
+                                                                {user.role}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-xs text-muted-foreground">{user.email}</span>
+                                                </div>
+                                            </div>
                                         </TableCell>
+
                                         <TableCell>
-                                            <div className="flex flex-col">
-                                                <span className="font-medium">{user.name}</span>
-                                                <span className="text-xs text-muted-foreground">{user.email}</span>
+                                            <div className="flex items-center gap-2">
+                                                <div className={cn(
+                                                    "h-2 w-2 rounded-full",
+                                                    user.status === 'Active' ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" :
+                                                        user.status === 'Suspended' ? "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]" :
+                                                            "bg-gray-500 shadow-[0_0_8px_rgba(107,114,128,0.4)]"
+                                                )} />
+                                                <span className="capitalize text-sm font-medium">
+                                                    {user.status}
+                                                </span>
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <Select
-                                                defaultValue={user.role}
-                                                onValueChange={(value) => handleRoleChange(user.id, value as UserRole)}
-                                                disabled={isPending}
-                                            >
-                                                <SelectTrigger className="w-[110px] h-8 border-none">
-                                                    <SelectValue placeholder="Select role" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value={UserRole.USER}>{UserRole.USER}</SelectItem>
-                                                    <SelectItem value={UserRole.MANAGER}>{UserRole.MANAGER}</SelectItem>
-                                                    <SelectItem value={UserRole.ADMIN}>{UserRole.ADMIN}</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge
-                                                variant={user.status === 'Active' ? 'default' : user.status === 'Suspended' ? 'destructive' : 'secondary'}
-                                                className="opacity-80"
-                                            >
-                                                {user.status}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell>
-                                            {user.location || "N/A"}
+                                            {(!user.location || user.location === "Unknown") ? "" : user.location}
                                         </TableCell>
                                         <TableCell className="text-muted-foreground text-sm">
                                             {user.lastActive}
@@ -172,7 +167,16 @@ export function UsersTable({ users }: UsersTableProps) {
                                                         Copy Email
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
-                                                    <DropdownMenuItem>View details</DropdownMenuItem>
+                                                    <DropdownMenuSub>
+                                                        <DropdownMenuSubTrigger>Change Role</DropdownMenuSubTrigger>
+                                                        <DropdownMenuSubContent>
+                                                            <DropdownMenuRadioGroup value={user.role} onValueChange={(v) => handleRoleChange(user.id, v as UserRole)}>
+                                                                <DropdownMenuRadioItem value={UserRole.USER}>User</DropdownMenuRadioItem>
+                                                                <DropdownMenuRadioItem value={UserRole.MANAGER}>Manager</DropdownMenuRadioItem>
+                                                                <DropdownMenuRadioItem value={UserRole.ADMIN}>Admin</DropdownMenuRadioItem>
+                                                            </DropdownMenuRadioGroup>
+                                                        </DropdownMenuSubContent>
+                                                    </DropdownMenuSub>
                                                     <DropdownMenuItem className="text-red-500">Suspend User</DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>

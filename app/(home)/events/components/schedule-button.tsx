@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import {Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -25,7 +25,7 @@ export function ScheduleButton() {
                         variant="ghost"
                         size="default"
                     >
-                        <Plus className="h-5 w-5" />
+                        <Video className="h-5 w-5" />
                         <span className="font-medium">Schedule</span>
                     </Button>
                 </DropdownMenuTrigger>

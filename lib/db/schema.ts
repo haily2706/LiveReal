@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, integer, smallint } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, boolean, integer, smallint, json } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
     id: text('id').primaryKey(), // Supabase Auth ID
@@ -9,6 +9,7 @@ export const users = pgTable('users', {
     location: text('location'),
     hbarAccountId: text('hbar_account_id'),
     hbarPrivateKey: text('hbar_private_key'),
+    cashoutPaymentMethod: json('cashout_payment_method'),
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
 });
@@ -48,6 +49,15 @@ export const cashIns = pgTable('cash_ins', {
     amount: text('amount').notNull(), // Amount in cents
     currency: text('currency').notNull(),
     status: text('status'), // succeeded, pending, failed
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const cashOuts = pgTable('cash_outs', {
+    id: text('id').primaryKey(),
+    userId: text('user_id').notNull().references(() => users.id),
+    amount: text('amount').notNull(),
+    status: smallint('status').default(0), // Open=0, Approval=1, Rejected=2, Transfered=3
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
 });

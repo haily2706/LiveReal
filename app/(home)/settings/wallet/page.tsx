@@ -5,13 +5,27 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Plus, ArrowUpRight, ArrowDownLeft, CreditCard, MoreHorizontal, Wallet as WalletIcon, CheckCircle2, XCircle, Clock, Landmark } from "lucide-react";
+import { Plus, ArrowUpRight, ArrowDownLeft, CreditCard, MoreHorizontal, Wallet as WalletIcon, CheckCircle2, XCircle, Clock, Landmark, Trash2, Pencil, ArrowRightLeft } from "lucide-react";
 import { Coin } from "@/components/ui/coin";
 import Image from "next/image";
 import { CashInModal } from "./components/cash-in-modal";
 import { CashOutModal } from "./components/cash-out-modal";
 import { AddPaymentMethodModal } from "./components/add-payment-method-modal";
 import { Badge } from "@/components/ui/badge";
+import { getCashoutPaymentMethod, deleteCashoutPaymentMethod, getCashInTransactions, getCashOutTransactions } from "@/app/actions/wallet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Transaction = {
     id: string;
@@ -31,31 +45,35 @@ type PaymentMethod = {
     expiry?: string;
 };
 
+const getCashOutStatusLabel = (status: number) => {
+    switch (status) {
+        case 0: return 'Pending';
+        case 1: return 'Approved';
+        case 2: return 'Rejected';
+        case 3: return 'Transferred';
+        default: return 'Unknown';
+    }
+};
+
 export default function WalletPage() {
     const [balanceData, setBalanceData] = useState<{
         hbarBalance: string;
         tokenBalance: string;
         accountId: string;
     } | null>(null);
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [cashInTransactions, setCashInTransactions] = useState<any[]>([]);
+    const [cashOutTransactions, setCashOutTransactions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-        {
-            id: '1',
-            type: 'bank',
-            title: 'Chase Bank',
-            description: 'Checking ending in 4242',
-            last4: '4242',
-            isDefault: true
-        }
-    ]);
+    const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [balanceRes, transactionsRes] = await Promise.all([
+                const [balanceRes, cashIns, cashOuts, paymentMethodData] = await Promise.all([
                     fetch('/api/wallet/balance'),
-                    fetch('/api/wallet/transactions')
+                    getCashInTransactions(),
+                    getCashOutTransactions(),
+                    getCashoutPaymentMethod()
                 ]);
 
                 if (balanceRes.ok) {
@@ -63,9 +81,13 @@ export default function WalletPage() {
                     setBalanceData(data);
                 }
 
-                if (transactionsRes.ok) {
-                    const data = await transactionsRes.json();
-                    setTransactions(data);
+                setCashInTransactions(cashIns);
+                setCashOutTransactions(cashOuts);
+
+                if (paymentMethodData) {
+                    setPaymentMethods([paymentMethodData]);
+                } else {
+                    setPaymentMethods([]);
                 }
             } catch (error) {
                 console.error("Failed to fetch wallet data", error);
@@ -97,7 +119,22 @@ export default function WalletPage() {
     };
 
     const handleAddMethod = (newMethod: PaymentMethod) => {
-        setPaymentMethods([...paymentMethods, newMethod]);
+        setPaymentMethods([newMethod]);
+    };
+
+    const handleDeleteMethod = async () => {
+        try {
+            const result = await deleteCashoutPaymentMethod();
+            if (result.success) {
+                setPaymentMethods([]);
+                toast.success("Payment method removed");
+            } else {
+                toast.error("Failed to remove payment method");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to remove payment method");
+        }
     };
 
     const usdBalance = balanceData ? parseInt(balanceData.tokenBalance) / 100 : 0;
@@ -109,15 +146,10 @@ export default function WalletPage() {
                 <p className="text-sm text-muted-foreground">
                     Manage your balance, cash in/out, and payment methods.
                 </p>
-                {balanceData && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                        Hedera Account ID: <span className="font-mono">{balanceData.accountId}</span>
-                    </p>
-                )}
             </div>
 
             {/* Balance Section */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                 <Card className="col-span-2 overflow-hidden relative border-none bg-linear-to-br from-primary/10 via-primary/5 to-background shadow-xl group">
                     {/* Background Coin */}
                     <div className="absolute -right-5 -bottom-5 opacity-[0.05] group-hover:opacity-15 transition-all duration-500 rotate-[15deg] group-hover:rotate-0 scale-100 group-hover:scale-110 pointer-events-none">
@@ -145,13 +177,6 @@ export default function WalletPage() {
                                 </div>
                             </>
                         )}
-
-                        <div className="flex items-center gap-2 mt-2">
-                            <div className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 text-xs font-medium">
-                                +20.1%
-                            </div>
-                            <span className="text-xs text-muted-foreground">from last month</span>
-                        </div>
                     </CardContent>
                 </Card>
 
@@ -175,28 +200,40 @@ export default function WalletPage() {
                         <p className="text-[10px] text-muted-foreground text-center mt-1 group-hover:text-muted-foreground/80">Withdraw funds to bank</p>
                     </Card>
                 </CashOutModal>
+
+                <Card
+                    className="col-span-1 group flex flex-col justify-center items-center p-4 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10"
+                    onClick={() => toast.info("Transfer feature coming soon")}
+                >
+                    <div className="h-10 w-10 rounded-full bg-blue-500/10 group-hover:scale-110 group-hover:bg-blue-500 text-blue-500 group-hover:text-white flex items-center justify-center mb-2 transition-all duration-300 shadow-sm">
+                        <ArrowRightLeft className="h-5 w-5" />
+                    </div>
+                    <div className="font-bold text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Transfer</div>
+                    <p className="text-[10px] text-muted-foreground text-center mt-1 group-hover:text-muted-foreground/80">Send funds to others</p>
+                </Card>
             </div>
 
             {/* Cashout Methods */}
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h4 className="text-base font-semibold">Cashout Methods</h4>
-                        <p className="text-sm text-muted-foreground">Manage accounts for withdrawals</p>
+                        <h4 className="text-base font-semibold">Cashout Payment Method</h4>
+                        <p className="text-sm text-muted-foreground">Manage bank account for withdrawals</p>
                     </div>
-                    <AddPaymentMethodModal onAddMethod={handleAddMethod}>
-                        <Button variant="outline" size="sm" className="h-9 gap-1 rounded-full px-4 hover:border-primary/50 hover:text-primary transition-colors">
-                            <Plus className="h-4 w-4" />
-                            Add New
-                        </Button>
-                    </AddPaymentMethodModal>
+
                 </div>
 
                 <Card className="overflow-hidden border-muted/60">
                     <CardContent className="p-0">
                         {paymentMethods.length === 0 ? (
-                            <div className="p-8 text-center text-muted-foreground">
-                                No cashout methods added yet.
+                            <div className="p-8 flex flex-col items-center gap-4 text-center text-muted-foreground">
+                                <p>No cashout methods added yet.</p>
+                                <AddPaymentMethodModal onAddMethod={handleAddMethod}>
+                                    <Button variant="outline" size="sm" className="h-9 gap-1 rounded-full px-4 hover:border-primary/50 hover:text-primary transition-colors">
+                                        <Plus className="h-4 w-4" />
+                                        Add New
+                                    </Button>
+                                </AddPaymentMethodModal>
                             </div>
                         ) : (
                             <div className="divide-y divide-border/50">
@@ -221,10 +258,38 @@ export default function WalletPage() {
                                                 {method.expiry && ` • Expires ${method.expiry}`}
                                             </div>
                                         </div>
-                                        {/* Future Feature: Edit/Delete/Make Default */}
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <MoreHorizontal className="h-4 w-4" />
-                                        </Button>
+                                        <AddPaymentMethodModal onAddMethod={handleAddMethod} existingMethod={method}>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 text-muted-foreground hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+                                        </AddPaymentMethodModal>
+                                        <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                    <AlertDialogTitle>Delete Payment Method?</AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        Are you sure you want to remove this payment method? This action cannot be undone.
+                                                    </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                    <AlertDialogAction onClick={handleDeleteMethod} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
                                     </div>
                                 ))}
                             </div>
@@ -237,46 +302,124 @@ export default function WalletPage() {
             <div className="space-y-4 pt-4">
                 <div className="flex items-center justify-between">
                     <h4 className="text-base font-semibold">Recent Activity</h4>
-                    <Button variant="link" className="text-xs h-auto p-0">View All</Button>
                 </div>
-                <Card className="border-none shadow-none bg-transparent">
-                    <CardContent className="p-0">
-                        {transactions.length === 0 ? (
-                            <div className="p-8 text-center text-muted-foreground text-sm">
-                                No recent transactions
-                            </div>
-                        ) : (
-                            <div className="divide-y divide-border/20">
-                                {transactions.map((tx) => (
-                                    <div key={tx.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/10 transition-colors">
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-8 w-8 rounded-full bg-muted/50 flex items-center justify-center">
-                                                {getStatusIcon(tx.status)}
-                                            </div>
-                                            <div>
-                                                <div className="font-medium text-sm leading-none">Cash In</div>
-                                                <div className="text-[10px] text-muted-foreground mt-1">
-                                                    {new Date(tx.createdAt).toLocaleDateString()} • {new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                <Tabs defaultValue="cash-in" className="w-full">
+                    <TabsList className="w-auto flex bg-transparent p-0 gap-6 border-b border-border/40 rounded-none h-auto justify-start">
+                        <TabsTrigger
+                            value="cash-in"
+                            className="bg-transparent shadow-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-1 pb-3 pt-2 font-medium text-muted-foreground data-[state=active]:text-foreground transition-all gap-2"
+                        >
+                            <ArrowDownLeft className="h-4 w-4" />
+                            Cash In
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="cash-out"
+                            className="bg-transparent shadow-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-1 pb-3 pt-2 font-medium text-muted-foreground data-[state=active]:text-foreground transition-all gap-2"
+                        >
+                            <ArrowUpRight className="h-4 w-4" />
+                            Cash Out
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="transfers"
+                            className="bg-transparent shadow-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-1 pb-3 pt-2 font-medium text-muted-foreground data-[state=active]:text-foreground transition-all gap-2"
+                        >
+                            <ArrowRightLeft className="h-4 w-4" />
+                            Transfers
+                        </TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="cash-in">
+                        <Card className="border-none shadow-none bg-transparent">
+                            <CardContent className="p-0">
+                                {cashInTransactions.length === 0 ? (
+                                    <div className="p-8 text-center text-muted-foreground text-sm">
+                                        No recent cash in transactions
+                                    </div>
+                                ) : (
+                                    <div className="divide-y divide-border/20">
+                                        {cashInTransactions.map((tx) => (
+                                            <div key={tx.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/10 transition-colors">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-8 w-8 rounded-full bg-muted/50 flex items-center justify-center">
+                                                        {getStatusIcon(tx.status)}
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-medium text-sm leading-none">Cash In</div>
+                                                        <div className="text-[10px] text-muted-foreground mt-1">
+                                                            {new Date(tx.createdAt).toLocaleDateString()} • {new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="font-bold text-sm leading-none mb-1">
+                                                        +{formatCurrency(tx.amount, tx.currency)}
+                                                    </div>
+                                                    <Badge variant="outline" className={`h-5 px-1.5 text-[10px] capitalize ${tx.status === 'succeeded' ? 'border-green-500/20 text-green-600' :
+                                                        tx.status === 'failed' ? 'border-red-500/20 text-red-600' :
+                                                            'border-orange-500/20 text-orange-600'
+                                                        }`}>
+                                                        {tx.status}
+                                                    </Badge>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="text-right">
-                                            <div className="font-bold text-sm leading-none mb-1">
-                                                +{formatCurrency(tx.amount, tx.currency)}
-                                            </div>
-                                            <Badge variant="outline" className={`h-5 px-1.5 text-[10px] capitalize ${tx.status === 'succeeded' ? 'border-green-500/20 text-green-600' :
-                                                tx.status === 'failed' ? 'border-red-500/20 text-red-600' :
-                                                    'border-orange-500/20 text-orange-600'
-                                                }`}>
-                                                {tx.status}
-                                            </Badge>
-                                        </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    <TabsContent value="cash-out">
+                        <Card className="border-none shadow-none bg-transparent">
+                            <CardContent className="p-0">
+                                {cashOutTransactions.length === 0 ? (
+                                    <div className="p-8 text-center text-muted-foreground text-sm">
+                                        No recent cash out transactions
+                                    </div>
+                                ) : (
+                                    <div className="divide-y divide-border/20">
+                                        {cashOutTransactions.map((tx) => (
+                                            <div key={tx.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/10 transition-colors">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-8 w-8 rounded-full bg-muted/50 flex items-center justify-center">
+                                                        {tx.status === 3 ? <CheckCircle2 className="h-4 w-4 text-green-500" /> :
+                                                            tx.status === 2 ? <XCircle className="h-4 w-4 text-red-500" /> :
+                                                                <Clock className="h-4 w-4 text-orange-500" />}
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-medium text-sm leading-none">Cash Out</div>
+                                                        <div className="text-[10px] text-muted-foreground mt-1">
+                                                            {new Date(tx.createdAt).toLocaleDateString()} • {new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="font-bold text-sm leading-none mb-1">
+                                                        -{formatCurrency(tx.amount, 'USD')}
+                                                    </div>
+                                                    <Badge variant="outline" className={`h-5 px-1.5 text-[10px] capitalize ${tx.status === 3 ? 'border-green-500/20 text-green-600' :
+                                                        tx.status === 2 ? 'border-red-500/20 text-red-600' :
+                                                            'border-orange-500/20 text-orange-600'
+                                                        }`}>
+                                                        {getCashOutStatusLabel(tx.status)}
+                                                    </Badge>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    <TabsContent value="transfers">
+                        <Card className="border-none shadow-none bg-transparent">
+                            <CardContent className="p-8 text-center text-muted-foreground text-sm">
+                                Transfer history coming soon
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
             </div>
 
         </div>

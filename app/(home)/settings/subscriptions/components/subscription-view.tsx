@@ -91,6 +91,9 @@ export const SubscriptionView = ({ subscription, planIdFromUrl }: SubscriptionVi
                     <div className="flex flex-col sm:flex-row justify-between gap-4 relative z-10">
                         <div className="space-y-3">
                             <div className="flex items-center gap-x-3">
+                                <div className={cn("p-2 rounded-lg bg-primary/10")}>
+                                    <currentPlan.icon className={cn("h-5 w-5", `text-${currentPlan.color}-500`)} />
+                                </div>
                                 <h2 className="text-2xl font-bold">{currentPlan.name}</h2>
                                 <span className={cn(
                                     "px-2.5 py-0.5 rounded-full text-white text-[10px] font-bold uppercase tracking-wide",
