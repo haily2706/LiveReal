@@ -110,7 +110,7 @@ export function EphemeralFeatureSection() {
                                         <h3 className="text-xl font-bold text-white">Live Stream</h3>
                                     </div>
                                     <p className="text-white/50 leading-relaxed">
-                                        Live today, gone forever. Experience streams that leave no digital footprint.
+                                        Live today, gone forever. Streams leave no digital footprint.
                                     </p>
                                 </div>
                             </div>
