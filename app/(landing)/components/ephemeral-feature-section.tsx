@@ -45,9 +45,8 @@ export function EphemeralFeatureSection() {
                             </span>
                         </h2>
 
-                        <p className="text-lg text-muted-foreground mb-12 leading-relaxed max-w-2xl mx-auto">
-                            The magic of a real conversation is that it's fleeting. <br className="hidden md:block" />
-                            Our streams and chats aren't recorded. They exist only in the moment.
+                        <p className="text-lg text-muted-foreground mb-12 leading-relaxed max-w-3xl mx-auto">
+                            Experience true digital freedom. Our platform is built on the principle of impermanence streams, chats, and calls that exist only in the moment and vanish without a trace.
                         </p>
                     </motion.div>
 
@@ -111,7 +110,7 @@ export function EphemeralFeatureSection() {
                                         <h3 className="text-xl font-bold text-white">Live Stream</h3>
                                     </div>
                                     <p className="text-white/50 leading-relaxed">
-                                        Broadcast to thousands. Once the stream ends, it's gone forever. No VODs, no archives.
+                                        Live today, gone forever. Experience streams that leave no digital footprint.
                                     </p>
                                 </div>
                             </div>
@@ -158,7 +157,7 @@ export function EphemeralFeatureSection() {
                                         <h3 className="text-xl font-bold text-white">Ghost Chat</h3>
                                     </div>
                                     <p className="text-white/50 leading-relaxed">
-                                        Messages self-destruct after seconds. Have genuine conversations without the history log.
+                                        Conversations that evaporate. Zero logs, absolute privacy.
                                     </p>
                                 </div>
                             </div>
@@ -232,7 +231,7 @@ export function EphemeralFeatureSection() {
                                         <h3 className="text-xl font-bold text-white">Secure Calls</h3>
                                     </div>
                                     <p className="text-white/50 leading-relaxed">
-                                        Peer-to-peer encrypted video calls. Nothing touches our servers but the handshake.
+                                        Encrypted, ephemeral calls. Speak freely, knowing nothing stays.
                                     </p>
                                 </div>
                             </div>
