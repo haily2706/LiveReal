@@ -268,19 +268,21 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                                         <div className="absolute inset-0 bg-black/40" />
                                     </div>
 
-                                    <div className="flex flex-col items-center gap-6 relative z-10 animate-in fade-in zoom-in duration-500">
-                                        {/* Avatar with Spinner Ring */}
+                                    <div className="flex flex-col items-center gap-4 relative z-10 animate-in fade-in zoom-in duration-500">
                                         <div className="relative">
-                                            <div className="absolute -inset-2 rounded-full border-4 border-primary/50 border-t-primary animate-spin" />
-                                            <Avatar className="h-24 w-24 border-4 border-background shadow-2xl">
+                                            {/* Glow Effect */}
+                                            {/* <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" /> */}
+                                            {/* Spinner Ring */}
+                                            <div className="absolute inset-0 rounded-full border-4 border-primary/30 border-t-primary animate-spin z-10" />
+
+                                            <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
                                                 <AvatarImage src={live.channel.avatar} />
-                                                <AvatarFallback>{live.channel.name[0]}</AvatarFallback>
+                                                <AvatarFallback className="text-4xl bg-zinc-900 text-white">
+                                                    {live.channel.name[0]}
+                                                </AvatarFallback>
                                             </Avatar>
                                         </div>
-
-                                        <div className="flex flex-col items-center gap-2">
-                                            <p className="text-white/80 font-medium animate-pulse text-sm tracking-widest">Stream is offline or connecting...</p>
-                                        </div>
+                                        <p className="font-medium animate-pulse text-white/80">Stream is connecting...</p>
                                     </div>
                                 </div>
                             )}

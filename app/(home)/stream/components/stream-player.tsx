@@ -314,7 +314,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
                   </AvatarFallback>
                 </Avatar>
               </div>
-              <p className="font-medium animate-pulse">Stream is offline or connecting...</p>
+              <p className="font-medium animate-pulse">Stream is offline</p>
             </div>
           </div>
         )}
