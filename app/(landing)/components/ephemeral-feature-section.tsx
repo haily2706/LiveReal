@@ -62,25 +62,25 @@ export function EphemeralFeatureSection() {
                             className="group relative"
                         >
                             <div className="absolute -inset-1 rounded-2xl bg-linear-to-b from-purple-500/20 to-cyan-500/20 blur-md opacity-0 group-hover:opacity-100 transition duration-500" />
-                            <div className="glass rounded-2xl border border-white/10 overflow-hidden relative h-full flex flex-col bg-black/40">
+                            <div className="glass rounded-2xl border border-black/5 dark:border-white/10 overflow-hidden relative h-full flex flex-col bg-white/40 dark:bg-black/40">
 
                                 {/* Visual Area */}
-                                <div className="relative h-56 md:h-64 bg-neutral-900 overflow-hidden">
+                                <div className="relative h-56 md:h-64 bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
                                     <div className="absolute inset-0 bg-linear-to-tr from-purple-500/10 via-transparent to-cyan-500/10 opacity-50" />
 
                                     {/* Stream Overlay */}
                                     <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-8 h-8 rounded-full bg-linear-to-tr from-pink-500 to-purple-500 border border-white/20" />
+                                            <Image src="/coin.svg" alt="LiveReal" width={32} height={32} className="w-8 h-8 rounded-full border border-white/20" />
                                             <div className="flex flex-col">
-                                                <span className="text-xs font-bold text-white">Alexandra</span>
+                                                <span className="text-xs font-bold text-neutral-900 dark:text-white">LiveReal</span>
                                                 <div className="flex items-center gap-1">
                                                     <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                                                    <span className="text-[10px] text-white/70">Live</span>
+                                                    <span className="text-[10px] text-neutral-600 dark:text-white/70">Live</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="px-2 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[10px] text-white font-medium">
+                                        <div className="px-2 py-1 rounded-full bg-white/60 dark:bg-black/40 backdrop-blur-md border border-black/5 dark:border-white/10 text-[10px] text-neutral-900 dark:text-white font-medium">
                                             12.5k
                                         </div>
                                     </div>
@@ -89,12 +89,12 @@ export function EphemeralFeatureSection() {
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         <div className="relative">
                                             <div className="absolute inset-0 bg-purple-500/20 blur-2xl rounded-full animate-pulse" />
-                                            <Video className="w-12 h-12 text-white/20 relative z-10" />
+                                            <Video className="w-12 h-12 text-neutral-400 dark:text-white/20 relative z-10" />
                                         </div>
                                     </div>
 
-                                    <div className="absolute bottom-4 left-4 z-10">
-                                        <div className="px-2 py-1 rounded-md bg-purple-500/20 border border-purple-500/30 text-[10px] text-purple-300 flex items-center gap-1.5 font-medium">
+                                    <div className="absolute bottom-2 left-4 z-10">
+                                        <div className="px-2 py-1 rounded-md bg-purple-500/20 border border-purple-500/30 text-[10px] text-purple-700 dark:text-purple-300 flex items-center gap-1.5 font-medium">
                                             <Sparkles className="w-3 h-3" />
                                             No Recording
                                         </div>
@@ -102,14 +102,14 @@ export function EphemeralFeatureSection() {
                                 </div>
 
                                 {/* Content Info */}
-                                <div className="p-8">
+                                <div className="p-4">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="p-2 rounded-lg bg-pink-500/10 text-pink-400">
+                                        <div className="p-2 rounded-lg bg-pink-500/10 text-pink-600 dark:text-pink-400">
                                             <Radio className="w-5 h-5" />
                                         </div>
-                                        <h3 className="text-xl font-bold text-white">Live Stream</h3>
+                                        <h3 className="text-xl font-bold text-neutral-900 dark:text-white">Live Stream</h3>
                                     </div>
-                                    <p className="text-white/50 leading-relaxed">
+                                    <p className="text-neutral-600 dark:text-white/50 leading-relaxed">
                                         Live today, gone forever. Streams leave no digital footprint.
                                     </p>
                                 </div>
@@ -125,10 +125,10 @@ export function EphemeralFeatureSection() {
                             className="group relative"
                         >
                             <div className="absolute -inset-1 rounded-2xl bg-linear-to-b from-cyan-500/20 to-blue-500/20 blur-md opacity-0 group-hover:opacity-100 transition duration-500" />
-                            <div className="glass rounded-2xl border border-white/10 overflow-hidden relative h-full flex flex-col bg-black/40">
+                            <div className="glass rounded-2xl border border-black/5 dark:border-white/10 overflow-hidden relative h-full flex flex-col bg-white/40 dark:bg-black/40">
 
                                 {/* Visual Area */}
-                                <div className="relative h-56 md:h-64 bg-neutral-900/50 overflow-hidden flex flex-col">
+                                <div className="relative h-56 md:h-64 bg-neutral-100/50 dark:bg-neutral-900/50 overflow-hidden flex flex-col">
                                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent opacity-50" />
 
                                     <div className="flex-1 p-4 flex flex-col justify-center relative mask-image-linear-to-t">
@@ -138,9 +138,9 @@ export function EphemeralFeatureSection() {
                                     </div>
 
                                     {/* Input Fake */}
-                                    <div className="p-4 pt-0 z-10">
+                                    <div className="p-4 pb-2 pt-0 z-10">
                                         <div className="flex items-center gap-2">
-                                            <div className="h-8 flex-1 rounded-full bg-white/5 border border-white/10" />
+                                            <div className="h-8 flex-1 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10" />
                                             <div className="w-8 h-8 rounded-full bg-cyan-600/20 flex items-center justify-center text-cyan-400">
                                                 <Send className="w-3.5 h-3.5" />
                                             </div>
@@ -149,14 +149,14 @@ export function EphemeralFeatureSection() {
                                 </div>
 
                                 {/* Content Info */}
-                                <div className="p-8">
+                                <div className="p-4">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400">
+                                        <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
                                             <MessageCircle className="w-5 h-5" />
                                         </div>
-                                        <h3 className="text-xl font-bold text-white">Ghost Chat</h3>
+                                        <h3 className="text-xl font-bold text-neutral-900 dark:text-white">Ghost Chat</h3>
                                     </div>
-                                    <p className="text-white/50 leading-relaxed">
+                                    <p className="text-neutral-600 dark:text-white/50 leading-relaxed">
                                         Conversations that evaporate. Zero logs, absolute privacy.
                                     </p>
                                 </div>
@@ -172,49 +172,49 @@ export function EphemeralFeatureSection() {
                             className="group relative"
                         >
                             <div className="absolute -inset-1 rounded-2xl bg-linear-to-b from-indigo-500/20 to-purple-500/20 blur-md opacity-0 group-hover:opacity-100 transition duration-500" />
-                            <div className="glass rounded-2xl border border-white/10 overflow-hidden relative h-full flex flex-col bg-black/40">
+                            <div className="glass rounded-2xl border border-black/5 dark:border-white/10 overflow-hidden relative h-full flex flex-col bg-white/40 dark:bg-black/40">
 
                                 {/* Visual Area */}
-                                <div className="relative h-56 md:h-64 bg-neutral-800 overflow-hidden">
+                                <div className="relative h-56 md:h-64 bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
                                     {/* 2-Person Grid */}
                                     {/* Video Call Layout - PIP Mode */}
-                                    <div className="w-full h-full relative bg-neutral-900">
+                                    <div className="w-full h-full relative bg-neutral-50 dark:bg-neutral-900">
                                         {/* Main View (Receiver) */}
                                         <div className="absolute inset-0 flex items-center justify-center">
-                                            <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/40" />
+                                            <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/5 dark:to-black/40" />
 
                                             <div className="flex flex-col items-center gap-3">
                                                 <div className="w-16 h-16 rounded-full bg-pink-500/20 flex items-center justify-center ring-4 ring-pink-500/10">
-                                                    <Users className="w-8 h-8 text-pink-400" />
+                                                    <Users className="w-8 h-8 text-pink-600 dark:text-pink-400" />
                                                 </div>
                                                 <div className="flex flex-col items-center">
-                                                    <span className="text-white font-medium text-lg">Mike</span>
-                                                    <span className="text-white/40 text-xs">04:23</span>
+                                                    <span className="text-neutral-900 dark:text-white font-medium text-lg">David Serna</span>
+                                                    <span className="text-neutral-500 dark:text-white/40 text-xs">04:23</span>
                                                 </div>
                                             </div>
 
                                             {/* Call Controls */}
-                                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
-                                                <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white/70">
+                                            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                                                <div className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md flex items-center justify-center text-neutral-700 dark:text-white/70">
                                                     <Mic className="w-3.5 h-3.5" />
                                                 </div>
                                                 <div className="w-10 h-10 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg shadow-red-500/20">
                                                     <Phone className="w-4 h-4 fill-current rotate-135" />
                                                 </div>
-                                                <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white/70">
+                                                <div className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-md flex items-center justify-center text-neutral-700 dark:text-white/70">
                                                     <Video className="w-3.5 h-3.5" />
                                                 </div>
                                             </div>
                                         </div>
 
                                         {/* Caller View (PIP) - Top Right 9:16 */}
-                                        <div className="absolute top-4 right-4 w-20 aspect-9/16 bg-neutral-800 rounded-xl border border-white/15 shadow-2xl overflow-hidden z-20 flex items-center justify-center group/pip">
+                                        <div className="absolute top-3 right-3 w-18 aspect-9/16 bg-white dark:bg-neutral-800 rounded-xl border border-black/10 dark:border-white/15 shadow-2xl overflow-hidden z-20 flex items-center justify-center group/pip">
                                             <div className="absolute inset-0 bg-indigo-500/5 group-hover/pip:bg-indigo-500/10 transition-colors" />
                                             <div className="flex flex-col items-center gap-1">
                                                 <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center">
                                                     <Users className="w-3.5 h-3.5 text-indigo-400" />
                                                 </div>
-                                                <span className="text-[9px] text-white/50">You</span>
+                                                <span className="text-[9px] text-neutral-500 dark:text-white/50">You</span>
                                             </div>
                                         </div>
                                     </div>
@@ -223,14 +223,14 @@ export function EphemeralFeatureSection() {
                                 </div>
 
                                 {/* Content Info */}
-                                <div className="p-8">
+                                <div className="p-4">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
+                                        <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                                             <Video className="w-5 h-5" />
                                         </div>
-                                        <h3 className="text-xl font-bold text-white">Secure Calls</h3>
+                                        <h3 className="text-xl font-bold text-neutral-900 dark:text-white">Secure Calls</h3>
                                     </div>
-                                    <p className="text-white/50 leading-relaxed">
+                                    <p className="text-neutral-600 dark:text-white/50 leading-relaxed">
                                         Encrypted, ephemeral calls. Speak freely, knowing nothing stays.
                                     </p>
                                 </div>
@@ -247,16 +247,16 @@ export function EphemeralFeatureSection() {
 
 function ChatSimulation({ mode = 'stream' }: { mode?: 'stream' | 'chat' }) {
     const allMessages = [
-        { user: "Leo", text: "Is this recorded?", color: "text-cyan-400", type: "stream" },
-        { user: "Sarah", text: "Nope, fully ephemeral! 👻", color: "text-pink-400", type: "stream" },
-        { user: "Mike", text: "Love this privacy feature.", color: "text-green-400", type: "stream" },
-        { user: "Anna", text: "Wait, so it's gone after?", color: "text-purple-400", type: "stream" },
-        { user: "Host", text: "Exactly. No history. 🤫", color: "text-yellow-400", type: "stream" },
+        { user: "Leo", text: "Is this recorded?", color: "text-cyan-600 dark:text-cyan-400", type: "stream" },
+        { user: "Sarah", text: "Nope, fully ephemeral! 👻", color: "text-pink-600 dark:text-pink-400", type: "stream" },
+        { user: "Mike", text: "Love this privacy feature.", color: "text-green-600 dark:text-green-400", type: "stream" },
+        { user: "Anna", text: "Wait, so it's gone after?", color: "text-purple-600 dark:text-purple-400", type: "stream" },
+        { user: "Host", text: "Exactly. No history. 🤫", color: "text-yellow-600 dark:text-yellow-400", type: "stream" },
 
-        { user: "Me", text: "Hey! Did you see the new update?", color: "text-green-400", type: "chat", self: true },
-        { user: "Jamie", text: "Yeah! The self-destructing messages? 🔥", color: "text-blue-400", type: "chat" },
-        { user: "Me", text: "It's insane.", color: "text-green-400", type: "chat", self: true },
-        { user: "Jamie", text: "Poof and gone. 💨", color: "text-blue-400", type: "chat" },
+        { user: "Me", text: "Hey! Did you see the new update?", color: "text-green-600 dark:text-green-400", type: "chat", self: true },
+        { user: "Jamie", text: "The self-destructing messages? 🔥", color: "text-blue-600 dark:text-blue-400", type: "chat" },
+        { user: "Me", text: "It's insane.", color: "text-green-600 dark:text-green-400", type: "chat", self: true },
+        { user: "Jamie", text: "Poof and gone. 💨", color: "text-blue-600 dark:text-blue-400", type: "chat" },
     ];
 
     // Filter messages based on active mode
@@ -303,14 +303,14 @@ function ChatSimulation({ mode = 'stream' }: { mode?: 'stream' | 'chat' }) {
 
                     <div className={`
                         ${mode === 'chat'
-                            ? ((msg as any).self ? 'bg-purple-600 text-white rounded-2xl rounded-tr-sm' : 'bg-neutral-800 text-neutral-200 rounded-2xl rounded-tl-sm')
-                            : 'bg-white/10 backdrop-blur-md rounded-2xl rounded-tl-sm text-white/90 border border-white/5'}
+                            ? ((msg as any).self ? 'bg-purple-600 text-white rounded-2xl rounded-tr-sm' : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 rounded-2xl rounded-tl-sm')
+                            : 'bg-black/5 dark:bg-white/10 backdrop-blur-md rounded-2xl rounded-tl-sm text-neutral-900 dark:text-white/90 border border-black/5 dark:border-white/5'}
                         px-4 py-2 text-sm shadow-sm max-w-[85%]
                     `}>
                         {msg.text}
                     </div>
                     {mode === 'chat' && (
-                        <span className="text-[10px] text-white/30 px-1 mt-1">Disappearing...</span>
+                        <span className="text-[10px] text-neutral-400 dark:text-white/30 px-1 mt-1">Disappearing...</span>
                     )}
                 </motion.div>
             ))}
