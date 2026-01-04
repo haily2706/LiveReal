@@ -11,6 +11,7 @@ import { useChat, useLocalParticipant, useRoomInfo, useDataChannel } from "@live
 import { RoomMetadata } from "../lib/controller";
 import { ReactionPicker } from "./reaction-picker";
 import { toAvatarURL } from "@/lib/constants";
+import { AnimatePresence, motion } from "framer-motion";
 
 
 
@@ -18,6 +19,9 @@ interface ChatProps {
   className?: string;
   onClose?: () => void;
 }
+
+// Configure the duration (in seconds) for which chat messages remain visible
+const EPHEMERAL_MESSAGE_DURATION_SEC = 15;
 
 export function Chat({ className, onClose }: ChatProps) {
   const { chatMessages, send } = useChat();
@@ -32,13 +36,26 @@ export function Chat({ className, onClose }: ChatProps) {
 
   const { enable_chat: chatEnabled } = safeJsonParse(metadata, {} as RoomMetadata);
 
+
+
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 200);
+    return () => clearInterval(interval);
+  }, []);
+
   const messages = useMemo(() => {
     const timestamps = chatMessages.map((msg) => msg.timestamp);
     const filtered = chatMessages.filter(
-      (msg, i) => !timestamps.includes(msg.timestamp, i + 1)
+      (msg, i) =>
+        !timestamps.includes(msg.timestamp, i + 1) &&
+        now - msg.timestamp < EPHEMERAL_MESSAGE_DURATION_SEC * 1000
     );
     return filtered;
-  }, [chatMessages]);
+  }, [chatMessages, now]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -97,41 +114,46 @@ export function Chat({ className, onClose }: ChatProps) {
       {/* Messages */}
       <ScrollArea className="flex-1 relative z-10 bg-white dark:bg-[#0f0f0f]">
         <div ref={containerRef} className="px-3 py-3 space-y-4">
-          {messages.map((message) => {
-            const isLocal = localParticipant.identity === message.from?.identity;
-            const displayName = message.from?.name || message.from?.identity || "Unknown";
-            const nameColor = isLocal ? "text-zinc-900 dark:text-white" : "text-zinc-500 dark:text-zinc-400";
+          <AnimatePresence initial={false} mode="popLayout">
+            {messages.map((message) => {
+              const isLocal = localParticipant.identity === message.from?.identity;
+              const displayName = message.from?.name || message.from?.identity || "Unknown";
+              const nameColor = isLocal ? "text-zinc-900 dark:text-white" : "text-zinc-500 dark:text-zinc-400";
 
-            return (
-              <div
-                key={message.timestamp}
-                className="flex gap-1 items-start group transition-colors"
-              >
-                <Avatar className="h-6 w-6 rounded-full shrink-0 ring-0 ring-transparent">
-                  <AvatarImage src={toAvatarURL(message.from?.identity)} />
-                  <AvatarFallback className={`text-[10px] font-bold ${nameColor} bg-zinc-100 dark:bg-zinc-800`}>
-                    <User className="h-3.5 w-3.5" />
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0 text-[13px] leading-relaxed pt-0.5">
-                  <span className={`${nameColor} font-medium mr-2 hover:underline cursor-pointer`}>
-                    {displayName}
-                  </span>
-                  <span className="text-zinc-800 dark:text-[#e2e2e2] wrap-break-word">
-                    {message.message}
-                  </span>
-                </div>
-                {/* Actions (hidden by default, show on hover) */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-zinc-600 dark:hover:text-white -mt-1 ml-1"
+              return (
+                <motion.div
+                  key={message.timestamp}
+                  layout
+                  // Only animate the exit (ephemeral effect)
+                  exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                  className="flex gap-1 items-start group transition-colors"
                 >
-                  <MoreVertical className="h-3 w-3" />
-                </Button>
-              </div>
-            );
-          })}
+                  <Avatar className="h-6 w-6 rounded-full shrink-0 ring-0 ring-transparent">
+                    <AvatarImage src={toAvatarURL(message.from?.identity)} />
+                    <AvatarFallback className={`text-[10px] font-bold ${nameColor} bg-zinc-100 dark:bg-zinc-800`}>
+                      <User className="h-3.5 w-3.5" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0 text-[13px] leading-relaxed pt-0.5">
+                    <span className={`${nameColor} font-medium mr-2 hover:underline cursor-pointer`}>
+                      {displayName}
+                    </span>
+                    <span className="text-zinc-800 dark:text-[#e2e2e2] wrap-break-word">
+                      {message.message}
+                    </span>
+                  </div>
+                  {/* Actions (hidden by default, show on hover) */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-zinc-600 dark:hover:text-white -mt-1 ml-1"
+                  >
+                    <MoreVertical className="h-3 w-3" />
+                  </Button>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
         </div>
       </ScrollArea>
 

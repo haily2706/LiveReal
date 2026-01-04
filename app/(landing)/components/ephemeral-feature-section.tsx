@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { Zap, MessageCircle, Video, Clock, Shield, Ghost, Lock, Sparkles, Mic, Phone, Users, Radio, Send } from "lucide-react";
+import { Zap, MessageCircle, Video, Clock, Shield, Ghost, Lock, Sparkles, Mic, Phone, User, Users, Radio, Send } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
 
@@ -185,7 +185,7 @@ export function EphemeralFeatureSection() {
 
                                             <div className="flex flex-col items-center gap-3">
                                                 <div className="w-16 h-16 rounded-full bg-pink-500/20 flex items-center justify-center ring-4 ring-pink-500/10">
-                                                    <Users className="w-8 h-8 text-pink-600 dark:text-pink-400" />
+                                                    <User className="w-8 h-8 text-pink-600 dark:text-pink-400" />
                                                 </div>
                                                 <div className="flex flex-col items-center">
                                                     <span className="text-neutral-900 dark:text-white font-medium text-lg">David Serna</span>
@@ -212,7 +212,7 @@ export function EphemeralFeatureSection() {
                                             <div className="absolute inset-0 bg-indigo-500/5 group-hover/pip:bg-indigo-500/10 transition-colors" />
                                             <div className="flex flex-col items-center gap-1">
                                                 <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center">
-                                                    <Users className="w-3.5 h-3.5 text-indigo-400" />
+                                                    <User className="w-3.5 h-3.5 text-indigo-400" />
                                                 </div>
                                                 <span className="text-[9px] text-neutral-500 dark:text-white/50">You</span>
                                             </div>
