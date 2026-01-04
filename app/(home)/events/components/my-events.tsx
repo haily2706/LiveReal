@@ -63,7 +63,7 @@ export function MyEvents({ onEdit }: MyEventsProps) {
         return (
             <div className="text-card-foreground rounded-xl shadow-xs space-y-4">
                 <div className="space-y-2">
-                    <h3 className="font-semibold leading-none tracking-tight">My Events</h3>
+                    <h3 className="font-semibold leading-none tracking-tight">Events</h3>
                     <p className="text-sm text-muted-foreground">Manage your events.</p>
                 </div>
                 <Separator />
@@ -79,7 +79,7 @@ export function MyEvents({ onEdit }: MyEventsProps) {
     return (
         <div className="text-card-foreground rounded-xl shadow-xs space-y-4">
             <div className="space-y-2">
-                <h3 className="font-semibold leading-none tracking-tight">My Events</h3>
+                <h3 className="font-semibold leading-none tracking-tight">Events</h3>
                 <p className="text-sm text-muted-foreground">Manage your events.</p>
             </div>
             <Separator />

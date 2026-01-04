@@ -8,6 +8,7 @@ import { StreamPlayer } from "@/app/(home)/stream/components/stream-player";
 import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { log } from "console";
 
 interface StreamInfo {
     eventId: string;
@@ -141,7 +142,14 @@ export function StreamManager({ children }: { children: React.ReactNode }) {
 
     // Handle PiP exit (Back to Tab or Close button)
     useEffect(() => {
+        let interval: ReturnType<typeof setInterval> | null = null;
+
         const handleLeavePiP = (event: Event) => {
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+            }
+
             const info = streamInfoRef.current;
             const path = pathnameRef.current;
             const currentRouter = routerRef.current;
@@ -153,24 +161,24 @@ export function StreamManager({ children }: { children: React.ReactNode }) {
             }
         };
 
-        // Polling fallback to detect PiP exit if events fail
-        let lastPiPElement: Element | null = null;
-        const interval = setInterval(() => {
-            const currentPiP = document.pictureInPictureElement;
+        const startPolling = () => {
+            if (interval) return;
+            console.log("Starting PiP exit polling...");
 
-            // If we HAD PiP and now we DON'T, and we are not on the stream page
-            if (lastPiPElement && !currentPiP) {
-                const info = streamInfoRef.current;
-                const path = pathnameRef.current;
-                const currentRouter = routerRef.current;
+            interval = setInterval(() => {
+                console.log("Polling PiP exit...");
+                const currentPiP = document.pictureInPictureElement;
 
-                if (path && info && !path.includes(info.eventId)) {
-                    const roleParam = info.role === 'host' ? '?role=host' : '';
-                    currentRouter.push(`/stream/${info.eventId}${roleParam}`);
+                // If we are no longer in PiP
+                if (!currentPiP) {
+                    handleLeavePiP(new Event('leavepictureinpicture'));
                 }
-            }
-            lastPiPElement = currentPiP;
-        }, 2000);
+            }, 3000);
+        };
+
+        const handleEnterPiP = (event: Event) => {
+            startPolling();
+        };
 
         // Monitoring function to attach listeners to ANY video that might enter PiP
         const monitorVideos = () => {
@@ -179,6 +187,7 @@ export function StreamManager({ children }: { children: React.ReactNode }) {
                 if (!(video as any)._pipTracked) {
                     (video as any)._pipTracked = true;
                     video.addEventListener('leavepictureinpicture', handleLeavePiP);
+                    video.addEventListener('enterpictureinpicture', handleEnterPiP);
                 }
             });
         };
@@ -190,13 +199,16 @@ export function StreamManager({ children }: { children: React.ReactNode }) {
 
         // Global window capture as backup
         window.addEventListener('leavepictureinpicture', handleLeavePiP, { capture: true });
+        window.addEventListener('enterpictureinpicture', handleEnterPiP, { capture: true });
 
         return () => {
-            clearInterval(interval);
+            if (interval) clearInterval(interval);
             observer.disconnect();
             window.removeEventListener('leavepictureinpicture', handleLeavePiP, { capture: true });
+            window.removeEventListener('enterpictureinpicture', handleEnterPiP, { capture: true });
             document.querySelectorAll('video').forEach(video => {
                 video.removeEventListener('leavepictureinpicture', handleLeavePiP);
+                video.removeEventListener('enterpictureinpicture', handleEnterPiP);
                 (video as any)._pipTracked = false;
             });
         };

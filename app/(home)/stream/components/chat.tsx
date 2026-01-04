@@ -53,7 +53,7 @@ export function Chat({ className, onClose }: ChatProps) {
   };
 
   const pruneMessages = useCallback(() => {
-    console.log("pruning messages...");
+
     const filtered = filterEphemeralMessages(latestChatMessages.current);
 
     setMessages((prev) => {
@@ -67,7 +67,7 @@ export function Chat({ className, onClose }: ChatProps) {
 
   // Update ref and trigger immediate update when new messages arrive
   useEffect(() => {
-    console.log("pruning messages...");
+
     const prevMsgs = latestChatMessages.current;
 
     // If messages added, just append them without re-filtering the old ones
@@ -85,7 +85,6 @@ export function Chat({ className, onClose }: ChatProps) {
 
   // Set up checking interval independent of message updates
   useEffect(() => {
-    console.log("pruning messages...");
     const interval = setInterval(pruneMessages, EPHEMERAL_CHECK_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [pruneMessages]);
