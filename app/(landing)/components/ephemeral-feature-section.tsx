@@ -254,8 +254,8 @@ function ChatSimulation({ mode = 'stream' }: { mode?: 'stream' | 'chat' }) {
         { user: "Host", text: "Exactly. No history. 🤫", color: "text-yellow-600 dark:text-yellow-400", type: "stream" },
 
         { user: "Me", text: "Hey! Did you see the new update?", color: "text-green-600 dark:text-green-400", type: "chat", self: true },
-        { user: "Jamie", text: "The self-destructing messages? 🔥", color: "text-blue-600 dark:text-blue-400", type: "chat" },
-        { user: "Me", text: "It's insane.", color: "text-green-600 dark:text-green-400", type: "chat", self: true },
+        { user: "Jamie", text: "The self-destructing messages?", color: "text-blue-600 dark:text-blue-400", type: "chat" },
+        { user: "Me", text: "It's insane. 🔥", color: "text-green-600 dark:text-green-400", type: "chat", self: true },
         { user: "Jamie", text: "Poof and gone. 💨", color: "text-blue-600 dark:text-blue-400", type: "chat" },
     ];
 
