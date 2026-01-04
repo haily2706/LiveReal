@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Crown, MoreVertical, X, Send, ChevronDown, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { cn, safeJsonParse } from "@/lib/utils";
 import { useChat, useLocalParticipant, useRoomInfo, useDataChannel } from "@livekit/components-react";
 import { RoomMetadata } from "../lib/controller";
@@ -21,7 +21,9 @@ interface ChatProps {
 }
 
 // Configure the duration (in seconds) for which chat messages remain visible
-const EPHEMERAL_MESSAGE_DURATION_SEC = 15;
+const EPHEMERAL_MESSAGE_DURATION_SEC = 30;
+// Configure the interval (in milliseconds) to check for expired messages
+const EPHEMERAL_CHECK_INTERVAL_MS = 10000;
 
 export function Chat({ className, onClose }: ChatProps) {
   const { chatMessages, send } = useChat();
@@ -36,26 +38,57 @@ export function Chat({ className, onClose }: ChatProps) {
 
   const { enable_chat: chatEnabled } = safeJsonParse(metadata, {} as RoomMetadata);
 
+  const [messages, setMessages] = useState<typeof chatMessages>([]);
+  const latestChatMessages = useRef<typeof chatMessages>([]);
 
-
-  const [now, setNow] = useState(Date.now());
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setNow(Date.now());
-    }, 200);
-    return () => clearInterval(interval);
-  }, []);
-
-  const messages = useMemo(() => {
-    const timestamps = chatMessages.map((msg) => msg.timestamp);
-    const filtered = chatMessages.filter(
+  const filterEphemeralMessages = (msgs: typeof chatMessages) => {
+    console.log("filterEphemeralMessages", msgs.length);
+    const now = Date.now();
+    const timestamps = msgs.map((msg) => msg.timestamp);
+    return msgs.filter(
       (msg, i) =>
         !timestamps.includes(msg.timestamp, i + 1) &&
         now - msg.timestamp < EPHEMERAL_MESSAGE_DURATION_SEC * 1000
     );
-    return filtered;
-  }, [chatMessages, now]);
+  };
+
+  const pruneMessages = useCallback(() => {
+    console.log("pruning messages...");
+    const filtered = filterEphemeralMessages(latestChatMessages.current);
+
+    setMessages((prev) => {
+      if (prev.length !== filtered.length) return filtered;
+      const isDifferent = prev.some(
+        (p, i) => p.timestamp !== filtered[i].timestamp
+      );
+      return isDifferent ? filtered : prev;
+    });
+  }, []);
+
+  // Update ref and trigger immediate update when new messages arrive
+  useEffect(() => {
+    console.log("pruning messages...");
+    const prevMsgs = latestChatMessages.current;
+
+    // If messages added, just append them without re-filtering the old ones
+    if (chatMessages.length > prevMsgs.length) {
+      const newMsgs = chatMessages.slice(prevMsgs.length);
+      setMessages((prev) => [...prev, ...newMsgs]);
+    } else if (chatMessages.length < prevMsgs.length) {
+      // If messages removed (cleared), re-run filter
+      const filtered = filterEphemeralMessages(chatMessages);
+      setMessages(filtered);
+    }
+
+    latestChatMessages.current = chatMessages;
+  }, [chatMessages]);
+
+  // Set up checking interval independent of message updates
+  useEffect(() => {
+    console.log("pruning messages...");
+    const interval = setInterval(pruneMessages, EPHEMERAL_CHECK_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [pruneMessages]);
 
   // Auto-scroll to bottom
   useEffect(() => {
