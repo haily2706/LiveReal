@@ -241,7 +241,7 @@ export default function InvestorPage() {
                                 quarter="Q4"
                                 year="2026"
                                 title="Ecosystem Expansion"
-                                items={["Public API for Developers", "Hardware Partnerships", "Series B Preparation"]}
+                                items={["Global Events", "Global Influencer Marketing", "Series B Preparation"]}
                                 align="right"
                             />
                         </div>
