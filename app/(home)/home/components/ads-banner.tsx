@@ -12,8 +12,8 @@ export function AdsBanner() {
                 <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full mix-blend-overlay blur-3xl -translate-x-1/2 -translate-y-1/2" />
                 <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-400 rounded-full mix-blend-overlay blur-3xl translate-x-1/3 translate-y-1/3" />
             </div>
-            <div className="absolute -right-1 -top-1 opacity-[0.3] group-hover:opacity-15 transition-all duration-500 rotate-15 group-hover:rotate-0 scale-100 group-hover:scale-110 pointer-events-none">
-                <Coin className="w-12 h-12 blur-[1px]" />
+            <div className="absolute -right-5 -top-5 opacity-[0.1] group-hover:opacity-15 transition-all duration-500 rotate-15 group-hover:rotate-0 scale-100 group-hover:scale-110 pointer-events-none">
+                <Coin className="w-24 h-24 blur-[1px]" />
             </div>
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-4 md:p-6 gap-4">
                 <div className="space-y-2 max-w-xl text-center md:text-left">

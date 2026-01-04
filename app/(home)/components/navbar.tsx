@@ -127,7 +127,7 @@ export function Navbar({ }: NavbarProps) {
                     </div>
 
                     {/* Center Section - Toggle between Pills and Search */}
-                    <div className="hidden md:flex flex-1 max-w-[850px] items-center justify-center bg-transparent relative">
+                    <div className="hidden md:flex flex-1 min-w-0 max-w-[850px] items-center justify-center bg-transparent relative">
                         <AnimatePresence mode="popLayout" initial={false}>
                             {isSearchFocused ? (
                                 <motion.div
@@ -178,7 +178,7 @@ export function Navbar({ }: NavbarProps) {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
-                                    className="flex items-center gap-2"
+                                    className="flex items-center gap-2 overflow-x-auto no-scrollbar max-w-full mask-gradient px-6"
                                 >
                                     {categories.map((category) => {
                                         const isSelected = selectedCategory === category;
