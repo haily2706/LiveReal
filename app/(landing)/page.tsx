@@ -28,14 +28,14 @@ export default function Page() {
         {/* How It Works */}
         <HowItWorks />
 
+        {/* Gift Gallery */}
+        <GiftGallery />
+
         {/* Features */}
         <FeaturesSection />
 
         {/* HBar Wallet Section */}
         <HBarWalletSection />
-
-        {/* Gift Gallery */}
-        <GiftGallery />
 
         {/* Testimonials */}
         <Testimonials />
