@@ -351,7 +351,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
                   <div className="relative">
                     <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
                     <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
-                      <AvatarImage src={toAvatarURL(mainParticipant.identity ?? "")} />
+                      <AvatarImage src={toAvatarURL(mainParticipant.identity ?? streamerId)} />
                       <AvatarFallback className="text-4xl bg-zinc-900 text-white">
                         {mainParticipant.name?.[0] ?? mainParticipant.identity?.[0] ?? ""}
                       </AvatarFallback>

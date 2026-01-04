@@ -36,6 +36,7 @@ import { StreamInviteAlert } from "./stream-invite-alert";
 import { JoinStreamResponse } from "../lib/controller";
 import { useTheme } from "next-themes";
 import { useStreamContext } from "@/app/(home)/components/stream-manager";
+import { toAvatarURL } from "@/lib/constants";
 
 
 interface LiveClientProps {
@@ -284,7 +285,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                                             <div className="absolute inset-0 rounded-full border-4 border-primary/30 border-t-primary animate-spin z-10" />
 
                                             <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
-                                                <AvatarImage src={live.channel.avatar} />
+                                                <AvatarImage src={toAvatarURL(live.channel.id)} />
                                                 <AvatarFallback className="text-4xl bg-zinc-900 text-white">
                                                     {live.channel.name[0]}
                                                 </AvatarFallback>
@@ -314,7 +315,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                                     <div className="flex items-center gap-3 w-full sm:w-auto justify-start sm:justify-start">
                                         <div className="relative group cursor-pointer shrink-0">
                                             <Avatar className="h-10 w-10 sm:h-12 sm:w-12 ring-2 ring-background relative">
-                                                <AvatarImage src={live.channel.avatar} />
+                                                <AvatarImage src={toAvatarURL(live.channel.id)} />
                                                 <AvatarFallback>{live.channel.name[0]}</AvatarFallback>
                                             </Avatar>
                                             <div className="absolute -bottom-1 -right-1 bg-red-500 rounded-full p-0.5 border-4 border-background z-10">
