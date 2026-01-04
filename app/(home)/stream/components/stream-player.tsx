@@ -13,7 +13,7 @@ import {
   useTracks,
 } from "@livekit/components-react";
 import { useStreamContext } from "@/app/(home)/components/stream-manager";
-import { Eye, EyeOff, LogOut, Power, VolumeX, PictureInPicture } from "lucide-react";
+import { Eye, EyeOff, LogOut, Power, VolumeX, PictureInPicture, Pin, PinOff } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -105,6 +105,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
   const [totalCoins, setTotalCoins] = useState(0);
   const [isInPip, setIsInPip] = useState(false);
 
+
   // Handle PiP state
   useEffect(() => {
     const onEnterPiP = () => setIsInPip(true);
@@ -152,15 +153,14 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
   };
 
   useEffect(() => {
-    const handleParticipantMetadataChanged = () => {
+    const handleMetadataChanged = () => {
       setTicker((prev) => prev + 1);
     };
-    room.on(RoomEvent.ParticipantMetadataChanged, handleParticipantMetadataChanged);
+    room.on(RoomEvent.ParticipantMetadataChanged, handleMetadataChanged);
+    room.on(RoomEvent.RoomMetadataChanged, handleMetadataChanged);
     return () => {
-      room.off(
-        RoomEvent.ParticipantMetadataChanged,
-        handleParticipantMetadataChanged
-      );
+      room.off(RoomEvent.ParticipantMetadataChanged, handleMetadataChanged);
+      room.off(RoomEvent.RoomMetadataChanged, handleMetadataChanged);
     };
   }, [room]);
 
@@ -208,6 +208,37 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
     });
   };
 
+  const onPin = async (identity: string) => {
+    try {
+      await fetch("/api/stream/pin_participant", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${authToken} `,
+        },
+        body: JSON.stringify({
+          identity,
+        }),
+      });
+    } catch (error) {
+      toast.error("Failed to pin participant");
+    }
+  };
+
+  const onUnpin = async () => {
+    try {
+      await fetch("/api/stream/unpin_participant", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${authToken} `,
+        },
+      });
+    } catch (error) {
+      toast.error("Failed to unpin participant");
+    }
+  };
+
   useEffect(() => {
     // No cleanup required here as StreamManager handles it.
   }, []);
@@ -217,6 +248,21 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
 
   const onEndStream = async () => {
     try {
+      await fetch("/api/stream/stop_stream", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${authToken} `,
+        },
+        body: JSON.stringify({
+          force: true
+        }),
+      });
+    } catch (error) {
+      console.error("Failed to stop stream API", error);
+    }
+
+    try {
       // Use the manager's leaveStream to handle API call and state cleanup synchronously
       leaveStream(true);
       router.push("/events/list");
@@ -225,27 +271,47 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
     }
   };
 
-  // Identify Host Participant (Remote)
-  // We use creatorIdentity to find the host among remote participants
-  const hostParticipant = creatorIdentity
-    ? participants.find(p => p.identity === creatorIdentity && !p.isLocal)
-    : undefined;
+  const pinnedParticipantIdentity =
+    (localMetadata?.is_pinned ? localParticipant.identity : undefined) ||
+    participants.find((p) => {
+      const meta = safeJsonParse(p.metadata, {} as ParticipantMetadata);
+      return meta?.is_pinned;
+    })?.identity ||
+    roomMetadata?.pinned_identity;
 
-  // Identify Guest Participants (Remote & On Stage)
-  const guestParticipants = participants.filter(p => {
+  // Identify Main Stage Participant (Pinned or Host)
+  const mainIdentity = pinnedParticipantIdentity && (
+    pinnedParticipantIdentity === localParticipant.identity ||
+    participants.some(p => p.identity === pinnedParticipantIdentity)
+  )
+    ? pinnedParticipantIdentity
+    : (creatorIdentity || (isHost ? localParticipant.identity : undefined));
+
+  const isLocalMain = mainIdentity === localParticipant.identity;
+
+  const mainParticipant = isLocalMain
+    ? localParticipant
+    : participants.find(p => p.identity === mainIdentity);
+
+  // Identify Sidebar Participants (Remote)
+  // Everyone who is "on stage" (Host + Invited) EXCEPT the main focus
+  const sidebarRemoteParticipants = participants.filter(p => {
     if (p.isLocal) return false;
-    if (creatorIdentity && p.identity === creatorIdentity) return false;
+    if (p.identity === mainIdentity) return false; // Already on main stage
+
     const meta = safeJsonParse(p.metadata, {} as ParticipantMetadata);
-    return meta?.invited_to_stage;
+    const isCreator = creatorIdentity && p.identity === creatorIdentity;
+
+    return isCreator || meta?.invited_to_stage;
   });
 
-  const hostRemoteTrack = creatorIdentity
-    ? remoteVideoTracks.find(t => t.participant.identity === creatorIdentity)
+  const mainRemoteTrack = !isLocalMain && mainParticipant
+    ? remoteVideoTracks.find(t => t.participant.identity === mainParticipant.identity)
     : undefined;
 
-  const isHostCameraEnabled = isLocalHost
-    ? localParticipant.isCameraEnabled
-    : hostParticipant?.isCameraEnabled;
+  const isMainCameraEnabled = mainParticipant?.isCameraEnabled;
+
+  const showLocalInSidebar = canHost && !isLocalMain;
 
 
   return (
@@ -258,52 +324,70 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
             alt="Stream Background"
             className={cn(
               "w-full h-full object-cover transition-all duration-1000",
-              isHostCameraEnabled ? "opacity-30 blur-xl" : "opacity-60 blur-md"
+              isMainCameraEnabled ? "opacity-30 blur-xl" : "opacity-60 blur-md"
             )}
           />
           <div className="absolute inset-0 bg-black/20" />
         </div>
       )}
 
-      {/* === PRIMARY LAYER (Host) === */}
+      {/* === PRIMARY LAYER (Main Stage) === */}
       <div className="absolute inset-0 w-full h-full">
-        {isLocalHost && canHost ? (
-          // Layout: Local Host
-          <ActiveStagePlayer
-            localParticipant={localParticipant}
-            localMetadata={localMetadata}
-            showBadge={false}
-            large
-          />
-        ) : hostParticipant ? (
-          // Layout: Remote Host (Connected)
-          <div className="relative w-full h-full">
-            {/* Avatar Fallback - Only show if camera is off */}
-            {!isHostCameraEnabled && (
-              <div className="absolute inset-0 flex items-center justify-center z-10 transition-all">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                  <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
-                    <AvatarImage src={toAvatarURL(hostParticipant.identity)} />
-                    <AvatarFallback className="text-4xl bg-zinc-900 text-white">
-                      {hostParticipant.name?.[0] ?? hostParticipant.identity?.[0] ?? ""}
-                    </AvatarFallback>
-                  </Avatar>
+        {mainParticipant ? (
+          isLocalMain ? (
+            // Layout: Local Participant (Host or Pinned Guest Me)
+            <ActiveStagePlayer
+              localParticipant={localParticipant}
+              localMetadata={localMetadata}
+              showBadge={false}
+              large
+            />
+          ) : (
+            // Layout: Remote Participant on Main Stage
+            <div className="relative w-full h-full group">
+              {/* Avatar Fallback */}
+              {!isMainCameraEnabled && (
+                <div className="absolute inset-0 flex items-center justify-center z-10 transition-all">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                    <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
+                      <AvatarImage src={toAvatarURL(mainParticipant.identity ?? "")} />
+                      <AvatarFallback className="text-4xl bg-zinc-900 text-white">
+                        {mainParticipant.name?.[0] ?? mainParticipant.identity?.[0] ?? ""}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
                 </div>
-              </div>
-            )}
-            {/* Video Track Overlay */}
-            {isHostCameraEnabled && hostRemoteTrack && (
-              <VideoTrack
-                trackRef={hostRemoteTrack}
-                id="main-video-player"
-                className="absolute inset-0 w-full h-full object-cover z-20"
-              />
-            )}
-          </div>
+              )}
+              {/* Video Track Overlay */}
+              {isMainCameraEnabled && mainRemoteTrack && (
+                <VideoTrack
+                  trackRef={mainRemoteTrack}
+                  id="main-video-player"
+                  className="absolute inset-0 w-full h-full object-cover z-20"
+                />
+              )}
+
+              {/* Unpin Button (Host Only) */}
+              {isLocalHost && pinnedParticipantIdentity === mainParticipant.identity && (
+                <div className="absolute top-10 right-2 z-40 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="rounded-full w-8 h-8 bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 text-white"
+                    onClick={() => onUnpin()}
+                  >
+                    <PinOff />
+                    {/* Unpin */}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )
         ) : (
           // Layout: Host Offline or Unknown
           <div className="flex items-center justify-center w-full h-full text-muted-foreground bg-transparent">
+            {/* Same Offline UI */}
             <div className="flex flex-col items-center gap-4">
               <div className="relative">
                 <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
@@ -319,16 +403,16 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
           </div>
         )}
 
-        {/* PiP Fallback Overlay - Shows when video is popped out */}
+        {/* PiP Fallback Overlay */}
         {isInPip && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-zinc-950/90 backdrop-blur-sm">
             <div className="flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-300">
               <div className="relative">
                 <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
                 <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
-                  <AvatarImage src={toAvatarURL(isLocalHost ? localParticipant.identity : hostParticipant?.identity ?? streamerId)} />
+                  <AvatarImage src={toAvatarURL(mainParticipant?.identity ?? streamerId)} />
                   <AvatarFallback className="text-4xl bg-zinc-900 text-white">
-                    {isLocalHost ? (localParticipant.name?.[0] ?? 'Y') : (hostParticipant?.name?.[0] ?? streamerName?.[0] ?? "S")}
+                    {mainParticipant?.name?.[0] ?? streamerName?.[0] ?? "S"}
                   </AvatarFallback>
                 </Avatar>
                 {/* PiP Badge */}
@@ -337,18 +421,17 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
                   In PiP
                 </div>
               </div>
-
             </div>
           </div>
         )}
       </div>
 
 
-      {/* === OVERLAY LAYER (Guests) === */}
+      {/* === OVERLAY LAYER (Sidebar) === */}
       {/* Top Left Stage Corner */}
       <div className="absolute top-2 left-2 flex flex-col items-start gap-2 z-30 pointer-events-none">
-        {/* Local Guest (Me on Stage) */}
-        {canHost && !isLocalHost && (
+        {/* Local Sidebar Participant (e.g. Host bumped from main) */}
+        {showLocalInSidebar && (
           <div className="pointer-events-auto w-24 sm:w-36 aspect-video rounded-lg overflow-hidden ring-1 ring-white/10 shadow-xl bg-zinc-900 relative group transition-all duration-300">
             <ActiveStagePlayer
               localParticipant={localParticipant}
@@ -357,8 +440,8 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
           </div>
         )}
 
-        {/* Remote Guests */}
-        {guestParticipants.map((p) => {
+        {/* Remote Sidebar Participants */}
+        {sidebarRemoteParticipants.map((p) => {
           const videoTrack = remoteVideoTracks.find(t => t.participant.identity === p.identity);
           return (
             <div
@@ -376,7 +459,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
               </div>
 
               {/* Video */}
-              {videoTrack && (
+              {videoTrack && p.isCameraEnabled && (
                 <VideoTrack
                   trackRef={videoTrack}
                   className="absolute inset-0 w-full h-full object-cover"
@@ -384,11 +467,25 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
               )}
 
               {/* Name Badge */}
-              <div className="absolute bottom-0 left-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              <div className="absolute bottom-0 left-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                 <span className="text-[9px] font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                   {p.name ?? p.identity}
                 </span>
               </div>
+
+              {/* Pin Button (Host Only) */}
+              {isLocalHost && (
+                <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    className="h-6 w-6 rounded-full bg-black/50 hover:bg-black/70 border border-white/10 text-white"
+                    onClick={() => onPin(p.identity)}
+                  >
+                    <Pin className="w-3 h-3" />
+                  </Button>
+                </div>
+              )}
             </div>
           );
         })}

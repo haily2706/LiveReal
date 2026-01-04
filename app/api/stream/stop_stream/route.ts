@@ -19,11 +19,15 @@ import { eq } from "drizzle-orm";
  */
 export async function POST(req: Request) {
   const controller = new Controller();
+  const body = await req.json();
   let session;
   try {
     session = getSessionFromReq(req);
     console.log("Session: ", session?.room_name);
-    await controller.stopStream(session);
+    if (body.force) {
+      await controller.stopStream(session);
+    }
+
     return Response.json({});
   } catch (err) {
     // if (err instanceof Error) {
@@ -31,7 +35,7 @@ export async function POST(req: Request) {
     // }
 
     // return new Response(null, { status: 500 });
-     return Response.json({});
+    return Response.json({});
   } finally {
     if (session?.room_name) {
       // Update event status in database

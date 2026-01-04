@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -95,6 +95,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
 
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
+    const createdStreamRef = useRef<string | null>(null);
 
     // UI States
     const [isSubscribed, setIsSubscribed] = useState(false);
@@ -123,7 +124,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
         const isViewer = role === 'viewer';
         // If user is logged in, use their ID. If not, use stable guest ID.
         const identity = (user && user.id) ? user.id : guestIdentity;
-        const name = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || (isViewer ? "Guest Viewer" : "Streamer");
+        const name = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || (isViewer ? "Guest" : "Streamer");
 
         // Set initial stream info immediately so UI can update
         setStreamInfo({
@@ -161,6 +162,11 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
             // For host: use create_stream implementation to get token and auth_token
             const createStream = async () => {
                 if (!user) return;
+
+                // Prevent duplicate calls
+                if (createdStreamRef.current === eventId) return;
+                createdStreamRef.current = eventId;
+
                 try {
                     const displayName = getDisplayName() || name;
                     const res = await fetch("/api/stream/create_stream", {
@@ -179,6 +185,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
 
                     if (!res.ok) {
                         console.error("Failed to create stream");
+                        createdStreamRef.current = null;
                         return;
                     }
 
@@ -188,6 +195,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                     setWsUrl(data.connection_details.ws_url);
                 } catch (error) {
                     console.error("Error creating stream:", error);
+                    createdStreamRef.current = null;
                 }
             };
             createStream();

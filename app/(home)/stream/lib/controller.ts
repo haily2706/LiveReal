@@ -13,6 +13,7 @@ import {
   ParticipantPermission,
   RoomServiceClient,
   TrackSource,
+  Room,
 } from "livekit-server-sdk";
 
 
@@ -20,12 +21,14 @@ export type RoomMetadata = {
   creator_identity: string;
   enable_chat: boolean;
   allow_participation: boolean;
+  pinned_identity?: string;
 };
 
 export type ParticipantMetadata = {
   hand_raised: boolean;
   invited_to_stage: boolean;
   avatar_image: string;
+  is_pinned?: boolean;
 };
 
 export type Config = {
@@ -87,6 +90,18 @@ export type RemoveFromStageParams = {
   identity?: string;
 };
 
+export type PinParticipantParams = {
+  identity: string;
+};
+
+export type RoomWithParsedMetadata = {
+  sid: string;
+  name: string;
+  metadata?: RoomMetadata;
+  [key: string]: any;
+};
+
+
 export type ErrorResponse = {
   error: string;
 };
@@ -119,6 +134,44 @@ export class Controller {
       process.env.LIVEKIT_API_KEY!,
       process.env.LIVEKIT_API_SECRET!
     );
+    console.log(`[Controller] Initialized LiveKit Service. URL: ${httpUrl}, API Key: ${process.env.LIVEKIT_API_KEY?.slice(0, 4)}***`);
+  }
+
+  private async getRoom(roomName: string, actionName: string, suppressWarning: boolean = false): Promise<RoomWithParsedMetadata> {
+    let rooms = await this.roomService.listRooms([roomName]);
+
+    if (rooms.length === 0) {
+      if (!suppressWarning) {
+        console.warn(`[${actionName}] Room ${roomName} not found by direct lookup. Listing all rooms to check for mismatches...`);
+        const allRooms = await this.roomService.listRooms();
+        console.log(`[${actionName}] Active rooms on server:`, allRooms.map(r => r.name));
+
+        const match = allRooms.find(r => r.name === roomName);
+        if (match) {
+          console.log(`[${actionName}] Found match in allRooms! Using it.`);
+          rooms = [match];
+        }
+      }
+    }
+
+    const room = rooms.length > 0 ? rooms[0] : undefined;
+
+    if (!room) {
+      throw new Error(`Room ${roomName} not found`);
+    }
+
+    let metadata: RoomMetadata | undefined;
+    if (room.metadata) {
+      try {
+        metadata = JSON.parse(room.metadata);
+      } catch (e) {
+        if (!suppressWarning) {
+          console.warn(`[${actionName}] Failed to parse room metadata`, e);
+        }
+      }
+    }
+
+    return { ...room, metadata };
   }
 
   async createIngress({
@@ -132,7 +185,6 @@ export class Controller {
     }
 
     // Create room and ingress
-
     const rooms = await this.roomService.listRooms([room_name]);
     if (rooms.length > 0) {
       await this.roomService.updateRoomMetadata(room_name, JSON.stringify(metadata));
@@ -259,25 +311,15 @@ export class Controller {
     };
   }
 
+  isHost(room: RoomWithParsedMetadata, identity: string) {
+    return room?.metadata?.creator_identity === identity;
+  }
+
   async stopStream(session: Session) {
-    const rooms = await this.roomService.listRooms([session.room_name]);
+    const room = await this.getRoom(session.room_name, "stopStream");
 
-    if (rooms.length === 0) {
-      throw new Error("Room does not exist");
-    }
-
-    const room = rooms[0];
-    let creator_identity = "";
-    try {
-      if (room.metadata) {
-        creator_identity = (JSON.parse(room.metadata) as RoomMetadata).creator_identity;
-      }
-    } catch (e) {
-      console.warn("Failed to parse room metadata", e);
-    }
-
-    if (creator_identity !== session.identity) {
-      throw new Error("Only the creator can invite to stage");
+    if (!this.isHost(room, session.identity)) {
+      throw new Error("Only the creator can stop the stream");
     }
 
     await this.roomService.deleteRoom(session.room_name);
@@ -328,23 +370,10 @@ export class Controller {
   }
 
   async inviteToStage(session: Session, { identity }: InviteToStageParams) {
-    const rooms = await this.roomService.listRooms([session.room_name]);
 
-    if (rooms.length === 0) {
-      throw new Error("Room does not exist");
-    }
+    const room = await this.getRoom(session.room_name, "inviteToStage");
 
-    const room = rooms[0];
-    let creator_identity = "";
-    try {
-      if (room.metadata) {
-        creator_identity = (JSON.parse(room.metadata) as RoomMetadata).creator_identity;
-      }
-    } catch (e) {
-      console.warn("Failed to parse room metadata", e);
-    }
-
-    if (creator_identity !== session.identity) {
+    if (!this.isHost(room, session.identity)) {
       throw new Error("Only the creator can invite to stage");
     }
 
@@ -376,29 +405,25 @@ export class Controller {
       identity = session.identity;
     }
 
-    const rooms = await this.roomService.listRooms([session.room_name]);
+    const room = await this.getRoom(session.room_name, "removeFromStage");
 
-    if (rooms.length === 0) {
-      throw new Error("Room does not exist");
+    if (!room) {
+      console.warn(`[removeFromStage] Room ${session.room_name} not found. Proceeding to try getParticipant...`);
     }
 
-    const room = rooms[0];
-    let creator_identity = "";
-    try {
-      if (room.metadata) {
-        creator_identity = (JSON.parse(room.metadata) as RoomMetadata).creator_identity;
+    if (room) {
+      const creator_identity = room.metadata?.creator_identity;
+
+      if (
+        creator_identity !== session.identity &&
+        identity !== session.identity
+      ) {
+        throw new Error(
+          "Only the creator or the participant him self can remove from stage"
+        );
       }
-    } catch (e) {
-      console.warn("Failed to parse room metadata", e);
-    }
-
-    if (
-      creator_identity !== session.identity &&
-      identity !== session.identity
-    ) {
-      throw new Error(
-        "Only the creator or the participant him self can remove from stage"
-      );
+    } else {
+      console.warn("[removeFromStage] No room object found to verify permissions. Skipping check.");
     }
 
     const participant = await this.roomService.getParticipant(
@@ -445,6 +470,57 @@ export class Controller {
     );
   }
 
+  async pinParticipant(session: Session, { identity }: PinParticipantParams) {
+    const participants = await this.roomService.listParticipants(session.room_name);
+
+    // 1. Unpin everyone else
+    const updatePromises = participants.map(async (p) => {
+      const metadata = this.getOrCreateParticipantMetadata(p);
+      if (metadata.is_pinned) {
+        metadata.is_pinned = false;
+        await this.roomService.updateParticipant(
+          session.room_name,
+          p.identity,
+          JSON.stringify(metadata),
+          p.permission
+        );
+      }
+    });
+
+    await Promise.all(updatePromises);
+
+    // 2. Pin the target
+    const participant = await this.roomService.getParticipant(session.room_name, identity);
+    const metadata = this.getOrCreateParticipantMetadata(participant);
+    metadata.is_pinned = true;
+
+    await this.roomService.updateParticipant(
+      session.room_name,
+      identity,
+      JSON.stringify(metadata),
+      participant.permission
+    );
+  }
+
+  async unpinParticipant(session: Session) {
+    const participants = await this.roomService.listParticipants(session.room_name);
+
+    const updatePromises = participants.map(async (p) => {
+      const metadata = this.getOrCreateParticipantMetadata(p);
+      if (metadata.is_pinned) {
+        metadata.is_pinned = false;
+        await this.roomService.updateParticipant(
+          session.room_name,
+          p.identity,
+          JSON.stringify(metadata),
+          p.permission
+        );
+      }
+    });
+
+    await Promise.all(updatePromises);
+  }
+
   getOrCreateParticipantMetadata(
     participant: ParticipantInfo
   ): ParticipantMetadata {
@@ -461,6 +537,7 @@ export class Controller {
       avatar_image: `https://api.multiavatar.com/${participant.identity}.png`,
     };
   }
+
   createAuthToken(room_name: string, identity: string) {
     return jwt.sign(
       { room_name, identity },

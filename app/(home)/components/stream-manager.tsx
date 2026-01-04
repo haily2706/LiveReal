@@ -87,7 +87,10 @@ export function StreamManager({ children }: { children: React.ReactNode }) {
                         "Content-Type": "application/json",
                         Authorization: `Token ${token} `,
                     },
-                    keepalive: true
+                    keepalive: true,
+                    body: JSON.stringify({
+                        force: false
+                    })
                 });
             } catch (error) {
                 console.error("Failed to stop stream", error);
