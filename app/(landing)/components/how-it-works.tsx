@@ -57,7 +57,7 @@ export function HowItWorks() {
                         </span>
                     </h2>
                     <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-                        Start streaming your birthday celebration in just three easy steps
+                        Start streaming your event celebration in just three easy steps
                     </p>
                 </motion.div>
 

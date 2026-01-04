@@ -42,7 +42,7 @@ const features = [
     {
         icon: Palette,
         title: "Custom Themes",
-        description: "Choose from dozens of birthday-themed overlays, effects, and filters",
+        description: "Choose from dozens of event-themed overlays, effects, and filters",
         color: "text-green-600 dark:text-green-400",
         gradient: "from-green-500/20 to-emerald-500/20",
     },
