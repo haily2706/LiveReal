@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Calendar, Video, Wallet } from "lucide-react";
+import { Calendar, Sparkles, Video, Wallet } from "lucide-react";
 
 const steps = [
     {
@@ -36,6 +36,8 @@ const steps = [
 export function HowItWorks() {
     return (
         <section id="how-it-works" className="py-24 px-4 relative">
+            {/* Background effect */}
+            <div className="absolute inset-0 bg-linear-to-b from-transparent via-purple-500/5 to-transparent pointer-events-none" />
             <div className="container mx-auto max-w-6xl">
                 {/* Section Header */}
                 <motion.div

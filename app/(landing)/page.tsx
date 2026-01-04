@@ -1,6 +1,7 @@
 
 import { BackgroundBlobs } from "@/components/ui/background-blobs";
 import { HeroSection } from "@/app/(landing)/components/hero-section";
+import { EphemeralFeatureSection } from "@/app/(landing)/components/ephemeral-feature-section";
 import { HowItWorks } from "@/app/(landing)/components/how-it-works";
 import { FeaturesSection } from "@/app/(landing)/components/features-section";
 import { HBarWalletSection } from "@/app/(landing)/components/hbar-wallet-section";
@@ -16,10 +17,13 @@ import { Footer } from "@/app/(landing)/components/footer";
 export default function Page() {
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden">
-  
+
       <div className="flex-1">
         {/* Hero Section */}
         <HeroSection />
+
+        {/* Ephemeral Feature Section */}
+        <EphemeralFeatureSection />
 
         {/* How It Works */}
         <HowItWorks />

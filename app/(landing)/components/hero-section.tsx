@@ -46,6 +46,8 @@ const RotatingText = () => {
 export function HeroSection() {
     return (
         <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden py-20 px-4">
+            {/* Background effect */}
+            <div className="absolute inset-0 bg-linear-to-b from-transparent via-pink-500/5 to-transparent pointer-events-none" />
             {/* Floating decorative elements */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <motion.div
