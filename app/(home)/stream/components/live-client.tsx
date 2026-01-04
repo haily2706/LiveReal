@@ -54,6 +54,30 @@ interface LiveClientProps {
     };
 }
 
+function ChatSkeleton({ className }: { className?: string }) {
+    return (
+        <div className={`flex flex-col bg-card rounded-xl border border-border w-full lg:w-[350px] shrink-0 relative overflow-hidden font-sans ${className}`}>
+            <div className="flex items-center p-3 border-b border-border h-14">
+                <div className="h-6 w-24 bg-muted rounded animate-pulse" />
+            </div>
+            <div className="flex-1 p-4 space-y-4 overflow-hidden">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="flex gap-2 opacity-50">
+                        <div className="h-8 w-8 rounded-full bg-muted animate-pulse shrink-0" />
+                        <div className="flex flex-col gap-2 w-full">
+                            <div className="h-3 w-20 bg-muted rounded animate-pulse" />
+                            <div className="h-3 w-3/4 bg-muted rounded animate-pulse" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+            <div className="p-3 border-t border-border mt-auto">
+                <div className="h-10 w-full bg-muted rounded-full animate-pulse" />
+            </div>
+        </div>
+    );
+}
+
 export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClientProps) {
     const { user, getDisplayName } = useAuthStore();
     const {
@@ -184,26 +208,15 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
         // Dispatch reaction handled by ReactionBar inside StreamPlayer or separate
     };
 
-    if (!token) {
-        if (hasLeft) {
-            return (
-                <div className="flex items-center justify-center min-h-screen text-foreground bg-background">
-                    <div className="flex flex-col items-center gap-4">
-                        <h2 className="text-2xl font-bold">Stream Ended</h2>
-                        <p className="text-muted-foreground">The broadcast has finished.</p>
-                    </div>
-                </div>
-            );
-        }
-
+    if (hasLeft) {
         return (
             <div className="flex items-center justify-center min-h-screen text-foreground bg-background">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                    <p className="text-muted-foreground animate-pulse">Connecting to Live Server...</p>
+                    <h2 className="text-2xl font-bold">Stream Ended</h2>
+                    <p className="text-muted-foreground">The broadcast has finished.</p>
                 </div>
             </div>
-        )
+        );
     }
 
     return (
@@ -220,7 +233,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
             `}</style>
 
             <div className="flex flex-col lg:flex-row w-full relative">
-                <StreamInviteAlert />
+                {token && <StreamInviteAlert />}
 
                 {/* Main Content */}
                 <div className="flex-1 w-full relative z-10 pb-10">
@@ -238,6 +251,39 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                                     // React calls ref callback with null on unmount.
                                 }}
                             />
+
+                            {/* Connecting Overlay */}
+                            {/* Connecting Overlay */}
+                            {!token && (
+                                <div className="absolute inset-0 z-20 flex items-center justify-center overflow-hidden bg-background/10 backdrop-blur-sm transition-all duration-500">
+                                    {/* Blurred Background */}
+                                    <div className="absolute inset-0 z-0">
+                                        <Image
+                                            src={live.thumbnail}
+                                            alt={live.title}
+                                            fill
+                                            className="object-cover blur-md opacity-50"
+                                            priority
+                                        />
+                                        <div className="absolute inset-0 bg-black/40" />
+                                    </div>
+
+                                    <div className="flex flex-col items-center gap-6 relative z-10 animate-in fade-in zoom-in duration-500">
+                                        {/* Avatar with Spinner Ring */}
+                                        <div className="relative">
+                                            <div className="absolute -inset-2 rounded-full border-4 border-primary/50 border-t-primary animate-spin" />
+                                            <Avatar className="h-24 w-24 border-4 border-background shadow-2xl">
+                                                <AvatarImage src={live.channel.avatar} />
+                                                <AvatarFallback>{live.channel.name[0]}</AvatarFallback>
+                                            </Avatar>
+                                        </div>
+
+                                        <div className="flex flex-col items-center gap-2">
+                                            <p className="text-white/80 font-medium animate-pulse text-sm tracking-widest">Stream is offline or connecting...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Pre-Join Overlay */}
 
@@ -355,7 +401,11 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
 
                 {/* Chat Components */}
                 {/* Desktop Chat Sidebar */}
-                <Chat className="hidden lg:flex sticky top-[76px] h-[calc(100vh-92px)] mr-4 mt-4" />
+                {token ? (
+                    <Chat className="hidden lg:flex sticky top-[76px] h-[calc(100vh-92px)] mr-4 mt-4" />
+                ) : (
+                    <ChatSkeleton className="hidden lg:flex sticky top-[76px] h-[calc(100vh-92px)] mr-4 mt-4" />
+                )}
 
                 {/* Mobile Chat Button & Sheet */}
                 <div className="lg:hidden">
@@ -376,7 +426,11 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                         <SheetContent side="bottom" className="h-[85vh] p-0 border-t-0 rounded-t-3xl overflow-hidden bg-background">
                             <SheetTitle className="sr-only">Live Chat</SheetTitle>
                             <div className="h-full w-full">
-                                <Chat className="h-full w-full border-0" onClose={() => setIsChatOpen(false)} />
+                                {token ? (
+                                    <Chat className="h-full w-full border-0" onClose={() => setIsChatOpen(false)} />
+                                ) : (
+                                    <ChatSkeleton className="h-full w-full border-0" />
+                                )}
                             </div>
                         </SheetContent>
                     </Sheet>
