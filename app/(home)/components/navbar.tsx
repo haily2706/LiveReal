@@ -10,13 +10,6 @@ import {
     Search,
     Mic,
     Menu,
-    Video,
-
-    Radio,
-    PenSquare,
-    Compass,
-    Calendar,
-    Settings,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,17 +22,7 @@ import { ModeToggle } from "@/components/theme/mode-toggle";
 import { NotiDropdown } from "./noti-dropdown";
 import { TextLogo } from "@/components/ui/text-logo";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-
-const appLinks = [
-    { name: "Explore", href: "/home" },
-    { name: "Settings", href: "/settings" },
-];
-
-const mobileLinks = [
-    { name: "Explore", href: "/home", icon: Compass },
-    { name: "Events", href: "/events", icon: Calendar },
-    { name: "Settings", href: "/settings", icon: Settings }
-];
+import { NAV_LINKS } from "./sidebar";
 
 import { useAuthStore } from "@/components/auth/use-auth-store";
 import { UserMenu } from "@/components/auth/user-menu";
@@ -107,7 +90,7 @@ export function Navbar({ }: NavbarProps) {
                                         </SheetTitle>
                                     </SheetHeader>
                                     <nav className="flex flex-col gap-1 p-4">
-                                        {mobileLinks.map((link) => {
+                                        {NAV_LINKS.map((link) => {
                                             const isActive = pathname === link.href || pathname?.startsWith(`${link.href}/`);
                                             return (
                                                 <Link
@@ -124,7 +107,7 @@ export function Navbar({ }: NavbarProps) {
                                                         "h-5 w-5 transition-colors",
                                                         isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                                                     )} />
-                                                    {link.name}
+                                                    {link.label}
                                                 </Link>
                                             );
                                         })}
@@ -361,7 +344,7 @@ export function Navbar({ }: NavbarProps) {
                             </div>
 
                             <nav className="flex flex-col gap-1">
-                                {mobileLinks.map((link) => {
+                                {NAV_LINKS.map((link) => {
                                     const isActive = pathname === link.href || pathname?.startsWith(`${link.href}/`);
                                     return (
                                         <Link
@@ -379,7 +362,7 @@ export function Navbar({ }: NavbarProps) {
                                                 "h-5 w-5 transition-colors",
                                                 isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                                             )} />
-                                            {link.name}
+                                            {link.label}
                                         </Link>
                                     );
                                 })}
