@@ -56,14 +56,14 @@ export function Navbar() {
 
     return (
         <header className={cn(
-            "sticky top-0 z-50 w-full h-15",
+            "sticky top-0 z-50 w-full h-16 md:h-15",
             "bg-background/80 backdrop-blur-2xl border-b border-border",
             "transition-all duration-300"
         )}>
             {/* Ambient Gradient Top Line */}
             <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-indigo-500/20 to-transparent" />
 
-            <div className="flex h-full items-center px-6 gap-4">
+            <div className="flex h-full items-center px-4 md:px-6 gap-4">
                 {/* Left Section: Mobile Menu & Title */}
                 <div className="flex items-center gap-2 flex-1">
                     <Sheet>
@@ -191,7 +191,7 @@ export function Navbar() {
                             </Button>
                         </Link>
                     </div>
-                    <div className="flex items-center gap-1 border-r border-border pr-3 mr-1">
+                    <div className="flex items-center gap-1 border-border pr-3 mr-1">
 
                         <div className="hover:bg-accent rounded-full transition-colors">
                             <ModeToggle />
