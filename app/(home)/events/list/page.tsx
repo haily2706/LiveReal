@@ -54,7 +54,7 @@ export default function EventsListPage() {
             className="space-y-8 animate-in fade-in-50 duration-500"
         >
             <div>
-                <h3 className="text-lg font-medium">Events</h3>
+                <h3 className="text-lg font-semibold">Events</h3>
                 <p className="text-sm text-muted-foreground">
                     Manage your upcoming events.
                 </p>

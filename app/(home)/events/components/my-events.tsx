@@ -85,7 +85,7 @@ export function MyEvents({ onEdit }: MyEventsProps) {
 
     if (isLoading) {
         return (
-            <div className="text-card-foreground rounded-xl shadow-xs space-y-4">
+            <div className="text-card-foreground rounded-xl  space-y-4">
                 <div className="space-y-2">
                     <h3 className="font-semibold leading-none tracking-tight">Events</h3>
                     <p className="text-sm text-muted-foreground">Manage your events.</p>
@@ -100,7 +100,7 @@ export function MyEvents({ onEdit }: MyEventsProps) {
     const eventList = ids.map(id => events[id]);
 
     return (
-        <div className="text-card-foreground rounded-xl shadow-xs space-y-4">
+        <div className="text-card-foreground rounded-xl  space-y-4">
             <div className="space-y-2">
                 <h3 className="font-semibold leading-none tracking-tight">Events</h3>
                 <p className="text-sm text-muted-foreground">Manage your events.</p>
