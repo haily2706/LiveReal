@@ -1,7 +1,7 @@
 "use client";
 
 import { Sidebar } from "./components/sidebar";
-import { User, Calendar, Wallet } from "lucide-react";
+import { User, CalendarHeart as Calendar, Wallet } from "lucide-react";
 import { useSidebar } from "@/app/(home)/components/provider";
 import { cn } from "@/lib/utils";
 

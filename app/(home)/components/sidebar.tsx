@@ -12,6 +12,7 @@ import {
     Menu,
 
     Calendar,
+    CalendarHeart as Calendars,
     Compass,
     Clapperboard,
     MessageCircle,
@@ -273,7 +274,7 @@ function isActive(pathname: string, href: string) {
 
 const NAV_LINKS = [
     { icon: Compass, label: "Explore", href: "/home", color: "text-blue-400" },
-    { icon: Calendar, label: "Events", href: "/events/list", color: "text-purple-400" },
+    { icon: Calendars, label: "Events", href: "/events/list", color: "text-purple-400" },
     { icon: Wallet, label: "Wallet", href: "/events/wallet", color: "text-emerald-400" },
     { icon: Settings, label: "Settings", href: "/settings/profile", color: "text-gray-400" }
 ];
