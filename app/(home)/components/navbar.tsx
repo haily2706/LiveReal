@@ -43,12 +43,12 @@ const mobileLinks = [
 
 import { useAuthStore } from "@/components/auth/use-auth-store";
 import { UserMenu } from "@/components/auth/user-menu";
-import { EventTypes } from "@/lib/constants";
+import { PublicEventTypes } from "@/lib/constants";
 import { ScheduleButton } from "../events/components/schedule-button";
 
 export const categories = [
     "All",
-    ...EventTypes.map((type) => type.name),
+    ...PublicEventTypes.map((type) => type.name),
 ];
 
 interface NavbarProps { }
@@ -185,13 +185,13 @@ export function Navbar({ }: NavbarProps) {
                                         return (
                                             <Button
                                                 key={category}
-                                                variant={isSelected ? "default" : "secondary"}
+                                                variant={isSelected ? "default" : "ghost"}
                                                 onClick={() => handleSelect(category)}
                                                 className={cn(
                                                     "whitespace-nowrap rounded-full text-xs font-medium transition-all duration-300 h-8 px-4",
                                                     isSelected
                                                         ? "bg-foreground text-background hover:bg-foreground/90 shadow-[0_0_15px_rgba(var(--foreground),0.3)]"
-                                                        : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground border border-border"
+                                                        : "bg-muted/50 hover:bg-background text-muted-foreground hover:text-foreground border border-input hover:border-primary/50 hover:shadow-[0_0_20px_-5px_rgba(0,0,0,0.1)] hover:ring-2 hover:ring-primary/10"
                                                 )}
                                             >
                                                 {category}
@@ -280,13 +280,13 @@ export function Navbar({ }: NavbarProps) {
                             return (
                                 <Button
                                     key={category}
-                                    variant={isSelected ? "default" : "secondary"}
+                                    variant={isSelected ? "default" : "ghost"}
                                     onClick={() => handleSelect(category)}
                                     className={cn(
-                                        "whitespace-nowrap rounded-full text-xs font-medium transition-all duration-300 h-7 px-3 shrink-0",
+                                        "whitespace-nowrap rounded-full text-xs font-medium transition-all duration-300 ease-out h-7 px-3 shrink-0 hover:scale-105 active:scale-95",
                                         isSelected
-                                            ? "bg-foreground text-background hover:bg-foreground/90"
-                                            : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground border border-border"
+                                            ? "bg-foreground text-background hover:bg-foreground/90 shadow-[0_0_15px_rgba(var(--foreground),0.3)]"
+                                            : "bg-muted/50 hover:bg-background text-muted-foreground hover:text-foreground border border-input hover:border-primary/50 hover:shadow-[0_0_20px_-5px_rgba(0,0,0,0.1)] hover:ring-2 hover:ring-primary/10"
                                     )}
                                 >
                                     {category}

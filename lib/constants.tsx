@@ -1,6 +1,13 @@
-import { Cake, Mic, Users, Gamepad2, Sparkles, Zap, Crown } from "lucide-react";
+import { Cake, Mic, Users, Gamepad2, Sparkles, Zap, Crown, Video } from "lucide-react";
 
 export const EventTypes = [
+    {
+        name: 'Video Call',
+        value: 5,
+        color: "bg-linear-to-r from-emerald-500 via-teal-500 to-cyan-500",
+        icon: Video,
+        type: 'video'
+    },
     {
         name: 'Birthday',
         value: 1,
@@ -26,6 +33,8 @@ export const EventTypes = [
         icon: Gamepad2
     }
 ];
+
+export const PublicEventTypes = EventTypes.filter(type => type.type !== 'video')
 
 export const PLANS = [
     {

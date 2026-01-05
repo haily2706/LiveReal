@@ -8,10 +8,10 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faApple, faAndroid, faChrome } from "@fortawesome/free-brands-svg-icons";
 
-import { EventTypes } from "@/lib/constants";
+import { PublicEventTypes } from "@/lib/constants";
 
 const RotatingText = () => {
-    const items = EventTypes.map(type => ({
+    const items = PublicEventTypes.map(type => ({
         text: type.name,
         color: type.color
     }));
