@@ -243,57 +243,24 @@ function SidebarLink({
         >
             <div
                 className={cn(
-                    "relative flex items-center transition-all duration-300 group px-3 py-3 rounded-2xl mx-2 overflow-hidden",
-                    isCollapsed ? "justify-center px-0 w-12 h-12 mx-auto" : "w-auto",
-                    active && "bg-linear-to-r from-[#FF3B5C]/10 via-purple-500/5 to-transparent"
+                    "relative flex items-center transition-all duration-200 group px-3 py-2 rounded-lg mx-2",
+                    isCollapsed ? "justify-center px-0 w-10 h-10 mx-auto" : "w-auto",
+                    active && "bg-muted font-medium text-foreground",
+                    !active && "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                 )}
             >
+                <link.icon className={cn(
+                    "h-5 w-5 transition-all duration-200",
+                    active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground",
+                    !active && isHovered ? link.color : "",
+                    isCollapsed ? "" : "mr-3"
+                )} />
 
-                {/* Active Indicator Bar */}
-                {active && (
-                    <motion.div
-                        layoutId="active-indicator"
-                        className="absolute left-0 w-[3px] h-6 bg-[#FF3B5C] rounded-r-full shadow-[0_0_10px_#FF3B5C]"
-                        initial={{ opacity: 0, scaleY: 0.5 }}
-                        animate={{ opacity: 1, scaleY: 1 }}
-                        transition={{ duration: 0.2 }}
-                    />
+                {!isCollapsed && (
+                    <span className="text-sm truncate">
+                        {link.label}
+                    </span>
                 )}
-
-                {/* Hover Spotlight for non-active items */}
-                {!active && isHovered && (
-                    <motion.div
-                        layoutId="hover-nav-bg"
-                        className="absolute inset-0 bg-muted/50 rounded-2xl"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                    />
-                )}
-
-
-                <div className={cn(
-                    "relative z-10 flex items-center transition-all duration-300",
-                    isCollapsed ? "justify-center" : "gap-4",
-                    active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-                )}>
-                    <link.icon className={cn(
-                        "h-[22px] w-[22px] transition-all duration-300",
-                        active ? "text-[#FF3B5C] drop-shadow-[0_0_8px_rgba(255,59,92,0.5)]" : "",
-                        !active && isHovered ? link.color : "",
-                        isCollapsed ? "" : "",
-                        "group-hover:scale-110"
-                    )} />
-
-                    {!isCollapsed && (
-                        <span className={cn(
-                            "text-sm font-medium tracking-wide transition-all duration-300",
-                            active ? "font-bold" : ""
-                        )}>
-                            {link.label}
-                        </span>
-                    )}
-                </div>
             </div>
         </Link>
     );
@@ -319,7 +286,7 @@ export function MobileBottomNav() {
             {/* Glassmorphic Container */}
             <div className="bg-background/80 backdrop-blur-xl border-t border-border/50 pb-[env(safe-area-inset-bottom)]">
                 <nav
-                    className="flex items-center justify-around h-[70px] px-2 relative"
+                    className="flex items-center justify-around h-[60px] px-2 relative"
                     onMouseLeave={() => setHoveredLink(null)}
                 >
                     {NAV_LINKS.map((link) => {
@@ -333,47 +300,14 @@ export function MobileBottomNav() {
                                 className="relative flex flex-col items-center justify-center w-full h-full group"
                                 onMouseEnter={() => setHoveredLink(link.href)}
                             >
-                                {/* Active Indicator Background Glow */}
-                                {active && (
-                                    <motion.div
-                                        layoutId="mobile-nav-indicator"
-                                        className="absolute inset-0 bg-linear-to-t from-[#FF3B5C]/10 to-transparent"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ duration: 0.3 }}
-                                    />
-                                )}
-
-                                {/* Hover Spotlight for non-active items */}
-                                {!active && isHovered && (
-                                    <motion.div
-                                        layoutId="mobile-nav-hover-bg"
-                                        className="absolute inset-1 bg-muted/50 rounded-2xl"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                    />
-                                )}
-
-                                {/* Top Active Line */}
-                                {active && (
-                                    <motion.div
-                                        layoutId="mobile-nav-top-line"
-                                        className="absolute top-0 h-[3px] w-12 bg-[#FF3B5C] shadow-[0_0_10px_#FF3B5C] rounded-b-md"
-                                        initial={{ scaleX: 0.5 }}
-                                        animate={{ scaleX: 1 }}
-                                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                    />
-                                )}
-
                                 <div className={cn(
-                                    "flex flex-col items-center justify-center h-full w-full transition-all duration-300 relative z-10"
+                                    "flex flex-col items-center justify-center h-full w-full transition-all duration-200",
+                                    active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                                 )}>
                                     <div className="relative">
                                         <link.icon className={cn(
-                                            "h-6 w-6 transition-all duration-300",
-                                            active ? "text-[#FF3B5C] scale-110 drop-shadow-[0_0_8px_rgba(255,59,92,0.5)]" : "text-muted-foreground",
+                                            "h-6 w-6 transition-all duration-200",
+                                            active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground",
                                             !active && isHovered ? link.color : ""
                                         )} />
                                         {link.label === "Messages" && (

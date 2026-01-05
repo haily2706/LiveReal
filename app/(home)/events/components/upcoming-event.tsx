@@ -86,15 +86,15 @@ export function UpcomingEvent({
     };
 
     return (
-        <div className="bg-card text-card-foreground shadow-sm rounded-xl border overflow-hidden relative group">
+        <div className="shadow-sm  overflow-hidden relative group">
             {/* Decorative Background Icon */}
             <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none transition-opacity group-hover:opacity-[0.05]">
-                <ThemeIcon className={cn("w-40 h-40", !eventConfig && "text-pink-500")} />
+                {/* <ThemeIcon className={cn("w-40 h-40", !eventConfig && "text-pink-500")} /> */}
             </div>
 
-            <div className={cn("relative z-10", isCompact ? "p-4" : "p-6")}>
+            <div className={cn("relative z-10")}>
                 {/* Header */}
-                <div className={cn("flex items-center justify-between", isCompact ? "mb-2" : "mb-6")}>
+                <div className={cn("flex items-center justify-between", isCompact ? "mb-4" : "mb-6")}>
                     <div className="space-y-1">
                         <h3 className="font-semibold text-lg leading-none tracking-tight flex items-center gap-2">
                             {isVideoCall ? "Upcoming Call" : "Upcoming Event"}
@@ -110,7 +110,7 @@ export function UpcomingEvent({
                     <div className="flex flex-col md:flex-row gap-4">
                         {/* Thumbnail Section */}
                         {!isAvatar && (
-                            <div className="w-full md:w-56 aspect-video md:aspect-auto bg-muted/50 rounded-lg shrink-0 overflow-hidden relative border border-border/50 shadow-sm">
+                            <div className="w-full md:w-56 aspect-video md:aspect-auto rounded-lg shrink-0 overflow-hidden relative">
                                 {thumbnailUrl ? (
                                     <img src={thumbnailUrl} alt={title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                                 ) : (
@@ -132,7 +132,7 @@ export function UpcomingEvent({
                                 <div className="flex gap-4 items-start">
                                     {isAvatar && thumbnailUrl && (
                                         <div className="relative shrink-0">
-                                            <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+                                            <div className="absolute inset-0 bg-primary/20 rounded-full" />
                                             <img
                                                 src={thumbnailUrl}
                                                 alt={title}
@@ -235,7 +235,7 @@ export function UpcomingEvent({
                 ) : (
                     <div className="bg-muted/5 flex flex-col items-center justify-center text-center space-y-4">
                         <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center">
-                            <ThemeIcon className="h-8 w-8 text-muted-foreground/50" />
+                            {/* <ThemeIcon className="h-8 w-8 text-muted-foreground/50" /> */}
                         </div>
                         <div className="space-y-1 max-w-sm">
                             <h4 className="font-semibold text-foreground">No upcoming event</h4>

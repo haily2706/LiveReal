@@ -273,43 +273,15 @@ function SidebarItem({
                         <div
                             onMouseEnter={onHover}
                             className={cn(
-                                "relative flex items-center transition-all duration-300 group rounded-2xl mx-auto overflow-hidden cursor-pointer select-none justify-center w-12 h-12 px-0 py-3",
-                                active && "bg-linear-to-r from-[#FF3B5C]/10 via-purple-500/5 to-transparent"
+                                "relative flex items-center justify-center transition-all duration-200 group rounded-lg mx-auto overflow-hidden cursor-pointer select-none w-10 h-10",
+                                active ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                             )}
                         >
-                            {/* Active Indicator Bar (Parent) */}
-                            {active && (
-                                <motion.div
-                                    layoutId="active-indicator-parent"
-                                    className="absolute left-0 w-[3px] h-6 bg-[#FF3B5C] rounded-r-full shadow-[0_0_10px_#FF3B5C]"
-                                    initial={{ opacity: 0, scaleY: 0.5 }}
-                                    animate={{ opacity: 1, scaleY: 1 }}
-                                    transition={{ duration: 0.2 }}
-                                />
-                            )}
-
-                            {/* Hover BG */}
-                            {!active && isHovered && (
-                                <motion.div
-                                    layoutId="hover-nav-bg"
-                                    className="absolute inset-0 bg-muted/50 rounded-2xl"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                />
-                            )}
-
-                            <div className={cn(
-                                "relative z-10 flex items-center justify-center transition-all duration-300",
-                                active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-                            )}>
-                                <item.icon className={cn(
-                                    "h-[22px] w-[22px] transition-all duration-300",
-                                    active ? "text-[#FF3B5C] drop-shadow-[0_0_8px_rgba(255,59,92,0.5)]" : "",
-                                    !active && isHovered ? item.color : "",
-                                    "group-hover:scale-110"
-                                )} />
-                            </div>
+                            <item.icon className={cn(
+                                "h-5 w-5 transition-all duration-200",
+                                active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground",
+                                !active && isHovered ? item.color : ""
+                            )} />
                         </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="right" align="start" sideOffset={10} className="w-[200px] ml-2 backdrop-blur-xl bg-background/80">
@@ -334,50 +306,25 @@ function SidebarItem({
                     onClick={toggleOpen}
                     onMouseEnter={onHover}
                     className={cn(
-                        "relative flex items-center transition-all duration-300 group px-3 py-3 rounded-2xl mx-2 overflow-hidden cursor-pointer select-none",
-                        isCollapsed ? "justify-center px-0 w-12 h-12 mx-auto" : "w-auto justify-between",
-                        active && !isOpen && "bg-linear-to-r from-[#FF3B5C]/10 via-purple-500/5 to-transparent"
+                        "relative flex items-center transition-all duration-200 group px-3 py-2 rounded-lg mx-2 cursor-pointer select-none",
+                        isCollapsed ? "justify-center px-0 w-10 h-10 mx-auto" : "w-auto justify-between",
+                        active && !isOpen
+                            ? "bg-muted text-foreground"
+                            : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                     )}
                 >
-                    {/* Active Indicator Bar (Parent) only if closed and active child */}
-                    {active && !isOpen && (
-                        <motion.div
-                            layoutId="active-indicator-parent"
-                            className="absolute left-0 w-[3px] h-6 bg-[#FF3B5C] rounded-r-full shadow-[0_0_10px_#FF3B5C]"
-                            initial={{ opacity: 0, scaleY: 0.5 }}
-                            animate={{ opacity: 1, scaleY: 1 }}
-                            transition={{ duration: 0.2 }}
-                        />
-                    )}
-
-                    {/* Hover BG */}
-                    {!active && isHovered && (
-                        <motion.div
-                            layoutId="hover-nav-bg"
-                            className="absolute inset-0 bg-muted/50 rounded-2xl"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                        />
-                    )}
-
                     <div className={cn(
-                        "relative z-10 flex items-center transition-all duration-300",
-                        isCollapsed ? "justify-center" : "gap-4",
-                        active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                        "relative z-10 flex items-center transition-all duration-200",
+                        isCollapsed ? "justify-center" : "gap-3"
                     )}>
                         <item.icon className={cn(
-                            "h-[22px] w-[22px] transition-all duration-300",
-                            active ? "text-[#FF3B5C] drop-shadow-[0_0_8px_rgba(255,59,92,0.5)]" : "",
-                            !active && isHovered ? item.color : "",
-                            "group-hover:scale-110"
+                            "h-5 w-5 transition-all duration-200",
+                            active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground",
+                            !active && isHovered ? item.color : ""
                         )} />
 
                         {!isCollapsed && (
-                            <span className={cn(
-                                "text-sm font-medium tracking-wide transition-all duration-300",
-                                active ? "font-bold" : ""
-                            )}>
+                            <span className="text-sm truncate">
                                 {item.label}
                             </span>
                         )}
@@ -406,8 +353,8 @@ function SidebarItem({
                                         link={child}
                                         pathname={pathname}
                                         isCollapsed={isCollapsed}
-                                        isHovered={false} // No hover effect from parent
-                                        onHover={() => { }} // No hover logic needed for children for now or can implement individual hover
+                                        isHovered={false}
+                                        onHover={() => { }}
                                         isChild={true}
                                     />
                                 ))}
@@ -460,63 +407,25 @@ function SidebarLink({
         >
             <div
                 className={cn(
-                    "relative flex items-center transition-all duration-300 group rounded-2xl overflow-hidden",
-                    isChild ? "px-3 py-2 mx-1" : "px-3 py-3 mx-2",
-                    isCollapsed ? "justify-center px-0 w-12 h-12 mx-auto" : "w-auto",
-                    active && "bg-linear-to-r from-[#FF3B5C]/10 via-purple-500/5 to-transparent"
+                    "relative flex items-center transition-all duration-200 group rounded-lg mx-2 px-3 py-2",
+                    isCollapsed ? "justify-center px-0 w-10 h-10 mx-auto" : "w-auto",
+                    active
+                        ? "bg-muted text-foreground font-medium"
+                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                 )}
             >
+                <link.icon className={cn(
+                    "transition-all duration-200 h-5 w-5",
+                    active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground",
+                    !active && isHovered ? link.color : "",
+                    isCollapsed ? "" : "mr-3"
+                )} />
 
-                {/* Active Indicator Bar */}
-                {active && (
-                    <motion.div
-                        layoutId={`active-indicator-${link.href}`}
-                        className={cn(
-                            "absolute left-0 bg-[#FF3B5C] rounded-r-full shadow-[0_0_10px_#FF3B5C]",
-                            isChild ? "w-[2px] h-4" : "w-[3px] h-6"
-                        )}
-                        initial={{ opacity: 0, scaleY: 0.5 }}
-                        animate={{ opacity: 1, scaleY: 1 }}
-                        transition={{ duration: 0.2 }}
-                    />
+                {!isCollapsed && (
+                    <span className="truncate text-sm">
+                        {link.label}
+                    </span>
                 )}
-
-                {/* Hover Spotlight for non-active items */}
-                {!active && isHovered && (
-                    <motion.div
-                        layoutId="hover-nav-bg"
-                        className="absolute inset-0 bg-muted/50 rounded-2xl"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                    />
-                )}
-
-
-                <div className={cn(
-                    "relative z-10 flex items-center transition-all duration-300",
-                    isCollapsed ? "justify-center" : "gap-4",
-                    active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-                )}>
-                    <link.icon className={cn(
-                        "transition-all duration-300",
-                        isChild ? "h-[18px] w-[18px]" : "h-[22px] w-[22px]",
-                        active ? "text-[#FF3B5C] drop-shadow-[0_0_8px_rgba(255,59,92,0.5)]" : "",
-                        !active && isHovered ? link.color : "",
-                        isCollapsed ? "" : "",
-                        "group-hover:scale-110"
-                    )} />
-
-                    {!isCollapsed && (
-                        <span className={cn(
-                            "font-medium tracking-wide transition-all duration-300",
-                            isChild ? "text-xs" : "text-sm",
-                            active ? "font-bold" : ""
-                        )}>
-                            {link.label}
-                        </span>
-                    )}
-                </div>
             </div>
         </Link>
     );

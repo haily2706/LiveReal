@@ -33,17 +33,19 @@ export function Sidebar({ className, items, ...props }: SidebarNavProps) {
                         key={item.href}
                         href={item.href}
                         className={cn(
-                            buttonVariants({ variant: "ghost" }),
+                            "group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 shrink-0",
                             isActive
-                                ? "bg-accent hover:bg-accent text-foreground font-medium"
-                                : "hover:bg-accent/50 hover:text-foreground text-muted-foreground",
-                            "justify-start relative transition-all duration-200 ease-in-out px-4 py-2.5 h-auto rounded-xl shrink-0"
+                                ? "bg-muted text-foreground"
+                                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                         )}
                     >
-                        <span className={cn("mr-1 transition-colors", isActive ? "text-pink-500" : "text-muted-foreground")}>
+                        <span className={cn(
+                            "flex items-center justify-center transition-colors",
+                            isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                        )}>
                             {item.icon}
                         </span>
-                        <span className="relative z-10 text-sm whitespace-nowrap">{item.title}</span>
+                        <span className="truncate">{item.title}</span>
                     </Link>
                 )
             })}

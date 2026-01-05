@@ -98,7 +98,7 @@ export function Navbar({ }: NavbarProps) {
                                         <Menu className="h-6 w-6" />
                                     </Button>
                                 </SheetTrigger>
-                                <SheetContent side="left" className="w-[300px] border-r border-border p-0">
+                                <SheetContent side="left" className="w-[220px] border-r border-border p-0">
                                     <SheetHeader className="p-6 border-b border-border">
                                         <SheetTitle asChild>
                                             <Link href="/" className="flex items-center gap-3">
@@ -107,16 +107,27 @@ export function Navbar({ }: NavbarProps) {
                                         </SheetTitle>
                                     </SheetHeader>
                                     <nav className="flex flex-col gap-1 p-4">
-                                        {mobileLinks.map((link) => (
-                                            <Link
-                                                key={link.href}
-                                                href={link.href}
-                                                className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-accent text-muted-foreground hover:text-foreground transition-all duration-300"
-                                            >
-                                                <link.icon className="h-5 w-5" />
-                                                {link.name}
-                                            </Link>
-                                        ))}
+                                        {mobileLinks.map((link) => {
+                                            const isActive = pathname === link.href || pathname?.startsWith(`${link.href}/`);
+                                            return (
+                                                <Link
+                                                    key={link.href}
+                                                    href={link.href}
+                                                    className={cn(
+                                                        "group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200",
+                                                        isActive
+                                                            ? "bg-muted text-foreground"
+                                                            : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                                    )}
+                                                >
+                                                    <link.icon className={cn(
+                                                        "h-5 w-5 transition-colors",
+                                                        isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                                                    )} />
+                                                    {link.name}
+                                                </Link>
+                                            );
+                                        })}
                                     </nav>
                                 </SheetContent>
                             </Sheet>
@@ -188,10 +199,10 @@ export function Navbar({ }: NavbarProps) {
                                                 variant={isSelected ? "default" : "ghost"}
                                                 onClick={() => handleSelect(category)}
                                                 className={cn(
-                                                    "whitespace-nowrap rounded-full text-xs font-medium transition-all duration-300 h-8 px-4",
+                                                    "whitespace-nowrap rounded-full text-xs font-medium h-8 px-4 transition-colors",
                                                     isSelected
-                                                        ? "bg-foreground text-background hover:bg-foreground/90 shadow-[0_0_15px_rgba(var(--foreground),0.3)]"
-                                                        : "bg-muted/50 hover:bg-background text-muted-foreground hover:text-foreground border border-input hover:border-primary/50 hover:shadow-[0_0_20px_-5px_rgba(0,0,0,0.1)] hover:ring-2 hover:ring-primary/10"
+                                                        ? "bg-foreground text-background hover:bg-foreground/90"
+                                                        : "bg-muted/50 border border-input text-muted-foreground hover:text-foreground"
                                                 )}
                                             >
                                                 {category}
@@ -283,10 +294,10 @@ export function Navbar({ }: NavbarProps) {
                                     variant={isSelected ? "default" : "ghost"}
                                     onClick={() => handleSelect(category)}
                                     className={cn(
-                                        "whitespace-nowrap rounded-full text-xs font-medium transition-all duration-300 ease-out h-7 px-3 shrink-0 hover:scale-105 active:scale-95",
+                                        "whitespace-nowrap rounded-full text-xs font-medium h-7 px-3 shrink-0 transition-colors",
                                         isSelected
-                                            ? "bg-foreground text-background hover:bg-foreground/90 shadow-[0_0_15px_rgba(var(--foreground),0.3)]"
-                                            : "bg-muted/50 hover:bg-background text-muted-foreground hover:text-foreground border border-input hover:border-primary/50 hover:shadow-[0_0_20px_-5px_rgba(0,0,0,0.1)] hover:ring-2 hover:ring-primary/10"
+                                            ? "bg-foreground text-background hover:bg-foreground/90"
+                                            : "bg-muted/50 border border-input text-muted-foreground hover:text-foreground"
                                     )}
                                 >
                                     {category}
@@ -336,7 +347,7 @@ export function Navbar({ }: NavbarProps) {
                                         key={link.name}
                                         href={link.href}
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="text-lg font-medium p-4 rounded-xl hover:bg-muted transition-colors flex items-center gap-4"
+                                        className="text-lg font-medium p-4 text-muted-foreground hover:text-foreground transition-colors flex items-center gap-4"
                                     >
                                         {link.name}
                                     </Link>
