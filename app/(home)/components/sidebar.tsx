@@ -287,7 +287,7 @@ export function MobileBottomNav() {
             {/* Glassmorphic Container */}
             <div className="bg-background/80 backdrop-blur-xl border-t border-border/50 pb-[env(safe-area-inset-bottom)]">
                 <nav
-                    className="flex items-center justify-around h-[60px] px-2 relative"
+                    className="flex items-center justify-around h-[60px] px-0 relative"
                     onMouseLeave={() => setHoveredLink(null)}
                 >
                     {NAV_LINKS.map((link) => {
