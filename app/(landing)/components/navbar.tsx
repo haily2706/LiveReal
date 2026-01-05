@@ -67,7 +67,7 @@ export function Navbar() {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-backdrop-filter:bg-background/60">
-            <div className="container mx-auto flex h-15 items-center px-4 gap-4">
+            <div className="container mx-auto flex h-16 items-center px-4 gap-4">
 
                 {/* Mobile Menu Trigger & Logo */}
                 <div className="flex items-center gap-2 flex-1 lg:flex-none">
@@ -79,7 +79,7 @@ export function Navbar() {
                                 </Button>
                             </SheetTrigger>
                             <SheetContent side="left" className="w-[260px] border-r border-border p-0">
-                                <SheetHeader className="p-6 border-b border-border">
+                                <SheetHeader className="p-6 border-border">
                                     <SheetTitle asChild>
                                         <Link href="/" className="flex items-center gap-3" onClick={() => setIsSheetOpen(false)}>
                                             <TextLogo />
@@ -108,19 +108,18 @@ export function Navbar() {
                                                 </Link>
                                             );
                                         })}
-                                        <div className="mt-2 pt-4 border-t border-border/50">
-                                            <Link
-                                                href="/home"
-                                                onClick={() => setIsSheetOpen(false)}
-                                                className="group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-all duration-200"
-                                            >
-                                                Dashboard
-                                            </Link>
-                                        </div>
-                                    </nav>
-                                    <div className="mt-auto p-4 border-t border-border">
-                                        {!user && (
-                                            <div className="flex flex-col gap-2">
+                                        {user ? (
+                                            <div className="mt-2 pt-4 border-border/50">
+                                                <Link
+                                                    href="/home"
+                                                    onClick={() => setIsSheetOpen(false)}
+                                                    className="group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-all duration-200"
+                                                >
+                                                    Dashboard
+                                                </Link>
+                                            </div>
+                                        ) : (
+                                            <div className="mt-4 pt-4  border-border/50 flex flex-col gap-2">
                                                 <Button
                                                     variant="outline"
                                                     className="w-full justify-start hover:text-pink-500 hover:bg-pink-500/10"
@@ -142,6 +141,8 @@ export function Navbar() {
                                                 </Button>
                                             </div>
                                         )}
+                                    </nav>
+                                    <div className="mt-auto p-4 border-t border-border">
                                         {user && (
                                             <div className="flex items-center gap-2">
                                                 <UserMenu email={user.email} />
@@ -229,6 +230,26 @@ export function Navbar() {
                 {/* Mobile Right Side */}
                 <div className="flex lg:hidden items-center gap-2">
                     <ModeToggle />
+                    {!user && (
+                        <>
+                            <Link href="/home">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="hover:text-pink-500 hover:bg-pink-500/10 active:scale-95 transition-all cursor-pointer"
+                                >
+                                    Home
+                                </Button>
+                            </Link>
+                            <Button
+                                size="sm"
+                                className="bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg shadow-pink-500/20 active:scale-95 transition-all text-white"
+                                onClick={() => onOpen("sign_up")}
+                            >
+                                Sign Up
+                            </Button>
+                        </>
+                    )}
                     {user && <UserMenu email={user.email} />}
                 </div>
             </div>

@@ -21,7 +21,7 @@ export function ScheduleButton() {
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
-                        className="group flex items-center justify-center gap-2 rounded-full w-9 md:w-auto px-0 md:px-4 border border-input bg-transparent md:bg-muted/50 hover:bg-accent md:hover:bg-background text-muted-foreground md:text-foreground hover:text-foreground transition-colors [&_svg]:!size-5"
+                        className="group flex items-center justify-center gap-2 md:rounded-full w-9 md:w-auto px-0 md:px-4 md:border md:border-input bg-transparent md:bg-muted/50 hover:bg-accent md:hover:bg-background md:text-foreground hover:text-foreground transition-colors [&_svg]:!size-5"
                         variant="ghost"
                         size="default"
                     >

@@ -74,7 +74,7 @@ export function Navbar() {
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="left" className="w-[220px] border-r border-border p-0">
-                            <SheetHeader className="p-6 border-b border-border">
+                            <SheetHeader className="p-6 border-border">
                                 <SheetTitle asChild>
                                     <Link href="/dashboard" className="flex items-center gap-3">
                                         <TextLogo />

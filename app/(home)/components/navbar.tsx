@@ -99,7 +99,7 @@ export function Navbar({ }: NavbarProps) {
                                     </Button>
                                 </SheetTrigger>
                                 <SheetContent side="left" className="w-[220px] border-r border-border p-0">
-                                    <SheetHeader className="p-6 border-b border-border">
+                                    <SheetHeader className="p-6 border-border">
                                         <SheetTitle asChild>
                                             <Link href="/" className="flex items-center gap-3">
                                                 <TextLogo />
@@ -128,6 +128,23 @@ export function Navbar({ }: NavbarProps) {
                                                 </Link>
                                             );
                                         })}
+                                        {!user && (
+                                            <div className="mt-4 pt-4 border-border/50 flex flex-col gap-2">
+                                                <Button
+                                                    variant="outline"
+                                                    className="w-full justify-start hover:text-pink-500 hover:bg-pink-500/10"
+                                                    onClick={() => onOpen("sign_in")}
+                                                >
+                                                    Sign In
+                                                </Button>
+                                                <Button
+                                                    className="w-full justify-start bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg shadow-pink-500/20 text-white"
+                                                    onClick={() => onOpen("sign_up")}
+                                                >
+                                                    Sign Up
+                                                </Button>
+                                            </div>
+                                        )}
                                     </nav>
                                 </SheetContent>
                             </Sheet>
@@ -264,16 +281,16 @@ export function Navbar({ }: NavbarProps) {
                         ) : user ? (
                             <UserMenu email={user.email} />
                         ) : (
-                            <div className="hidden md:flex items-center gap-2">
+                            <div className="flex items-center gap-2">
                                 <Button
                                     variant="ghost"
-                                    className="hover:text-pink-500 hover:bg-pink-500/10 active:scale-95 transition-all"
+                                    className="hidden md:inline-flex hover:text-pink-500 hover:bg-pink-500/10 active:scale-95 transition-all"
                                     onClick={() => onOpen("sign_in")}
                                 >
                                     Sign In
                                 </Button>
                                 <Button
-                                    className="bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg shadow-pink-500/20 active:scale-95 transition-all text-white"
+                                    className="h-8 md:h-9 text-xs md:text-sm bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg shadow-pink-500/20 active:scale-95 transition-all text-white px-3 md:px-4"
                                     onClick={() => onOpen("sign_up")}
                                 >
                                     Sign Up
@@ -282,31 +299,33 @@ export function Navbar({ }: NavbarProps) {
                         )}
 
                     </div>
-                </div>
+                </div >
                 {/* Mobile Categories - Visible only on mobile and /home */}
-                {pathname === '/home' && (
-                    <div className="md:hidden flex items-center gap-2 overflow-x-auto px-4 py-2 no-scrollbar border-t border-border/50">
-                        {categories.map((category) => {
-                            const isSelected = selectedCategory === category;
-                            return (
-                                <Button
-                                    key={category}
-                                    variant={isSelected ? "default" : "ghost"}
-                                    onClick={() => handleSelect(category)}
-                                    className={cn(
-                                        "whitespace-nowrap rounded-full text-xs font-medium h-7 px-3 shrink-0 transition-colors",
-                                        isSelected
-                                            ? "bg-foreground text-background hover:bg-foreground/90"
-                                            : "bg-muted/50 border border-input text-muted-foreground hover:text-foreground"
-                                    )}
-                                >
-                                    {category}
-                                </Button>
-                            );
-                        })}
-                    </div>
-                )}
-            </header>
+                {
+                    pathname === '/home' && (
+                        <div className="md:hidden flex items-center gap-2 overflow-x-auto px-4 py-2 no-scrollbar border-t border-border/50">
+                            {categories.map((category) => {
+                                const isSelected = selectedCategory === category;
+                                return (
+                                    <Button
+                                        key={category}
+                                        variant={isSelected ? "default" : "ghost"}
+                                        onClick={() => handleSelect(category)}
+                                        className={cn(
+                                            "whitespace-nowrap rounded-full text-xs font-medium h-7 px-3 shrink-0 transition-colors",
+                                            isSelected
+                                                ? "bg-foreground text-background hover:bg-foreground/90"
+                                                : "bg-muted/50 border border-input text-muted-foreground hover:text-foreground"
+                                        )}
+                                    >
+                                        {category}
+                                    </Button>
+                                );
+                            })}
+                        </div>
+                    )
+                }
+            </header >
 
             {/* Mobile Search - Visible only on mobile */}
             <AnimatePresence>
@@ -330,10 +349,10 @@ export function Navbar({ }: NavbarProps) {
                             </div>
 
                             <div className="relative group mb-6">
-                                <div className="relative flex items-center bg-background rounded-lg border border-border px-4 py-3">
+                                <div className="relative flex items-center bg-background rounded-lg border border-border px-4 py-2">
                                     <Search className="h-5 w-5 text-muted-foreground mr-3" />
                                     <input
-                                        className="flex-1 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground"
+                                        className="h-6 flex-1 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground"
                                         placeholder="Search..."
                                         autoFocus
                                     />
@@ -341,25 +360,34 @@ export function Navbar({ }: NavbarProps) {
                                 </div>
                             </div>
 
-                            <nav className="flex flex-col gap-4">
-                                {appLinks.map((link) => (
-                                    <Link
-                                        key={link.name}
-                                        href={link.href}
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                        className="text-lg font-medium p-4 text-muted-foreground hover:text-foreground transition-colors flex items-center gap-4"
-                                    >
-                                        {link.name}
-                                    </Link>
-                                ))}
-                            </nav>
-
-                            <div className="mt-auto pb-4">
+                            <nav className="flex flex-col gap-1">
+                                {mobileLinks.map((link) => {
+                                    const isActive = pathname === link.href || pathname?.startsWith(`${link.href}/`);
+                                    return (
+                                        <Link
+                                            key={link.href}
+                                            href={link.href}
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className={cn(
+                                                "group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200",
+                                                isActive
+                                                    ? "bg-muted text-foreground"
+                                                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                            )}
+                                        >
+                                            <link.icon className={cn(
+                                                "h-5 w-5 transition-colors",
+                                                isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                                            )} />
+                                            {link.name}
+                                        </Link>
+                                    );
+                                })}
                                 {!user && (
-                                    <>
+                                    <div className="mt-4 pt-4 border-border/50 flex flex-col gap-2">
                                         <Button
-                                            className="mb-4 w-full h-12 text-lg hover:text-pink-500 hover:bg-pink-500/10"
                                             variant="outline"
+                                            className="w-full justify-start hover:text-pink-500 hover:bg-pink-500/10"
                                             onClick={() => {
                                                 setIsMobileMenuOpen(false);
                                                 onOpen("sign_in");
@@ -368,7 +396,7 @@ export function Navbar({ }: NavbarProps) {
                                             Sign In
                                         </Button>
                                         <Button
-                                            className="w-full h-12 text-lg bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg shadow-pink-500/20 text-white"
+                                            className="w-full justify-start bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg shadow-pink-500/20 text-white"
                                             onClick={() => {
                                                 setIsMobileMenuOpen(false);
                                                 onOpen("sign_up");
@@ -376,9 +404,9 @@ export function Navbar({ }: NavbarProps) {
                                         >
                                             Sign Up
                                         </Button>
-                                    </>
+                                    </div>
                                 )}
-                            </div>
+                            </nav>
 
                         </motion.div>
                     )
