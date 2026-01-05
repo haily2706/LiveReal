@@ -47,7 +47,7 @@ export const PLANS = [
         platformFee: "20%",
         features: [
             "Limited streams",
-            "Up to 1k viewers per stream",
+            "Up to 100 viewers per stream",
             "Basic streaming themes",
             "Standard gift animations",
             "Standard stream quality"

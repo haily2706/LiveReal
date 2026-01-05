@@ -108,7 +108,7 @@ export function Sidebar() {
                 </Badge> */}
             </div>
 
-            <div className="flex flex-col flex-1 h-full overflow-y-auto custom-scrollbar relative z-10 px-2 space-y-2 pb-4 gap-4">
+            <div className="flex flex-col flex-1 h-full overflow-y-auto custom-scrollbar relative z-10 px-2 space-y-1 pb-4 gap-4">
                 {/* Profile Section */}
                 <div className={cn("flex flex-col items-center transition-all duration-300", isCollapsed ? "px-0" : "px-2")}>
                     {isLoading ? (
@@ -252,7 +252,6 @@ function SidebarLink({
                 <link.icon className={cn(
                     "h-5 w-5 transition-all duration-200",
                     active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground",
-                    !active && isHovered ? link.color : "",
                     isCollapsed ? "" : "mr-3"
                 )} />
 
@@ -316,6 +315,9 @@ export function MobileBottomNav() {
                                             </span>
                                         )}
                                     </div>
+                                    <span className="text-[10px] font-medium mt-1">
+                                        {link.label}
+                                    </span>
                                 </div>
                             </Link>
                         );
