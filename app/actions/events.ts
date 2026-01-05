@@ -18,7 +18,6 @@ export async function startStream(eventId: string) {
         await db.update(events)
             .set({
                 isLive: true,
-                status: "published",
                 updatedAt: new Date(),
             })
             .where(eq(events.id, eventId));

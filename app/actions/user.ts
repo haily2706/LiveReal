@@ -41,3 +41,40 @@ export async function updateProfile(data: {
         return { success: false, error: "Failed to update profile" };
     }
 }
+
+export async function searchUsers(query: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    if (!query || query.length < 2) {
+        return { success: true, data: [] };
+    }
+
+    try {
+        const results = await db.query.users.findMany({
+            where: (users, { or, ilike, and, ne }) => and(
+                or(
+                    ilike(users.name, `%${query}%`),
+                    ilike(users.email, `%${query}%`)
+                ),
+                ne(users.id, user.id) // Exclude self
+            ),
+            limit: 5,
+            columns: {
+                id: true,
+                name: true,
+                email: true,
+                avatar: true,
+            }
+        });
+
+        return { success: true, data: results };
+    } catch (error) {
+        console.error("Error searching users:", error);
+        return { success: false, error: "Failed to search users" };
+    }
+}

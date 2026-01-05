@@ -76,11 +76,11 @@ export const events = pgTable('events', {
     thumbnailUrl: text('thumbnail_url'),
     isShort: boolean('is_short').default(false),
     hashtags: text('hashtags'),
-    visibility: text('visibility').default('public'), // public, private, unlisted
-    status: text('status').default('draft'), // draft, published, ended
+    visibility: text('visibility').default('public'), // public, private, invited
     views: integer('views').default(0),
     lreals: integer('lreals').default(0),
     type: smallint('type'),
+    invitedUsers: json('invited_users').$type<{ id: string; name: string }[]>(),
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
 });

@@ -14,6 +14,7 @@ export async function createEvent(inputs: {
     thumbnailUrl?: string;
     isShort?: boolean;
     visibility?: string;
+    invitedUsers?: { id: string; name: string }[];
 }) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -33,7 +34,7 @@ export async function createEvent(inputs: {
             thumbnailUrl: inputs.thumbnailUrl,
             isShort: inputs.isShort,
             visibility: inputs.visibility || 'public',
-            status: 'published', // Default to published for now
+            invitedUsers: inputs.invitedUsers,
         }).returning();
 
         return { success: true, data: newEvent };
@@ -92,6 +93,7 @@ export async function updateEvent(eventId: string, inputs: {
     thumbnailUrl?: string;
     isShort?: boolean;
     visibility?: string;
+    invitedUsers?: { id: string; name: string }[];
 }) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -112,6 +114,7 @@ export async function updateEvent(eventId: string, inputs: {
         if (inputs.thumbnailUrl !== undefined) updateData.thumbnailUrl = inputs.thumbnailUrl;
         if (inputs.isShort !== undefined) updateData.isShort = inputs.isShort;
         if (inputs.visibility !== undefined) updateData.visibility = inputs.visibility;
+        if (inputs.invitedUsers !== undefined) updateData.invitedUsers = inputs.invitedUsers;
 
         const [updatedEvent] = await db.update(events)
             .set(updateData)

@@ -14,7 +14,10 @@ interface EventCardProps {
     title: string;
     date: string;
     duration?: string;
-    thumbnailUrl: string;
+    thumbnailUrl?: string | null;
+    isShort?: boolean;
+    icon?: React.ElementType;
+    isVideoCall?: boolean;
     lreal?: string;
     views?: string;
     onEdit?: () => void;
@@ -27,20 +30,89 @@ export function EventCard({
     date,
     duration,
     thumbnailUrl,
+    isShort,
+    icon: Icon = VideoIcon,
+    isVideoCall,
     lreal,
     views,
     onEdit,
     onDelete,
     onGoLive
 }: EventCardProps) {
+
+    if (isVideoCall) {
+        return (
+            <div className="group relative flex items-center p-4 border rounded-xl bg-card hover:bg-muted/50 transition-colors gap-4">
+                <div className="shrink-0 relative">
+                    {thumbnailUrl ? (
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <img
+                                src={thumbnailUrl}
+                                alt={title}
+                                className="w-14 h-14 rounded-full object-cover border-2 border-background relative z-10 shadow-sm"
+                            />
+                        </div>
+                    ) : (
+                        <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center border-2 border-background relative z-10">
+                            <Icon className="h-7 w-7 text-muted-foreground/50" />
+                        </div>
+                    )}
+                </div>
+
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    <h3 className="font-bold text-lg leading-tight truncate mb-1 pr-8 text-foreground">{title}</h3>
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                        <CalendarIcon className="h-4 w-4 shrink-0" />
+                        <span className="truncate">{date}</span>
+                    </div>
+                </div>
+
+                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                                <MoreVertical className="h-4 w-4" />
+                                <span className="sr-only">Open menu</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={onGoLive}>
+                                <Video className="mr-2 h-4 w-4" />
+                                Start Call
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={onEdit}>
+                                <Pencil className="mr-2 h-4 w-4" />
+                                Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={onDelete} className="text-destructive focus:text-destructive">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="group relative flex border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors overflow-hidden">
-            <div className="relative h-24 w-40 shrink-0 bg-muted">
-                <img
-                    src={thumbnailUrl}
-                    alt={title}
-                    className="h-full w-full object-cover"
-                />
+            <div className="relative h-24 w-40 shrink-0 bg-muted flex items-center justify-center overflow-hidden">
+                {thumbnailUrl ? (
+                    <img
+                        src={thumbnailUrl}
+                        alt={title}
+                        className="h-full w-full object-cover"
+                    />
+                ) : (
+                    <Icon className="h-8 w-8 text-muted-foreground/30" />
+                )}
+                {isShort && (
+                    <div className="absolute top-1 right-1 bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded text-[8px] text-white font-medium uppercase tracking-wider">
+                        Short
+                    </div>
+                )}
             </div>
             <div className="flex flex-col flex-1 px-3 py-2 min-w-0 justify-between gap-1">
                 <div className="flex items-start justify-between gap-2">
@@ -90,7 +162,12 @@ export function EventCard({
                     </span>
 
                     <div className="pt-0 flex-1 text-right">
-                        <Button variant="ghost" size="sm" className="px-0 text-xs text-pink-500 hover:text-pink-600 hover:bg-transparent font-medium p-0 justify-start">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="px-0 text-xs text-pink-500 hover:text-pink-600 hover:bg-transparent font-medium p-0 justify-start"
+                            onClick={onGoLive}
+                        >
                             Go Live &rarr;
                         </Button>
                     </div>

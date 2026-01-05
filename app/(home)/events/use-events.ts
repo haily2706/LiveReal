@@ -22,6 +22,7 @@ interface EventsState {
         thumbnailUrl?: string;
         isShort?: boolean;
         visibility?: string;
+        invitedUsers?: { id: string; name: string }[];
     }) => Promise<{ success: boolean; data?: Event; error?: string }>;
 }
 
@@ -99,6 +100,7 @@ export const useEvents = create<EventsState>((set, get) => ({
                 thumbnailUrl: data.thumbnailUrl || undefined,
                 isShort: data.isShort ?? undefined,
                 visibility: data.visibility || undefined,
+                invitedUsers: data.invitedUsers || undefined,
             };
 
             const result = await updateEventAction(eventId, updateInput);
