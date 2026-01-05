@@ -76,7 +76,7 @@ export function ChangePassword() {
             </div>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="outline">Change Password</Button>
+                    <Button variant="ghost" className="-mr-4">Change Password</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
