@@ -2,13 +2,6 @@ import { Cake, Mic, Users, Gamepad2, Sparkles, Zap, Crown, Video } from "lucide-
 
 export const EventTypes = [
     {
-        name: 'Video Call',
-        value: 5,
-        color: "bg-linear-to-r from-emerald-500 via-teal-500 to-cyan-500",
-        icon: Video,
-        type: 'video'
-    },
-    {
         name: 'Birthday',
         value: 1,
         color: "bg-linear-to-r from-pink-500 via-rose-500 to-yellow-500",
@@ -19,6 +12,13 @@ export const EventTypes = [
         value: 2,
         color: "bg-linear-to-r from-cyan-400 via-blue-500 to-purple-500",
         icon: Mic
+    },
+    {
+        name: 'Video Call',
+        value: 5,
+        color: "bg-linear-to-r from-emerald-500 via-teal-500 to-cyan-500",
+        icon: Video,
+        type: 'video'
     },
     {
         name: 'FanMeet',
