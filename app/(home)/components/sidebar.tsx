@@ -308,7 +308,6 @@ export function MobileBottomNav() {
                                         <link.icon className={cn(
                                             "h-6 w-6 transition-all duration-200",
                                             active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground",
-                                            !active && isHovered ? link.color : ""
                                         )} />
                                         {link.label === "Messages" && (
                                             <span className="absolute -top-1 -right-1 flex h-3 w-3">
