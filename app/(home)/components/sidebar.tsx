@@ -17,7 +17,8 @@ import {
     MessageCircle,
     Zap,
     Sparkles,
-    Crown
+    Crown,
+    Wallet
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/components/auth/use-auth-store";
@@ -27,7 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSidebar } from "@/app/(home)/components/provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PremiumBalanceCard } from "@/app/(home)/settings/wallet/components/premium-balance-card";
+import { PremiumBalanceCard } from "@/app/(home)/events/wallet/components/premium-balance-card";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
@@ -273,7 +274,8 @@ function isActive(pathname: string, href: string) {
 const NAV_LINKS = [
     { icon: Compass, label: "Explore", href: "/home", color: "text-blue-400" },
     { icon: Calendar, label: "Events", href: "/events/list", color: "text-purple-400" },
-    { icon: Settings, label: "Settings", href: "/settings/wallet", color: "text-gray-400" }
+    { icon: Wallet, label: "Wallet", href: "/events/wallet", color: "text-emerald-400" },
+    { icon: Settings, label: "Settings", href: "/settings/profile", color: "text-gray-400" }
 ];
 
 export function MobileBottomNav() {

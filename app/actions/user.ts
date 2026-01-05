@@ -34,7 +34,7 @@ export async function updateProfile(data: {
                 }
             });
 
-        revalidatePath("/events");
+        revalidatePath("/settings");
         return { success: true };
     } catch (error) {
         console.error("Error updating profile:", error);

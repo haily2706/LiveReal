@@ -1,6 +1,6 @@
 
-import ProfilePage from "./profile/page";
+import WalletPage from "./wallet/page";
 
 export default function EventsPage() {
-    return <ProfilePage />;
+    return <WalletPage />;
 }

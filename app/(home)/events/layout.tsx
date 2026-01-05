@@ -1,7 +1,7 @@
 "use client";
 
 import { Sidebar } from "./components/sidebar";
-import { User, Calendar } from "lucide-react";
+import { User, Calendar, Wallet } from "lucide-react";
 import { useSidebar } from "@/app/(home)/components/provider";
 import { cn } from "@/lib/utils";
 
@@ -12,9 +12,9 @@ const sidebarNavItems = [
         icon: <Calendar className="w-4 h-4" />,
     },
     {
-        title: "Profile",
-        href: "/events/profile",
-        icon: <User className="w-4 h-4" />,
+        title: "Wallet",
+        href: "/events/wallet",
+        icon: <Wallet className="w-4 h-4" />,
     },
 ]
 
@@ -33,7 +33,7 @@ export default function EventsLayout({ children }: { children: React.ReactNode }
                             Events
                         </h2>
                         <p className="text-muted-foreground text-sm">
-                            Manage your events and profile settings.
+                            Manage your events and wallet.
                         </p>
                     </div>
 

@@ -36,7 +36,7 @@ export function PremiumBalanceCard() {
 
     return (
         <Link
-            href="/settings/wallet"
+            href="/events/wallet"
             className="block mt-6 p-4 rounded-xl bg-linear-to-b from-muted/50 to-transparent border border-border backdrop-blur-md relative overflow-hidden group cursor-pointer hover:border-purple-500/50 transition-all duration-300"
         >
             {/* Background Coin */}

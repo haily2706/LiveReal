@@ -6,7 +6,7 @@ import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import { subscriptions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { CASH_IN_PLANS } from "@/app/(home)/settings/wallet/constants";
+import { CASH_IN_PLANS } from "@/app/(home)/events/wallet/constants";
 
 /**
  * @swagger
@@ -80,8 +80,8 @@ export async function POST(req: NextRequest) {
 
         let stripeSession;
         // In cash-in, success url redirects back to wallet
-        const successUrl = absoluteUrl(`/settings/wallet?success=true`);
-        const cancelUrl = absoluteUrl("/settings/wallet");
+        const successUrl = absoluteUrl(`/events/wallet?success=true`);
+        const cancelUrl = absoluteUrl("/events/wallet");
 
 
         stripeSession = await stripe.checkout.sessions.create({

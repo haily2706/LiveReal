@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils";
 
 const sidebarNavItems = [
     {
-        title: "Wallet",
-        href: "/settings/wallet",
-        icon: <Wallet className="w-4 h-4" />,
+        title: "Profile",
+        href: "/settings/profile",
+        icon: <User className="w-4 h-4" />,
     },
     {
         title: "Subscriptions",

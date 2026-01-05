@@ -164,8 +164,9 @@ export default function WalletPage() {
                     </CardHeader>
                     <CardContent className="relative z-10">
                         {loading ? (
-                            <div className="flex items-baseline gap-1 mb-1 animate-pulse">
-                                <div className="h-8 w-24 bg-muted rounded"></div>
+                            <div className="animate-pulse">
+                                <div className="h-9 w-24 bg-muted rounded mb-1"></div>
+                                <div className="h-5 w-16 bg-muted rounded"></div>
                             </div>
                         ) : (
                             <>

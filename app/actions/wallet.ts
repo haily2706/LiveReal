@@ -33,7 +33,7 @@ export async function updateCashoutPaymentMethod(method: PaymentMethod) {
             })
             .where(eq(users.id, user.id));
 
-        revalidatePath("/settings/wallet");
+        revalidatePath("/events/wallet");
         return { success: true };
     } catch (error) {
         console.error("Error updating payment method:", error);
@@ -57,7 +57,7 @@ export async function deleteCashoutPaymentMethod() {
             })
             .where(eq(users.id, user.id));
 
-        revalidatePath("/settings/wallet");
+        revalidatePath("/events/wallet");
         return { success: true };
     } catch (error) {
         console.error("Error deleting payment method:", error);
@@ -308,7 +308,7 @@ export async function transferCoins(formData: FormData) {
             });
 
             // Revalidate
-            revalidatePath("/settings/wallet");
+            revalidatePath("/events/wallet");
 
             return { success: true };
 

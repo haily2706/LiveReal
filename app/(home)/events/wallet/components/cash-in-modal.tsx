@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { CASH_IN_PLANS } from "@/app/(home)/settings/wallet/constants";
+import { CASH_IN_PLANS } from "@/app/(home)/events/wallet/constants";
 
 interface CashInModalProps {
     children: React.ReactNode;
