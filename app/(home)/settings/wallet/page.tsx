@@ -145,7 +145,7 @@ export default function WalletPage() {
     return (
         <div className="space-y-8 animate-in fade-in-50 duration-500">
             <div>
-                <h3 className="text-lg font-medium">Wallet</h3>
+                <h3 className="text-lg font-semibold">Wallet</h3>
                 <p className="text-sm text-muted-foreground">
                     Manage your balance, cash in/out, and payment methods.
                 </p>

@@ -24,8 +24,8 @@ export default function EventsLayout({ children }: { children: React.ReactNode }
     return (
         <div className="relative min-h-screen flex flex-col">
             <div className={cn(
-                "relative z-10 mx-auto p-4 transition-all duration-500 ease-in-out flex flex-col flex-1 w-full",
-                "max-w-full px-6"
+                "relative z-10 mx-auto transition-all duration-500 ease-in-out flex flex-col flex-1 w-full",
+                "max-w-full p-4 md:p-6 "
             )}>
                 <div className="flex flex-col flex-1 space-y-6">
                     <div className="hidden md:flex flex-col gap-2 mb-6">

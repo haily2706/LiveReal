@@ -40,7 +40,7 @@ export const DeleteAccount = () => {
     return (
         <div className="flex items-center justify-between py-3">
             <div className="space-y-0.5">
-                <Label className="text-base text-red-500">Delete Account</Label>
+                <Label className="font-semibold text-red-500">Delete Account</Label>
                 <p className="text-sm text-muted-foreground">
                     Permanently remove your account and all of its data.
                 </p>

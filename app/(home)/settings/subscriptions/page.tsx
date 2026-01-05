@@ -25,7 +25,7 @@ export default async function SubscriptionPage({ searchParams }: SubscriptionPag
 
     return (
         <div className="h-full flex flex-col space-y-4">
-            <h3 className="text-2xl font-bold">Subscriptions</h3>
+            <h3 className="text-lg font-semibold">Subscriptions</h3>
             <p className="text-muted-foreground">
                 Manage your subscription plan and billing details.
             </p>

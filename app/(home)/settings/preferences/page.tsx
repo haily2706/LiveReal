@@ -30,7 +30,7 @@ export default function PreferencesPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h3 className="text-lg font-medium">Preferences</h3>
+                <h3 className="ttext-lg font-semibold">Preferences</h3>
                 <p className="text-sm text-muted-foreground">
                     Customize your experience.
                 </p>
@@ -40,7 +40,7 @@ export default function PreferencesPage() {
                 {/* Theme Setting */}
                 <div className="flex items-center justify-between py-3">
                     <div className="space-y-0.5">
-                        <Label className="text-base">Dark Mode</Label>
+                        <Label className="font-semibold">Dark Mode</Label>
                         <p className="text-sm text-muted-foreground">
                             Toggle dark mode appearance.
                         </p>
@@ -55,7 +55,7 @@ export default function PreferencesPage() {
                 {/* Sidebar Setting */}
                 <div className="flex items-center justify-between py-3">
                     <div className="space-y-0.5">
-                        <Label className="text-base">Sidebar View</Label>
+                        <Label className="font-semibold">Sidebar View</Label>
                         <p className="text-sm text-muted-foreground">
                             Collapse the sidebar for more screen space.
                         </p>
@@ -70,7 +70,7 @@ export default function PreferencesPage() {
                 {/* Premium Balance Setting */}
                 <div className="flex items-center justify-between py-3">
                     <div className="space-y-0.5">
-                        <Label className="text-base">Premium Balance</Label>
+                        <Label className="font-semibold">Premium Balance</Label>
                         <p className="text-sm text-muted-foreground">
                             Show your premium coin balance card in the sidebar.
                         </p>

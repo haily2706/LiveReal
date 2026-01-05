@@ -69,7 +69,7 @@ export function ChangePassword() {
     return (
         <div className="flex items-center justify-between py-3">
             <div className="space-y-0.5">
-                <Label className="text-base">Password</Label>
+                <Label className="font-semibold">Password</Label>
                 <p className="text-sm text-muted-foreground">
                     Change your password to keep your account secure.
                 </p>

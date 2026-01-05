@@ -79,14 +79,11 @@ export const SubscriptionView = ({ subscription, planIdFromUrl }: SubscriptionVi
         <div className="space-y-8">
             {/* Current Plan Section */}
             <div className="space-y-4">
-                <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                <h4 className="text-sm font-medium text-muted-foreground tracking-wider">
                     Current Plan
                 </h4>
                 <div className={cn(
-                    "relative rounded-xl p-6 bg-linear-to-r overflow-hidden",
-                    currentPlanId === "free" && "from-blue-500/5 to-cyan-500/5",
-                    currentPlanId === "pro" && "from-pink-500/5 to-purple-500/5",
-                    currentPlanId === "creator" && "from-yellow-500/5 to-orange-500/5"
+                    "relative rounded-xl py-2 overflow-hidden",
                 )}>
                     <div className="flex flex-col sm:flex-row justify-between gap-4 relative z-10">
                         <div className="space-y-3">
@@ -120,7 +117,7 @@ export const SubscriptionView = ({ subscription, planIdFromUrl }: SubscriptionVi
                             </div>
                         </div>
 
-                        <div className="flex flex-col items-end gap-2 justify-center">
+                        <div className="flex flex-col items-end gap-2 justify-end">
                             <div className="flex items-center gap-2">
                                 {currentPlanId !== PlanId.FREE && (
                                     <Button
@@ -152,24 +149,12 @@ export const SubscriptionView = ({ subscription, planIdFromUrl }: SubscriptionVi
                             )}
                         </div>
                     </div>
-
-                    {/* Decorative Icon */}
-                    <div className="absolute -top-2 -right-2 opacity-10 sm:opacity-100 sm:top-6 sm:right-6">
-                        <div className={cn(
-                            "rounded-xl p-2",
-                            currentPlanId === "free" && "bg-blue-500",
-                            currentPlanId === "pro" && "bg-pink-500",
-                            currentPlanId === "creator" && "bg-orange-500"
-                        )}>
-                            <currentPlan.icon className="h-5 w-5 text-white" />
-                        </div>
-                    </div>
                 </div>
             </div>
 
             {/* Available Plans Section */}
             <div className="space-y-4">
-                <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                <h4 className="text-sm font-medium text-muted-foreground tracking-wider">
                     Available Plans
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

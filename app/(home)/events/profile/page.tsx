@@ -87,7 +87,7 @@ export default function ProfilePage() {
             className="space-y-8 animate-in fade-in-50 duration-500"
         >
             <div>
-                <h3 className="text-lg font-medium">Profile</h3>
+                <h3 className="text-lg font-semibold">Profile</h3>
                 <p className="text-sm text-muted-foreground">
                     Manage your public profile details.
                 </p>
