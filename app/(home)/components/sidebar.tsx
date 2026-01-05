@@ -315,7 +315,7 @@ export function MobileBottomNav() {
                                             </span>
                                         )}
                                     </div>
-                                    <span className="text-[10px] font-medium mt-1">
+                                    <span className="text-[9px] font-medium mt-1">
                                         {link.label}
                                     </span>
                                 </div>
