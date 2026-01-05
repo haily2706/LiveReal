@@ -66,7 +66,6 @@ export function MyEvents({ onEdit }: MyEventsProps) {
                     <h3 className="font-semibold leading-none tracking-tight">Events</h3>
                     <p className="text-sm text-muted-foreground">Manage your events.</p>
                 </div>
-                <Separator />
                 <div className="mt-6 text-center text-sm text-muted-foreground py-8">
                     Loading events...
                 </div>
@@ -82,7 +81,6 @@ export function MyEvents({ onEdit }: MyEventsProps) {
                 <h3 className="font-semibold leading-none tracking-tight">Events</h3>
                 <p className="text-sm text-muted-foreground">Manage your events.</p>
             </div>
-            <Separator />
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {eventList.length === 0 ? (
                     <div className="col-span-full text-center text-sm text-muted-foreground py-8">

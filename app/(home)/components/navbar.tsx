@@ -37,7 +37,7 @@ const appLinks = [
 
 const mobileLinks = [
     { name: "Explore", href: "/home", icon: Compass },
-    { name: "My Event", href: "/events", icon: Calendar },
+    { name: "Events", href: "/events", icon: Calendar },
     { name: "Settings", href: "/settings", icon: Settings }
 ];
 

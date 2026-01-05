@@ -91,7 +91,7 @@ export function EventCard({
 
                     <div className="pt-0 flex-1 text-right">
                         <Button variant="ghost" size="sm" className="px-0 text-xs text-pink-500 hover:text-pink-600 hover:bg-transparent font-medium p-0 justify-start">
-                            Watch Replay &rarr;
+                            Go Live &rarr;
                         </Button>
                     </div>
                 </div>

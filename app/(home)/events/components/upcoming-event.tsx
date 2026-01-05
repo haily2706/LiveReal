@@ -78,7 +78,6 @@ export function UpcomingEvent({
                     <p className="text-sm text-muted-foreground">Schedule your next celebration.</p>
                 </div>
             </div>
-            <Separator />
             <div className="bg-muted/30 rounded-lg p-4 relative overflow-hidden">
                 {hasEvent ? (
                     <div className="flex flex-col sm:flex-row gap-4 relative z-10">
