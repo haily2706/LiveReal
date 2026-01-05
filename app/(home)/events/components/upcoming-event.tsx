@@ -211,7 +211,7 @@ export function UpcomingEvent({
                                         {!isVideoCall && upcomingEvent?.views !== undefined && (
                                             <span>{formatCompactNumber(upcomingEvent.views)} views</span>
                                         )}
-                                        {upcomingEvent?.lreals !== undefined && upcomingEvent.lreals > 0 && (
+                                        {upcomingEvent?.lreals !== undefined && upcomingEvent.lreals! > 0 && (
                                             <div className="flex items-center gap-1">
                                                 <span>{formatCompactNumber(upcomingEvent.lreals)}</span>
                                                 <img src="/coin.svg" alt="LREAL" className="h-3 w-3 opacity-70" />

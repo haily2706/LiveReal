@@ -17,7 +17,8 @@ export function formatCurrency(value: number) {
   }).format(value)
 }
 
-export function formatCompactNumber(number: number) {
+export function formatCompactNumber(number?: number | null) {
+  if (!number) return "0";
   return new Intl.NumberFormat("en-US", {
     notation: "compact",
     maximumFractionDigits: 1,
