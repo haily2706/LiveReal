@@ -10,7 +10,14 @@ import {
     UserPlus,
     Settings,
     MoreHorizontal,
-    Inbox
+    Inbox,
+    Ticket,
+    Wallet,
+    Radio,
+    Gift,
+    Calendar,
+    Coins,
+    Video
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -26,49 +33,52 @@ import { cn } from "@/lib/utils";
 const notifications = [
     {
         id: 1,
-        type: "like",
-        user: { name: "Isabella Chen", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80" },
-        content: "liked your latest video",
-        detail: "The Cyberpunk City Cinematic",
+        type: "live",
+        user: { name: "Marcus Thorne", avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=150&q=80" },
+        content: "is live now: '2026 New Year Celebration'",
+        detail: "Join 1.2k others watching",
         time: "2m ago",
         read: false,
     },
     {
         id: 2,
-        type: "comment",
-        user: { name: "Marcus Thorne", avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=150&q=80" },
-        content: "commented on your post",
-        detail: "\"This is absolutely mind-blowing! 🤯\"",
+        type: "gift",
+        user: { name: "Jessica Lin", avatar: "https://images.unsplash.com/photo-1554151228-14d9def656ec?auto=format&fit=crop&w=150&q=80" },
+        content: "sent you a Super Chat gift",
+        detail: "Recieved 500 LREAL Diamonds 💎",
         time: "15m ago",
         read: false,
     },
     {
+        id: 4,
+        type: "cashout",
+        user: { name: "Wallet", avatar: "" },
+        content: "Cash out processed successfully",
+        detail: "Sent $450 to Bank Account ending in 4242",
+        time: "30m ago",
+        read: true,
+    },
+    {
         id: 3,
-        type: "follow",
-        user: { name: "Alex Rivera", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" },
-        content: "started following you",
+        type: "event",
+        user: { name: "System", avatar: "" },
+        content: "Upcoming Event Reminder",
+        detail: "'Night Talk 2026' starts in 1 hour",
         time: "1h ago",
         read: true,
     },
-    {
-        id: 4,
-        type: "system",
-        user: { name: "System", avatar: "" },
-        content: "Your video was boosted!",
-        detail: "Trending in 3 countries 🚀",
-        time: "3h ago",
-        read: true,
-    },
+
     {
         id: 5,
-        type: "mention",
+        type: "video_call",
         user: { name: "Sarah Wilson", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80" },
-        content: "mentioned you in a comment",
-        detail: "@CyberCreator check this out!",
+        content: "scheduled a video call",
+        detail: "Dinner with friends",
         time: "5h ago",
         read: true,
     },
 ];
+
 
 const getIcon = (type: string) => {
     switch (type) {
@@ -77,6 +87,13 @@ const getIcon = (type: string) => {
         case "follow": return <UserPlus className="h-3 w-3 fill-white text-white" />;
         case "system": return <Settings className="h-3 w-3 fill-white text-white" />;
         case "mention": return <Inbox className="h-3 w-3 fill-white text-white" />;
+        case "ticket": return <Ticket className="h-3 w-3 fill-white text-white" />;
+        case "wallet": return <Wallet className="h-3 w-3 fill-white text-white" />;
+        case "live": return <Radio className="h-3 w-3 fill-white text-white" />;
+        case "gift": return <Gift className="h-3 w-3 fill-white text-white" />;
+        case "event": return <Calendar className="h-3 w-3 fill-white text-white" />;
+        case "cashout": return <Coins className="h-3 w-3 fill-white text-white" />;
+        case "video_call": return <Video className="h-3 w-3 fill-white text-white" />;
         default: return <Bell className="h-3 w-3 fill-white text-white" />;
     }
 };
@@ -86,8 +103,15 @@ const getIconColor = (type: string) => {
         case "like": return "bg-red-500 shadow-red-500/50";
         case "comment": return "bg-blue-500 shadow-blue-500/50";
         case "follow": return "bg-green-500 shadow-green-500/50";
-        case "system": return "bg-purple-500 shadow-purple-500/50";
+        case "system": return "bg-gray-500 shadow-gray-500/50";
         case "mention": return "bg-orange-500 shadow-orange-500/50";
+        case "ticket": return "bg-indigo-500 shadow-indigo-500/50";
+        case "wallet": return "bg-emerald-500 shadow-emerald-500/50";
+        case "live": return "bg-rose-500 shadow-rose-500/50";
+        case "gift": return "bg-pink-500 shadow-pink-500/50";
+        case "event": return "bg-cyan-500 shadow-cyan-500/50";
+        case "cashout": return "bg-yellow-500 shadow-yellow-500/50";
+        case "video_call": return "bg-violet-500 shadow-violet-500/50";
         default: return "bg-gray-500";
     }
 };
@@ -116,19 +140,11 @@ export function NotiDropdown() {
                             variant="ghost"
                             size="icon"
                             className={cn(
-                                "shrink-0 rounded-full bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground border border-border relative group overflow-hidden transition-all duration-300",
-                                isOpen && "bg-primary/10 text-primary border-primary/20"
+                                "rounded-full text-muted-foreground hover:text-foreground",
+                                isOpen && "text-foreground"
                             )}
                         >
-                            <Bell className={cn(
-                                "h-5 w-5 transition-all duration-300",
-                                isOpen ? "fill-primary/20 text-primary" : "group-hover:text-yellow-500 dark:group-hover:text-yellow-400"
-                            )} />
-
-                            {/* Ripple Effect Background on Active */}
-                            {isOpen && (
-                                <span className="absolute inset-0 bg-primary/10 animate-ping rounded-full opacity-20" />
-                            )}
+                            <Bell className="h-5 w-5" />
                         </Button>
                     </motion.div>
 
