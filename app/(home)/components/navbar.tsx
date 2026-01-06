@@ -219,6 +219,7 @@ export function Navbar({ }: NavbarProps) {
                             <Button
                                 variant="ghost"
                                 size="icon"
+                                className="text-muted-foreground hover:text-foreground rounded-full"
                                 onClick={() => setIsMobileMenuOpen(true)}
                             >
                                 <Search className="h-5 w-5" />
@@ -335,7 +336,7 @@ export function Navbar({ }: NavbarProps) {
                             </div>
 
                             <div className="relative group mb-6">
-                                <div className="relative flex items-center bg-background rounded-lg border border-border px-4 py-2">
+                                <div className="relative flex items-center bg-background rounded-full border border-border px-4 py-2">
                                     <Search className="h-5 w-5 text-muted-foreground mr-3" />
                                     <input
                                         className="h-6 flex-1 bg-transparent border-none focus:outline-none text-foreground placeholder:text-muted-foreground"
