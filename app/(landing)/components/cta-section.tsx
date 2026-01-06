@@ -43,7 +43,7 @@ const RotatingText = () => {
 
 export function CTASection() {
     return (
-        <section className="py-24 px-4 relative overflow-hidden">
+        <section className="py-20 px-4 relative overflow-hidden">
             {/* Background Elements */}
             <div className="absolute inset-0 bg-linear-to-r from-pink-500/10 via-purple-500/10 to-cyan-500/10" />
 

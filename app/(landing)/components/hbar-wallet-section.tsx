@@ -51,7 +51,7 @@ const features = [
 
 export function HBarWalletSection() {
     return (
-        <section id="hbar-wallet" className="py-24 px-4 relative overflow-hidden">
+        <section id="hbar-wallet" className="py-20 px-4 relative overflow-hidden">
             {/* Dynamic Background */}
             <div className="absolute inset-0 bg-linear-to-b from-transparent via-blue-900/5 to-transparent pointer-events-none" />
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-blue/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />

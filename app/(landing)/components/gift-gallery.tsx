@@ -108,7 +108,7 @@ export function GiftGallery({ onSelect, variant = "landing" }: GiftGalleryProps)
     }
 
     return (
-        <section id="gifts" className="py-24 px-4 relative overflow-hidden">
+        <section id="gifts" className="py-20 px-4 relative overflow-hidden">
             {/* Background effect */}
             <div className="absolute inset-0 bg-linear-to-b from-transparent via-pink-500/5 to-transparent pointer-events-none" />
 

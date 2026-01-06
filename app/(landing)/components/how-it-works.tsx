@@ -35,7 +35,7 @@ const steps = [
 
 export function HowItWorks() {
     return (
-        <section id="how-it-works" className="py-24 px-4 relative">
+        <section id="how-it-works" className="py-20 px-4 relative">
             {/* Background effect */}
             <div className="absolute inset-0 bg-linear-to-b from-transparent via-purple-500/5 to-transparent pointer-events-none" />
             <div className="container mx-auto max-w-6xl">
