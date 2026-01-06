@@ -244,6 +244,32 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
                 </DialogHeader>
 
                 <div className="space-y-6 pt-2">
+                    {!initialEventType && !eventToEdit && (
+                        <div className="grid gap-2">
+                            <Label>Event Type</Label>
+                            <Select
+                                value={eventType}
+                                onValueChange={(v) => {
+                                    setEventType(v);
+                                    setVisibility(v === '5' ? 'invited' : 'public');
+                                }}
+                            >
+                                <SelectTrigger className="bg-background/50">
+                                    <SelectValue placeholder="Select event type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {EventTypes.map((type) => (
+                                        <SelectItem key={type.value} value={type.value.toString()}>
+                                            <div className="flex items-center gap-2">
+                                                <type.icon className="h-4 w-4" />
+                                                {type.name}
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
                     {eventType !== "5" && (
                         <div className="flex flex-col md:flex-row gap-6">
                             <div className="flex-1 flex flex-col gap-4">

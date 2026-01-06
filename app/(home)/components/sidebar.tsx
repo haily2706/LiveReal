@@ -19,7 +19,8 @@ import {
     Zap,
     Sparkles,
     Crown,
-    Wallet
+    Wallet,
+    Plus
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/components/auth/use-auth-store";
@@ -30,6 +31,7 @@ import { Badge } from "@/components/ui/badge";
 import { useSidebar } from "@/app/(home)/components/provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PremiumBalanceCard } from "@/app/(home)/events/wallet/components/premium-balance-card";
+import { CreateEventModal } from "../events/components/create-event-modal";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
@@ -282,52 +284,87 @@ export const NAV_LINKS = [
 export function MobileBottomNav() {
     const pathname = usePathname();
     const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+    const { user } = useAuthStore();
+    const { onOpen } = useAuthModal();
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    const handleCreateClick = () => {
+        if (!user) {
+            onOpen("sign_up");
+        } else {
+            setIsCreateModalOpen(true);
+        }
+    };
+
+    const LinkItem = ({ link }: { link: typeof NAV_LINKS[0] }) => {
+        const active = isActive(pathname, link.href);
+        const isHovered = hoveredLink === link.href;
+
+        return (
+            <Link
+                key={link.href}
+                href={link.href}
+                className="relative flex flex-col items-center justify-center w-full h-full group"
+                onMouseEnter={() => setHoveredLink(link.href)}
+            >
+                <div className={cn(
+                    "flex flex-col items-center justify-center h-full w-full transition-all duration-200",
+                    active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                )}>
+                    <div className="relative">
+                        <link.icon className={cn(
+                            "h-5 w-5 transition-all duration-200",
+                            active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground",
+                        )} />
+                        {link.label === "Messages" && (
+                            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-background"></span>
+                            </span>
+                        )}
+                    </div>
+                    <span className="text-[9px] font-medium mt-1">
+                        {link.label}
+                    </span>
+                </div>
+            </Link>
+        );
+    };
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-            {/* Glassmorphic Container */}
-            <div className="bg-background/80 backdrop-blur-xl border-t border-border/50 pb-[env(safe-area-inset-bottom)]">
-                <nav
-                    className="flex items-center justify-around h-[60px] px-0 relative"
-                    onMouseLeave={() => setHoveredLink(null)}
-                >
-                    {NAV_LINKS.map((link) => {
-                        const active = isActive(pathname, link.href);
-                        const isHovered = hoveredLink === link.href;
+        <>
+            <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+                {/* Glassmorphic Container */}
+                <div className="bg-background/80 backdrop-blur-xl border-t border-border/50 pb-[env(safe-area-inset-bottom)]">
+                    <nav
+                        className="flex items-center justify-around h-[60px] px-1 relative"
+                        onMouseLeave={() => setHoveredLink(null)}
+                    >
+                        {NAV_LINKS.slice(0, 2).map((link) => (
+                            <LinkItem key={link.href} link={link} />
+                        ))}
 
-                        return (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className="relative flex flex-col items-center justify-center w-full h-full group"
-                                onMouseEnter={() => setHoveredLink(link.href)}
+                        <div className="flex items-center justify-center w-full h-full pb-2">
+                            <button
+                                onClick={handleCreateClick}
+                                className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center transition-transform active:scale-95 hover:bg-primary/20"
                             >
-                                <div className={cn(
-                                    "flex flex-col items-center justify-center h-full w-full transition-all duration-200",
-                                    active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-                                )}>
-                                    <div className="relative">
-                                        <link.icon className={cn(
-                                            "h-6 w-6 transition-all duration-200",
-                                            active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground",
-                                        )} />
-                                        {link.label === "Messages" && (
-                                            <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-background"></span>
-                                            </span>
-                                        )}
-                                    </div>
-                                    <span className="text-[9px] font-medium mt-1">
-                                        {link.label}
-                                    </span>
-                                </div>
-                            </Link>
-                        );
-                    })}
-                </nav>
+                                <Plus className="h-6 w-6" />
+                            </button>
+                        </div>
+
+                        {NAV_LINKS.slice(2).map((link) => (
+                            <LinkItem key={link.href} link={link} />
+                        ))}
+                    </nav>
+                </div>
             </div>
-        </div>
+
+            <CreateEventModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+            />
+        </>
     );
 }
 
