@@ -251,7 +251,6 @@ export function Navbar({ }: NavbarProps) {
                         {user && (
                             <>
                                 <ScheduleButton />
-                                <NotiDropdown />
                             </>
                         )}
 
