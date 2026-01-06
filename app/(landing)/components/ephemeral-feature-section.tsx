@@ -15,7 +15,7 @@ export function EphemeralFeatureSection() {
     });
 
     return (
-        <section ref={containerRef} className="py-12 md:py-24 px-4 relative overflow-hidden">
+        <section ref={containerRef} className="py-12 md:py-18 px-4 relative overflow-hidden">
             {/* Background effect */}
             <div className="absolute inset-0 bg-linear-to-b from-transparent via-orange-500/5 to-transparent pointer-events-none" />
 

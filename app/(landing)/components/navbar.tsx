@@ -67,7 +67,7 @@ export function Navbar() {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-backdrop-filter:bg-background/60">
-            <div className="container mx-auto flex h-16 items-center px-4 gap-4">
+            <div className="container mx-auto flex h-16 items-center px-4 md:px-6 gap-4">
 
                 {/* Mobile Menu Trigger & Logo */}
                 <div className="flex items-center gap-2 flex-1 lg:flex-none">

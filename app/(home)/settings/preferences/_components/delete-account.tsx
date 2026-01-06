@@ -47,7 +47,7 @@ export const DeleteAccount = () => {
             </div>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="destructive" size="sm">
+                    <Button variant="outline" size="sm" className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-red-800 dark:hover:bg-red-950/50">
                         <Trash2 className="w-4 h-4 mr-2" />
                         Delete Account
                     </Button>
