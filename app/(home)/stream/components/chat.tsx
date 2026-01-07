@@ -27,7 +27,7 @@ const EPHEMERAL_CHECK_INTERVAL_MS = 10000;
 
 export function Chat({ className, onClose }: ChatProps) {
   const { chatMessages, send } = useChat();
-  const { metadata } = useRoomInfo();
+  const { metadata, name } = useRoomInfo();
   const { localParticipant } = useLocalParticipant();
   const [encoder] = useState(() => new TextEncoder());
   const { send: sendReaction } = useDataChannel("reactions");
@@ -42,7 +42,7 @@ export function Chat({ className, onClose }: ChatProps) {
   const latestChatMessages = useRef<typeof chatMessages>([]);
 
   const filterEphemeralMessages = (msgs: typeof chatMessages) => {
-    console.log("filterEphemeralMessages", msgs.length);
+    // console.log("filterEphemeralMessages", msgs.length);
     const now = Date.now();
     const timestamps = msgs.map((msg) => msg.timestamp);
     return msgs.filter(
@@ -198,11 +198,14 @@ export function Chat({ className, onClose }: ChatProps) {
         ) : (
           <div className="flex flex-col gap-3">
             <ReactionPicker
+              hostId={safeJsonParse(metadata, {} as RoomMetadata).creator_identity}
+              roomId={name}
               onSelect={onSendReaction}
               onGiftSelect={(gift) => {
-                if (sendGift) {
-                  sendGift(encoder.encode(JSON.stringify(gift)), { reliable: true });
-                }
+                // Server action now handles the data packet for gifts
+                // if (sendGift) {
+                //   sendGift(encoder.encode(JSON.stringify(gift)), { reliable: true });
+                // }
                 if (send) {
                   send(`Sent a ${gift.emoji} ${gift.name}!`);
                 }

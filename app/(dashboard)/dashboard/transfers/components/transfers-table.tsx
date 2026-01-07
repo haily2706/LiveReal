@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Table,
     TableBody,
@@ -10,9 +10,9 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, cn } from "@/lib/utils";
-import { Search } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toAvatarURL } from "@/lib/constants";
@@ -68,6 +68,8 @@ export const TransfersTable = ({ transfers }: TransfersTableProps) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedTransfer, setSelectedTransfer] = useState<TransferData | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     const filteredTransfers = transfers.filter((tx) =>
         (tx.fromUser.email?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
@@ -76,6 +78,43 @@ export const TransfersTable = ({ transfers }: TransfersTableProps) => {
         (tx.toUser.name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
         tx.id.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery]);
+
+    const totalPages = Math.ceil(filteredTransfers.length / itemsPerPage);
+    const paginatedTransfers = filteredTransfers.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const getPageNumbers = () => {
+        if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+
+        const pages: (number | string)[] = [1];
+        if (currentPage > 4) pages.push("...");
+
+        let start = Math.max(2, currentPage - 1);
+        let end = Math.min(totalPages - 1, currentPage + 1);
+
+        if (currentPage <= 4) {
+            start = 2;
+            end = 5;
+        } else if (currentPage >= totalPages - 3) {
+            start = totalPages - 4;
+            end = totalPages - 1;
+        }
+
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
+        }
+
+        if (currentPage < totalPages - 3) pages.push("...");
+
+        pages.push(totalPages);
+        return pages;
+    };
 
     const handleViewTransaction = (transfer: TransferData) => {
         setSelectedTransfer(transfer);
@@ -124,7 +163,7 @@ export const TransfersTable = ({ transfers }: TransfersTableProps) => {
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                filteredTransfers.map((tx) => (
+                                paginatedTransfers.map((tx) => (
                                     <TableRow key={tx.id}>
                                         <TableCell>
                                             <div className="flex items-center gap-3">
@@ -201,6 +240,48 @@ export const TransfersTable = ({ transfers }: TransfersTableProps) => {
                         </TableBody>
                     </Table>
                 </CardContent>
+                <CardFooter className="flex items-center justify-between">
+                    <div className="text-xs text-muted-foreground">
+                        Showing <strong>{(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, filteredTransfers.length)}</strong> of <strong>{filteredTransfers.length}</strong> transfers
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                            disabled={currentPage === 1}
+                        >
+                            <span className="sr-only">Go to previous page</span>
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        {getPageNumbers().map((page, idx) => (
+                            page === "..." ? (
+                                <span key={idx} className="px-2 text-muted-foreground">...</span>
+                            ) : (
+                                <Button
+                                    key={idx}
+                                    variant={currentPage === page ? "default" : "outline"}
+                                    size="sm"
+                                    className="w-8 h-8 p-0"
+                                    onClick={() => setCurrentPage(page as number)}
+                                >
+                                    {page}
+                                </Button>
+                            )
+                        ))}
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                            disabled={currentPage === totalPages || totalPages === 0}
+                        >
+                            <span className="sr-only">Go to next page</span>
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </CardFooter>
             </Card>
 
             <HederaTransactionDetails

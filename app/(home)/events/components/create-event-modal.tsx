@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/components/auth/use-auth-store";
 import { useEvents, Event } from "../use-events";
-import { searchUsers } from "@/app/actions/user";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { X, Search, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -129,7 +129,9 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
 
             setIsSearching(true);
             try {
-                const result = await searchUsers(searchQuery);
+                const response = await fetch(`/api/users/search?q=${encodeURIComponent(searchQuery)}`);
+                const result = await response.json();
+
                 if (result.success && result.data) {
                     setSearchResults(result.data as any[]);
                 }

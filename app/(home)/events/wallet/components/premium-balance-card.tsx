@@ -5,30 +5,17 @@ import Link from "next/link";
 import { Wallet } from "lucide-react";
 import { Coin } from "@/components/ui/coin";
 
+import { useWalletStore } from "../use-wallet-store";
+
 export function PremiumBalanceCard() {
 
-    const [balance, setBalance] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
+    const { walletData, isLoading, fetchBalance } = useWalletStore();
 
     useEffect(() => {
-        const fetchBalance = async () => {
-            try {
-                const response = await fetch("/api/wallet/balance");
-                if (response.ok) {
-                    const data = await response.json();
-                    setBalance(data.tokenBalance);
-                }
-            } catch (error) {
-                console.error("Failed to fetch balance", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchBalance();
     }, []);
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="mt-6 w-full h-24 bg-muted animate-pulse rounded-2xl" />
         );
@@ -56,7 +43,7 @@ export function PremiumBalanceCard() {
             </div>
 
             <div className="text-xl font-bold text-foreground tracking-tighter text-left flex items-center gap-1 relative z-10">
-                {balance ? parseInt(balance).toLocaleString() : "0"}
+                {walletData?.tokenBalance ? parseInt(walletData.tokenBalance).toLocaleString() : "0"}
             </div>
         </Link>
     );

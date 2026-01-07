@@ -9,7 +9,7 @@ import { useEvents } from "../use-events";
 import { cn, formatCompactNumber } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { startStream } from "@/app/actions/events";
+import { startStream } from "@/app/(home)/events/actions/events";
 import { toast } from "sonner";
 import { ScheduleButton } from "./schedule-button";
 

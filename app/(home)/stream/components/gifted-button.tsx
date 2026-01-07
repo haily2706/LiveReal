@@ -14,29 +14,62 @@ import { GiftGallery, Gift } from "@/app/(landing)/components/gift-gallery";
 import { Coin } from "@/components/ui/coin";
 import { cn } from "@/lib/utils";
 
+import { toast } from "sonner";
+import { useWalletStore } from "@/app/(home)/events/wallet/use-wallet-store";
+
+
 interface GiftedButtonProps {
     onGiftSelect?: (gift: Gift) => void;
     className?: string;
+    hostId?: string;
+    roomId?: string;
 }
 
-export function GiftedButton({ onGiftSelect, className }: GiftedButtonProps) {
+export function GiftedButton({ onGiftSelect, className, hostId, roomId }: GiftedButtonProps) {
     const [open, setOpen] = useState(false);
-    const [balanceData, setBalanceData] = useState<{
-        tokenBalance: string;
-    } | null>(null);
+    const { walletData, fetchBalance } = useWalletStore();
+    const balance = walletData?.tokenBalance;
+    const [isSending, setIsSending] = useState(false);
 
     useEffect(() => {
         if (open) {
-            fetch('/api/wallet/balance')
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.tokenBalance) {
-                        setBalanceData(data);
-                    }
-                })
-                .catch(err => console.error("Failed to fetch balance", err));
+            fetchBalance();
         }
-    }, [open]);
+    }, [open, fetchBalance]);
+
+    const handleSendGift = async (gift: Gift) => {
+        if (!hostId || !roomId) {
+            toast.error("Unable to send gift: Host or Room information missing");
+            return;
+        }
+
+        setIsSending(true);
+        try {
+            const response = await fetch('/api/gifts/send_gift', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ gift, roomId, hostId }),
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                toast.success(`Sent result ${gift.name} successfully!`);
+                onGiftSelect?.(gift);
+                setOpen(false);
+                // Refresh balance
+                fetchBalance();
+            } else {
+                toast.error(result.message || "Failed to send gift");
+            }
+        } catch (error) {
+            toast.error("An unexpected error occurred");
+            console.error(error);
+        } finally {
+            setIsSending(false);
+        }
+    };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -65,11 +98,11 @@ export function GiftedButton({ onGiftSelect, className }: GiftedButtonProps) {
             <DialogContent className="sm:max-w-xl bg-background border-border text-foreground">
                 <DialogHeader className="flex flex-row items-center justify-between space-y-0">
                     <DialogTitle>Send a Gift</DialogTitle>
-                    {balanceData && (
+                    {balance && (
                         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mr-8">
                             <span className="text-xs text-muted-foreground mr-1">Balance:</span>
                             <span className="text-sm font-bold text-primary">
-                                {parseInt(balanceData.tokenBalance).toLocaleString()}
+                                {parseInt(balance).toLocaleString()}
                             </span>
                             <Coin className="w-4 h-4" />
                         </div>
@@ -77,10 +110,8 @@ export function GiftedButton({ onGiftSelect, className }: GiftedButtonProps) {
                 </DialogHeader>
                 <GiftGallery
                     variant="picker"
-                    onSelect={(gift) => {
-                        onGiftSelect?.(gift);
-                        setOpen(false);
-                    }}
+                    onSelect={handleSendGift}
+                    isSending={isSending}
                 />
             </DialogContent>
         </Dialog>

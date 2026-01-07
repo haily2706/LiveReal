@@ -2,8 +2,9 @@
 
 import { useDataChannel } from "@livekit/components-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import JSConfetti from "js-confetti";
+import { toast } from "sonner";
 import { Gift } from "@/app/(landing)/components/gift-gallery";
 
 interface FlyingGift {
@@ -27,10 +28,43 @@ export function FlyingGifts({ onGiftReceived }: FlyingGiftsProps) {
         setJsConfetti(new JSConfetti());
     }, []);
 
-    useDataChannel("gifts", (data) => {
+    const addGift = useCallback((gift: Gift) => {
+        const id = Math.random().toString(36).substring(7);
+        const x = Math.random() * 200 - 100; // Wider spread
+        const rotation = Math.random() * 40 - 20;
+        const scale = 1.0 + Math.random() * 0.5;
+
+        setGifts((prev) => [
+            ...prev,
+            { id, gift, x, rotation, scale },
+        ]);
+    }, []);
+
+    const onGiftReceivedRef = useRef(onGiftReceived);
+    useEffect(() => {
+        onGiftReceivedRef.current = onGiftReceived;
+    }, [onGiftReceived]);
+
+    const handleDataMessage = useCallback((data: any) => {
+        console.log("FlyingGifts received data", data);
         try {
-            const payload = decoder.decode(data.payload);
-            const gift = JSON.parse(payload) as Gift;
+            const payloadStr = decoder.decode(data.payload);
+            console.log("FlyingGifts payloadStr", payloadStr);
+            toast("Debug: Received Gift Data"); // VISUAL DEBUG
+            const payload = JSON.parse(payloadStr);
+
+            let gift: Gift | null = null;
+
+            // Handle new server action format
+            if (payload.type === "GIFT_RECEIVED" && payload.data?.gift) {
+                gift = payload.data.gift as Gift;
+            }
+            // Handle legacy/direct format (if any)
+            else if (payload.emoji && payload.name && payload.coins) {
+                gift = payload as Gift;
+            }
+
+            if (!gift) return;
 
             // Add Confetti Effect
             const isBigGift = gift.coins >= 100;
@@ -52,32 +86,24 @@ export function FlyingGifts({ onGiftReceived }: FlyingGiftsProps) {
             }
 
             addGift(gift);
-            if (onGiftReceived) {
-                onGiftReceived(gift);
+            if (onGiftReceivedRef.current) {
+                onGiftReceivedRef.current(gift);
             }
         } catch (e) {
             console.error("Failed to parse gift data", e);
         }
-    });
+    }, [decoder, jsConfetti, addGift]);
 
-    const addGift = useCallback((gift: Gift) => {
-        const id = Math.random().toString(36).substring(7);
-        const x = Math.random() * 200 - 100; // Wider spread
-        const rotation = Math.random() * 40 - 20;
-        const scale = 1.0 + Math.random() * 0.5;
-
-        setGifts((prev) => [
-            ...prev,
-            { id, gift, x, rotation, scale },
-        ]);
-    }, []);
+    useDataChannel(handleDataMessage);
 
     const removeGift = (id: string) => {
         setGifts((prev) => prev.filter((r) => r.id !== id));
     };
 
     return (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-60">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-[100]">
+
+
             <div className="absolute bottom-[20%] left-1/2 -translate-x-1/2 w-0 h-0 flex justify-center items-end">
                 <AnimatePresence>
                     {gifts.map(({ id, gift, x, rotation, scale }) => (

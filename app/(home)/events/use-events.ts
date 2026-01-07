@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getUserEvents, deleteEvent as deleteEventAction, updateEvent as updateEventAction, createEvent as createEventAction } from '@/app/actions/event';
+
 import { type InferSelectModel } from 'drizzle-orm';
 import { events } from '@/lib/db/schema';
 
@@ -34,7 +34,9 @@ export const useEvents = create<EventsState>((set, get) => ({
     fetchEvents: async () => {
         set({ isLoading: true, error: null });
         try {
-            const result = await getUserEvents();
+            const response = await fetch('/api/events/me');
+            const result = await response.json();
+
             if (result.success && result.data) {
                 const eventsMap: Record<string, Event> = {};
                 const ids: string[] = [];
@@ -73,7 +75,11 @@ export const useEvents = create<EventsState>((set, get) => ({
     },
     deleteEvent: async (eventId: string) => {
         try {
-            const result = await deleteEventAction(eventId);
+            const response = await fetch(`/api/events/${eventId}`, {
+                method: 'DELETE',
+            });
+            const result = await response.json();
+
             if (result.success) {
                 set((state) => {
                     const newEvents = { ...state.events };
@@ -91,11 +97,11 @@ export const useEvents = create<EventsState>((set, get) => ({
     },
     updateEvent: async (eventId: string, data: Partial<Event>) => {
         try {
-            // Transform Partial<Event> to the input format expected by the server action
+            // Transform Partial<Event> to the input format expected by the server action/API
             const updateInput = {
                 title: data.title,
                 description: data.description || undefined,
-                type: data.type,
+                eventType: data.type,
                 startTime: data.startTime ? new Date(data.startTime) : undefined,
                 thumbnailUrl: data.thumbnailUrl || undefined,
                 isShort: data.isShort ?? undefined,
@@ -103,7 +109,15 @@ export const useEvents = create<EventsState>((set, get) => ({
                 invitedUsers: data.invitedUsers || undefined,
             };
 
-            const result = await updateEventAction(eventId, updateInput);
+            const response = await fetch(`/api/events/${eventId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updateInput),
+            });
+            const result = await response.json();
+
             if (result.success && result.data) {
                 set((state) => ({
                     events: {
@@ -119,7 +133,15 @@ export const useEvents = create<EventsState>((set, get) => ({
     },
     createEvent: async (data) => {
         try {
-            const result = await createEventAction(data);
+            const response = await fetch('/api/events', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            const result = await response.json();
+
             if (result.success && result.data) {
                 set((state) => ({
                     events: {

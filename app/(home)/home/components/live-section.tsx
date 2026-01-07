@@ -8,7 +8,7 @@ interface LiveSectionProps {
     title?: string;
 }
 
-import { getLiveEvents } from "@/app/actions/event";
+
 import { useEffect, useState } from "react";
 
 export function LiveSection({ lives, title = "Birthday Live" }: LiveSectionProps) {
@@ -16,24 +16,30 @@ export function LiveSection({ lives, title = "Birthday Live" }: LiveSectionProps
 
     useEffect(() => {
         const fetchLives = async () => {
-            const { success, data } = await getLiveEvents();
-            if (success && data) {
-                const backendLives: LiveStream[] = data.map((event: any) => ({
-                    id: event.id,
-                    title: event.title,
-                    thumbnail: event.thumbnailUrl || "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=2670&auto=format&fit=crop",
-                    channel: {
-                        id: event.user.id,
-                        name: event.user.name || "Unknown",
-                        username: `@${event.user.name?.replace(/\s+/g, '').toLowerCase() || 'user'}`,
-                        avatar: event.user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${event.user.id}`,
-                    },
-                    viewers: event.views || 0,
-                    isBirthday: false,
-                    isVertical: event.isShort || false,
-                    isBackend: true,
-                }));
-                setMergedLives([...backendLives, ...lives]);
+            try {
+                const response = await fetch('/api/events/live');
+                const { success, data } = await response.json();
+
+                if (success && data) {
+                    const backendLives: LiveStream[] = data.map((event: any) => ({
+                        id: event.id,
+                        title: event.title,
+                        thumbnail: event.thumbnailUrl || "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=2670&auto=format&fit=crop",
+                        channel: {
+                            id: event.user.id,
+                            name: event.user.name || "Unknown",
+                            username: `@${event.user.name?.replace(/\s+/g, '').toLowerCase() || 'user'}`,
+                            avatar: event.user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${event.user.id}`,
+                        },
+                        viewers: event.views || 0,
+                        isBirthday: false,
+                        isVertical: event.isShort || false,
+                        isBackend: true,
+                    }));
+                    setMergedLives([...backendLives, ...lives]);
+                }
+            } catch (error) {
+                console.error("Failed to fetch live events:", error);
             }
         };
         fetchLives();

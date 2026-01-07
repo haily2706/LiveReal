@@ -12,7 +12,7 @@ import { CashInModal } from "./components/cash-in-modal";
 import { CashOutModal } from "./components/cash-out-modal";
 import { AddPaymentMethodModal } from "./components/add-payment-method-modal";
 import { Badge } from "@/components/ui/badge";
-import { getCashoutPaymentMethod, deleteCashoutPaymentMethod, getCashInTransactions, getCashOutTransactions, getTransfers } from "@/app/actions/wallet";
+import { useWalletStore } from "./use-wallet-store";
 import { TransferModal } from "./components/transfer-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -58,12 +58,7 @@ const getCashOutStatusLabel = (status: number) => {
 };
 
 export default function WalletPage() {
-    const [balanceData, setBalanceData] = useState<{
-        userId: string;
-        hbarBalance: string;
-        tokenBalance: string;
-        accountId: string;
-    } | null>(null);
+    const { walletData: balanceData, fetchBalance } = useWalletStore();
     const [cashInTransactions, setCashInTransactions] = useState<any[]>([]);
     const [cashOutTransactions, setCashOutTransactions] = useState<any[]>([]);
     const [transfers, setTransfers] = useState<any[]>([]);
@@ -72,25 +67,39 @@ export default function WalletPage() {
 
     const fetchData = async () => {
         try {
-            const [balanceRes, cashIns, cashOuts, paymentMethodData, transferData] = await Promise.all([
-                fetch('/api/wallet/balance'),
-                getCashInTransactions(),
-                getCashOutTransactions(),
-                getCashoutPaymentMethod(),
-                getTransfers()
+            const [
+                cashInsRes,
+                cashOutsRes,
+                paymentMethodRes,
+                transfersRes
+            ] = await Promise.all([
+                fetch('/api/wallet/transactions/cash-in'),
+                fetch('/api/wallet/transactions/cash-out'),
+                fetch('/api/wallet/payment-method'),
+                fetch('/api/wallet/transfers')
             ]);
 
-            if (balanceRes.ok) {
-                const data = await balanceRes.json();
-                setBalanceData(data);
-            }
+            const [
+                cashInsData,
+                cashOutsData,
+                paymentMethodData,
+                transfersData
+            ] = await Promise.all([
+                cashInsRes.json(),
+                cashOutsRes.json(),
+                paymentMethodRes.json(),
+                transfersRes.json()
+            ]);
 
-            setCashInTransactions(cashIns);
-            setCashOutTransactions(cashOuts);
-            setTransfers(transferData);
+            // Always call fetchBalance from store
+            await fetchBalance();
+
+            setCashInTransactions(cashInsData.data || []);
+            setCashOutTransactions(cashOutsData.data || []);
+            setTransfers(transfersData.data || []);
 
             // This line correctly handles both cases: if paymentMethodData is null/undefined, it sets an empty array; otherwise, it sets an array with the method.
-            setPaymentMethods(paymentMethodData ? [paymentMethodData] : []);
+            setPaymentMethods(paymentMethodData.data ? [paymentMethodData.data] : []);
         } catch (error) {
             console.error("Failed to fetch wallet data", error);
         } finally {
@@ -127,7 +136,11 @@ export default function WalletPage() {
 
     const handleDeleteMethod = async () => {
         try {
-            const result = await deleteCashoutPaymentMethod();
+            const response = await fetch('/api/wallet/payment-method', {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+
             if (result.success) {
                 setPaymentMethods([]);
                 toast.success("Payment method removed");

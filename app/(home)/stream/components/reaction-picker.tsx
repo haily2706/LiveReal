@@ -17,6 +17,8 @@ interface ReactionPickerProps {
     onSelect: (emoji: string) => void;
     onGiftSelect?: (gift: Gift) => void;
     className?: string;
+    hostId?: string;
+    roomId?: string;
 }
 
 const REACTIONS = [
@@ -30,7 +32,7 @@ const REACTIONS = [
     { emoji: "👎", label: "Dislike" }
 ];
 
-export function ReactionPicker({ onSelect, onGiftSelect, className }: ReactionPickerProps) {
+export function ReactionPicker({ onSelect, onGiftSelect, className, hostId, roomId }: ReactionPickerProps) {
 
     return (
         <div className={cn("flex items-center justify-between w-full", className)}>
@@ -59,7 +61,7 @@ export function ReactionPicker({ onSelect, onGiftSelect, className }: ReactionPi
             <div className="flex items-center pl-2 shrink-0">
                 <div className="mr-2 w-px h-5 bg-zinc-200 dark:bg-zinc-800" />
                 <TooltipProvider delayDuration={0}>
-                    <GiftedButton onGiftSelect={onGiftSelect} />
+                    <GiftedButton onGiftSelect={onGiftSelect} hostId={hostId} roomId={roomId} />
                 </TooltipProvider>
             </div>
         </div>

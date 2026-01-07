@@ -3,7 +3,7 @@
 
 import { CalendarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { startStream } from "@/app/actions/events";
+import { startStream } from "@/app/(home)/events/actions/events";
 import { Separator } from "@/components/ui/separator";
 import { EventCard } from "./event-card";
 import { toast } from "sonner";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchHederaTransaction } from "@/app/actions/wallet";
+
 import { Loader2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,10 +31,11 @@ export const HederaTransactionDetails = ({ open, onOpenChange, transactionId }: 
         setLoading(true);
         setError(false);
 
-        fetchHederaTransaction(transactionId)
-            .then(data => {
+        fetch(`/api/wallet/hedera/${transactionId}`)
+            .then(res => res.json())
+            .then(result => {
                 if (mounted) {
-                    if (data) setDetails(data);
+                    if (result.success && result.data) setDetails(result.data);
                     else setError(true);
                 }
             })

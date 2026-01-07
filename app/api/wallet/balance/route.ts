@@ -15,6 +15,8 @@ export const dynamic = 'force-dynamic';
  *     description: Retrieves HBAR and token balances for the user's wallet. Automatically creates a wallet if one does not exist for the user.
  *     tags:
  *       - Wallet
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Wallet balance details

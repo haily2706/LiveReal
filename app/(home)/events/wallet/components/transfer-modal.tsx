@@ -15,7 +15,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, ArrowRightLeft, User, Search, Wallet } from "lucide-react";
 import { toast } from "sonner";
-import { transferCoins, searchUser } from "@/app/actions/wallet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Coin } from "@/components/ui/coin";
 
@@ -31,11 +30,13 @@ export function TransferModal({ children, balance, onTransferSuccess }: { childr
         if (!recipientEmail) return;
         setSearching(true);
         try {
-            const user = await searchUser(recipientEmail);
-            if (user) {
-                setRecipient(user);
+            const response = await fetch(`/api/wallet/user/search?email=${encodeURIComponent(recipientEmail)}`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                setRecipient(result.data);
             } else {
-                toast.error("User not found");
+                toast.error(result.error || "User not found");
                 setRecipient(null);
             }
         } catch (error) {
@@ -70,11 +71,16 @@ export function TransferModal({ children, balance, onTransferSuccess }: { childr
         setLoading(true);
 
         try {
-            const formData = new FormData();
-            formData.append("amount", amount);
-            formData.append("recipientId", recipient.id);
+            const response = await fetch('/api/wallet/transfer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    amount: amount,
+                    recipientId: recipient.id
+                }),
+            });
 
-            const result = await transferCoins(formData);
+            const result = await response.json();
 
             if (result.success) {
                 toast.success("Transfer successful");

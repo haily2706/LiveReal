@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 
 import { ProfileAvatar } from "../components/profile-avatar";
 import { PersonalDetails } from "../components/personal-details";
-import { updateProfile } from "@/app/actions/user";
+
 
 export default function ProfilePage() {
     const supabase = createClient();
@@ -55,12 +55,19 @@ export default function ProfilePage() {
             if (error) throw error;
 
             // Update Postgres DB
-            const result = await updateProfile({
-                name: fullName,
-                location: country,
-                bio,
-                avatar: avatarUrl,
+            const response = await fetch('/api/users/profile', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: fullName,
+                    location: country,
+                    bio,
+                    avatar: avatarUrl,
+                }),
             });
+            const result = await response.json();
 
             if (!result.success) {
                 throw new Error("Failed to update database profile");

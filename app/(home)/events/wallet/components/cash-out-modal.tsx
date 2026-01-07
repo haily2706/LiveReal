@@ -73,10 +73,13 @@ export function CashOutModal({ children, balance, paymentMethods }: CashOutModal
         setError("");
 
         try {
-            // Import dynamically
-            const { requestCashout } = await import("@/app/actions/wallet");
+            const response = await fetch('/api/wallet/cashout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: numVal, paymentMethodId: linkedAccount.id }),
+            });
 
-            const result = await requestCashout(numVal, linkedAccount.id);
+            const result = await response.json();
 
             if (result.success) {
                 toast.success(`Successfully initiated withdrawal of ${numVal.toLocaleString()} LREAL`);

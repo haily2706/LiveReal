@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Loader2, Landmark } from "lucide-react";
 import { toast } from "sonner";
-import { updateCashoutPaymentMethod } from "@/app/actions/wallet";
+
 
 import { Button } from "@/components/ui/button";
 import {
@@ -56,7 +56,13 @@ export function AddPaymentMethodModal({ children, onAddMethod, existingMethod }:
                 expiry: 'Never'
             };
 
-            const result = await updateCashoutPaymentMethod(newMethod);
+            const response = await fetch('/api/wallet/payment-method', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newMethod),
+            });
+
+            const result = await response.json();
 
             if (!result.success) {
                 throw new Error(result.error);
