@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -17,6 +18,11 @@ interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
 
 export function Sidebar({ className, items, ...props }: SidebarNavProps) {
     const pathname = usePathname()
+    const [optimisticPath, setOptimisticPath] = useState(pathname)
+
+    useEffect(() => {
+        setOptimisticPath(pathname)
+    }, [pathname])
 
     return (
         <nav
@@ -27,11 +33,12 @@ export function Sidebar({ className, items, ...props }: SidebarNavProps) {
             {...props}
         >
             {items.map((item) => {
-                const isActive = pathname === item.href
+                const isActive = optimisticPath === item.href
                 return (
                     <Link
                         key={item.href}
                         href={item.href}
+                        onClick={() => setOptimisticPath(item.href)}
                         className={cn(
                             "group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 shrink-0",
                             isActive
