@@ -40,6 +40,11 @@ export function Sidebar() {
     const router = useRouter();
     const { isCollapsed, toggleSidebar, showPremiumBalance } = useSidebar();
     const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+    const [optimisticPath, setOptimisticPath] = useState(pathname);
+
+    useEffect(() => {
+        setOptimisticPath(pathname);
+    }, [pathname]);
     const subscription = "Creator" as "Free" | "Pro" | "Creator"; // Mock Data
 
     const supabase = createClient();
@@ -194,10 +199,11 @@ export function Sidebar() {
                             <div key={link.href}>
                                 <SidebarLink
                                     link={link}
-                                    pathname={pathname}
+                                    pathname={optimisticPath}
                                     isCollapsed={isCollapsed}
                                     isHovered={hoveredLink === link.href}
                                     onHover={() => setHoveredLink(link.href)}
+                                    onNavigate={() => setOptimisticPath(link.href)}
                                 />
                             </div>
                         ))}
@@ -229,13 +235,15 @@ function SidebarLink({
     pathname,
     isCollapsed,
     isHovered,
-    onHover
+    onHover,
+    onNavigate
 }: {
     link: any,
     pathname: string,
     isCollapsed: boolean,
     isHovered: boolean,
-    onHover: () => void
+    onHover: () => void,
+    onNavigate?: () => void
 }) {
     const active = isActive(pathname, link.href);
 
@@ -244,6 +252,7 @@ function SidebarLink({
             href={link.href}
             className="block"
             onMouseEnter={onHover}
+            onClick={onNavigate}
         >
             <div
                 className={cn(
@@ -283,7 +292,12 @@ export const NAV_LINKS = [
 
 export function MobileBottomNav() {
     const pathname = usePathname();
+    const [optimisticPath, setOptimisticPath] = useState(pathname);
     const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+
+    useEffect(() => {
+        setOptimisticPath(pathname);
+    }, [pathname]);
     const { user } = useAuthStore();
     const { onOpen } = useAuthModal();
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -297,7 +311,7 @@ export function MobileBottomNav() {
     };
 
     const LinkItem = ({ link }: { link: typeof NAV_LINKS[0] }) => {
-        const active = isActive(pathname, link.href);
+        const active = isActive(optimisticPath, link.href);
         const isHovered = hoveredLink === link.href;
 
         return (
@@ -306,6 +320,7 @@ export function MobileBottomNav() {
                 href={link.href}
                 className="relative flex flex-col items-center justify-center w-full h-full group"
                 onMouseEnter={() => setHoveredLink(link.href)}
+                onClick={() => setOptimisticPath(link.href)}
             >
                 <div className={cn(
                     "flex flex-col items-center justify-center h-full w-full transition-all duration-200",
