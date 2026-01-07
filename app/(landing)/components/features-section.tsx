@@ -27,8 +27,8 @@ const features = [
     },
     {
         icon: Wallet,
-        title: "Instant Cashout",
-        description: "Convert your virtual gifts to real money and withdraw instantly",
+        title: "Personal Wallet",
+        description: "Manage your LREAL coins and withdraw to your bank account",
         color: "text-yellow-600 dark:text-yellow-400",
         gradient: "from-yellow-500/20 to-orange-500/20",
     },

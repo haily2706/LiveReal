@@ -233,9 +233,9 @@ export function UpcomingEvent({
                         </div>
                     </div>
                 ) : (
-                    <div className="bg-muted/5 flex flex-col items-center justify-center text-center space-y-4">
-                        <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center">
-                            <VideoIcon className="h-8 w-8 text-muted-foreground/50" />
+                    <div className=" flex flex-col items-center justify-center text-center space-y-4">
+                        <div className="w-12 h-12 bg-muted/50 rounded-full flex items-center justify-center">
+                            <VideoIcon className="h-6 w-6 text-muted-foreground/50" />
                         </div>
                         <div className="space-y-1 max-w-sm">
                             <h4 className="font-semibold text-foreground">No upcoming event</h4>
