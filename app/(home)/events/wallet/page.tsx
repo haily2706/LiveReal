@@ -172,10 +172,7 @@ export default function WalletPage() {
     const usdBalance = balanceData ? parseInt(balanceData.tokenBalance) / 100 : 0;
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+        <div
             className="space-y-8 animate-in fade-in-50 duration-500"
         >
             <div>
@@ -511,6 +508,6 @@ export default function WalletPage() {
                 </Tabs>
             </div>
 
-        </motion.div>
+        </div>
     );
 }

@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CalendarIcon, MoreVertical, Pencil, Trash2, Video, VideoIcon, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface EventCardProps {
     title: string;
@@ -42,7 +43,13 @@ export function EventCard({
 
     if (isVideoCall) {
         return (
-            <div className="group relative flex items-center p-4 border rounded-xl bg-card hover:bg-muted/50 transition-colors gap-4">
+            <motion.div
+                className="group relative flex items-center p-4 border rounded-xl bg-card hover:bg-muted/50 transition-colors gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4 }}
+            >
                 <div className="shrink-0 relative">
                     {thumbnailUrl ? (
                         <div className="relative">
@@ -92,12 +99,18 @@ export function EventCard({
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-            </div>
+            </motion.div>
         )
     }
 
     return (
-        <div className="group relative flex border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors overflow-hidden">
+        <motion.div
+            className="group relative flex border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+        >
             <div className="relative h-24 w-40 shrink-0 bg-muted flex items-center justify-center overflow-hidden">
                 {thumbnailUrl ? (
                     <img
@@ -174,6 +187,6 @@ export function EventCard({
                 </div>
 
             </div>
-        </div>
+        </motion.div>
     );
 }

@@ -13,6 +13,8 @@ import { startStream } from "@/app/(home)/events/actions/events";
 import { toast } from "sonner";
 import { ScheduleButton } from "./schedule-button";
 
+import { motion } from "framer-motion";
+
 interface UpcomingEventProps {
     birthdayTime: string;
     isBirthdayEnabled: boolean;
@@ -86,7 +88,13 @@ export function UpcomingEvent({
     };
 
     return (
-        <div className="overflow-hidden relative group">
+        <motion.div
+            className="overflow-hidden relative group"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+        >
             {/* Decorative Background Icon */}
             <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none transition-opacity group-hover:opacity-[0.05]">
                 {/* <ThemeIcon className={cn("w-40 h-40", !eventConfig && "text-pink-500")} /> */}
@@ -246,7 +254,7 @@ export function UpcomingEvent({
                     </div>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 }
 
