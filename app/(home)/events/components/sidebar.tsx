@@ -21,7 +21,7 @@ export function Sidebar({ className, items, ...props }: SidebarNavProps) {
     return (
         <nav
             className={cn(
-                "flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-hide -mx-4 px-4 lg:px-0 lg:mx-0",
+                "flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-2 overflow-x-auto pb-2 lg:pb-0 no-scrollbar -mx-4 px-4 lg:px-0 lg:mx-0",
                 className
             )}
             {...props}

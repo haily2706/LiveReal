@@ -120,7 +120,7 @@ export function getSessionFromReq(req: Request): Session {
   return decoded;
 }
 
-export class Controller {
+export class LiveKitClient {
   private ingressService: IngressClient;
   private roomService: RoomServiceClient;
 
@@ -559,3 +559,6 @@ function randomString(length: number): string {
   }
   return result;
 }
+
+
+export const liveKitClient = new LiveKitClient();

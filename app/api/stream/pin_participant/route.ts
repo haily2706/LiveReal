@@ -1,8 +1,8 @@
 import {
-    Controller,
     PinParticipantParams,
     getSessionFromReq,
-} from "@/app/(home)/stream/lib/controller";
+    liveKitClient,
+} from "@/lib/livekit";
 
 /**
  * @swagger
@@ -26,12 +26,11 @@ import {
  *         description: Participant pinned successfully
  */
 export async function POST(req: Request) {
-    const controller = new Controller();
 
     try {
         const session = getSessionFromReq(req);
         const reqBody = await req.json();
-        await controller.pinParticipant(session, reqBody as PinParticipantParams);
+        await liveKitClient.pinParticipant(session, reqBody as PinParticipantParams);
 
         return Response.json({});
     } catch (err) {

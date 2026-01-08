@@ -1,8 +1,8 @@
 import {
-  Controller,
   RemoveFromStageParams,
   getSessionFromReq,
-} from "@/app/(home)/stream/lib/controller";
+  liveKitClient,
+} from "@/lib/livekit";
 
 
 /**
@@ -27,12 +27,11 @@ import {
  *         description: Participant removed from stage successfully
  */
 export async function POST(req: Request) {
-  const controller = new Controller();
 
   try {
     const session = getSessionFromReq(req);
     const reqBody = await req.json();
-    await controller.removeFromStage(session, reqBody as RemoveFromStageParams);
+    await liveKitClient.removeFromStage(session, reqBody as RemoveFromStageParams);
 
     return Response.json({});
   } catch (err) {

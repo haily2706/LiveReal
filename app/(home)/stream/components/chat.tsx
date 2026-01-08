@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { cn, safeJsonParse } from "@/lib/utils";
 import { useChat, useLocalParticipant, useRoomInfo, useDataChannel } from "@livekit/components-react";
-import { RoomMetadata } from "../lib/controller";
+import { RoomMetadata } from "../../../../lib/livekit";
 import { ReactionPicker } from "./reaction-picker";
 import { toAvatarURL } from "@/lib/constants";
 import { AnimatePresence, motion } from "framer-motion";

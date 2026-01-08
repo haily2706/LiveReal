@@ -33,7 +33,7 @@ import { TokenContext } from "./token-context";
 import { StreamPlayer } from "./stream-player";
 import { StreamInviteAlert } from "./stream-invite-alert";
 
-import { JoinStreamResponse } from "../lib/controller";
+import { JoinStreamResponse } from "../../../../lib/livekit";
 import { useTheme } from "next-themes";
 import { useStreamContext } from "@/app/(home)/components/stream-manager";
 import { toAvatarURL } from "@/lib/constants";

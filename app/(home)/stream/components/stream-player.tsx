@@ -1,7 +1,7 @@
 "use client";
 
 
-import { ParticipantMetadata, RoomMetadata } from "../lib/controller";
+import { ParticipantMetadata, RoomMetadata } from "../../../../lib/livekit";
 import { cn, safeJsonParse, formatCompactNumber } from "@/lib/utils";
 import {
   VideoTrack,

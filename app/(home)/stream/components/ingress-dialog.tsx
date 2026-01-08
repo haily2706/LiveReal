@@ -1,6 +1,6 @@
 "use client";
 
-import { CreateIngressResponse } from "../lib/controller";
+import { CreateIngressResponse } from "../../../../lib/livekit";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {

@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useLocalParticipant, useRoomContext } from "@livekit/components-react";
 import { RoomEvent } from "livekit-client";
-import { safeJsonParse } from "../lib/utils";
-import { ParticipantMetadata } from "../lib/controller";
+import { safeJsonParse } from "@/lib/utils";
+import { ParticipantMetadata } from "../../../../lib/livekit";
 import {
     AlertDialog,
     AlertDialogAction,

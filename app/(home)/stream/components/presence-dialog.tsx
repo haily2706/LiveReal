@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 
-import { ParticipantMetadata, RoomMetadata } from "../lib/controller";
-import { safeJsonParse } from "../lib/utils";
+import { ParticipantMetadata, RoomMetadata } from "../../../../lib/livekit";
+
 import {
   useLocalParticipant,
   useParticipants,
@@ -22,6 +22,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Participant, RoomEvent } from "livekit-client";
 import { useAuthToken } from "./token-context";
 import { toAvatarURL } from "@/lib/constants";
+import { safeJsonParse } from "@/lib/utils";
 
 function ParticipantListItem({
   participant,

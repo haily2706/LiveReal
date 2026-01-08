@@ -1,4 +1,4 @@
-import { Controller, CreateIngressParams } from "@/app/(home)/stream/lib/controller";
+import { CreateIngressParams, liveKitClient } from "@/lib/livekit";
 
 /**
  * @swagger
@@ -34,11 +34,10 @@ import { Controller, CreateIngressParams } from "@/app/(home)/stream/lib/control
  *         description: Ingress created successfully
  */
 export async function POST(req: Request) {
-  const controller = new Controller();
 
   try {
     const reqBody = await req.json();
-    const response = await controller.createIngress(
+    const response = await liveKitClient.createIngress(
       reqBody as CreateIngressParams
     );
 

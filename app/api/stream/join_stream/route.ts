@@ -1,4 +1,4 @@
-import { Controller, JoinStreamParams } from "@/app/(home)/stream/lib/controller";
+import { JoinStreamParams, liveKitClient } from "@/lib/livekit";
 
 
 /**
@@ -25,11 +25,10 @@ import { Controller, JoinStreamParams } from "@/app/(home)/stream/lib/controller
  *         description: Successfully joined the stream
  */
 export async function POST(req: Request) {
-  const controller = new Controller();
 
   try {
     const reqBody = await req.json();
-    const response = await controller.joinStream(reqBody as JoinStreamParams);
+    const response = await liveKitClient.joinStream(reqBody as JoinStreamParams);
 
     return Response.json(response);
   } catch (err) {

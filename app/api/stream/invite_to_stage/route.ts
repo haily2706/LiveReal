@@ -1,8 +1,8 @@
 import {
-  Controller,
   InviteToStageParams,
   getSessionFromReq,
-} from "@/app/(home)/stream/lib/controller";
+  liveKitClient,
+} from "@/lib/livekit";
 
 
 /**
@@ -27,12 +27,11 @@ import {
  *         description: Participant invited to stage successfully
  */
 export async function POST(req: Request) {
-  const controller = new Controller();
 
   try {
     const session = getSessionFromReq(req);
     const reqBody = await req.json();
-    await controller.inviteToStage(session, reqBody as InviteToStageParams);
+    await liveKitClient.inviteToStage(session, reqBody as InviteToStageParams);
 
     return Response.json({});
   } catch (err) {

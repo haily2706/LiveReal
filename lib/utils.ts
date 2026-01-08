@@ -25,10 +25,12 @@ export function formatCompactNumber(number?: number | null) {
   }).format(number);
 }
 
-export function safeJsonParse(data: any, fallback: any) {
+export function safeJsonParse<T>(jsonString: string | undefined | null, defaultValue: T): T {
+  if (!jsonString) return defaultValue;
+
   try {
-    return JSON.parse(data);
+    return JSON.parse(jsonString);
   } catch {
-    return fallback;
+    return defaultValue;
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, CreateStreamParams } from "@/app/(home)/stream/lib/controller";
+import { CreateStreamParams, liveKitClient } from "@/lib/livekit";
 import { db } from "@/lib/db";
 import { events } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -35,13 +35,13 @@ import { eq } from "drizzle-orm";
  *         description: Stream created successfully
  */
 export async function POST(req: Request) {
-  const controller = new Controller();
+
 
   try {
     const reqBody = await req.json();
     const params = reqBody as CreateStreamParams;
 
-    const response = await controller.createStream(params);
+    const response = await liveKitClient.createStream(params);
 
     if (params.room_name) {
       await db.update(events)

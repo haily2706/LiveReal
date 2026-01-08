@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +17,7 @@ import { TransferModal } from "./components/transfer-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { useAuthStore } from "@/components/auth/use-auth-store";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -28,6 +29,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { motion } from "framer-motion";
 
 type Transaction = {
     id: string;
@@ -58,14 +60,17 @@ const getCashOutStatusLabel = (status: number) => {
 };
 
 export default function WalletPage() {
-    const { walletData: balanceData, fetchBalance } = useWalletStore();
+    const { walletData: balanceData, fetchBalance, setWalletData } = useWalletStore();
+    const { user, isLoading: isAuthLoading } = useAuthStore();
     const [cashInTransactions, setCashInTransactions] = useState<any[]>([]);
     const [cashOutTransactions, setCashOutTransactions] = useState<any[]>([]);
     const [transfers, setTransfers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
+        if (!user) return;
+
         try {
             const [
                 cashInsRes,
@@ -105,11 +110,22 @@ export default function WalletPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [user, fetchBalance]);
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        if (isAuthLoading) return;
+
+        if (user) {
+            fetchData();
+        } else {
+            setLoading(false);
+            setCashInTransactions([]);
+            setCashOutTransactions([]);
+            setTransfers([]);
+            setPaymentMethods([]);
+            setWalletData(null);
+        }
+    }, [user, isAuthLoading, fetchData, setWalletData]);
 
     const getStatusIcon = (status: string) => {
         switch (status) {
@@ -156,7 +172,12 @@ export default function WalletPage() {
     const usdBalance = balanceData ? parseInt(balanceData.tokenBalance) / 100 : 0;
 
     return (
-        <div className="space-y-8 animate-in fade-in-50 duration-500">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="space-y-8 animate-in fade-in-50 duration-500"
+        >
             <div>
                 <h3 className="text-lg font-semibold">Wallet</h3>
                 <p className="text-sm text-muted-foreground">
@@ -490,6 +511,6 @@ export default function WalletPage() {
                 </Tabs>
             </div>
 
-        </div>
+        </motion.div>
     );
 }

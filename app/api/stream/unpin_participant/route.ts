@@ -1,7 +1,7 @@
 import {
-    Controller,
     getSessionFromReq,
-} from "@/app/(home)/stream/lib/controller";
+    liveKitClient,
+} from "@/lib/livekit";
 
 /**
  * @swagger
@@ -22,11 +22,10 @@ import {
  *         description: Participant unpinned successfully
  */
 export async function POST(req: Request) {
-    const controller = new Controller();
 
     try {
         const session = getSessionFromReq(req);
-        await controller.unpinParticipant(session);
+        await liveKitClient.unpinParticipant(session);
 
         return Response.json({});
     } catch (err) {

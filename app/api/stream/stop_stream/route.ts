@@ -1,4 +1,4 @@
-import { Controller, getSessionFromReq } from "@/app/(home)/stream/lib/controller";
+import { getSessionFromReq, liveKitClient } from "@/lib/livekit";
 import { db } from "@/lib/db";
 import { events } from "@/lib/db/schema";
 import { log } from "console";
@@ -18,14 +18,13 @@ import { eq } from "drizzle-orm";
  *         description: Stream stopped successfully
  */
 export async function POST(req: Request) {
-  const controller = new Controller();
   const body = await req.json();
   let session;
   try {
     session = getSessionFromReq(req);
     console.log("Session: ", session?.room_name);
     if (body.force) {
-      await controller.stopStream(session);
+      await liveKitClient.stopStream(session);
     }
 
     return Response.json({});

@@ -1,4 +1,4 @@
-import { Controller, getSessionFromReq } from "@/app/(home)/stream/lib/controller";
+import { getSessionFromReq, liveKitClient } from "@/lib/livekit";
 
 
 /**
@@ -14,12 +14,11 @@ import { Controller, getSessionFromReq } from "@/app/(home)/stream/lib/controlle
  *         description: Hand raised successfully
  */
 export async function POST(req: Request) {
-  const controller = new Controller();
 
   try {
     const session = getSessionFromReq(req);
     console.log('[raise_hand] Session:', session);
-    await controller.raiseHand(session);
+    await liveKitClient.raiseHand(session);
 
     return Response.json({});
   } catch (err) {
