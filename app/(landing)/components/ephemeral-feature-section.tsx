@@ -36,7 +36,7 @@ export function EphemeralFeatureSection() {
                             </span>
                         </div>
 
-                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 tracking-tight text-center lg:text-left">
                             Moments That{" "}
                             <span className="relative inline-block">
                                 <span className="relative bg-linear-to-r from-orange-500 via-rose-500 to-amber-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
