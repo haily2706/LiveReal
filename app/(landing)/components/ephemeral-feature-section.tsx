@@ -131,7 +131,7 @@ export function EphemeralFeatureSection() {
                             <div className="glass rounded-2xl border border-black/5 dark:border-white/10 overflow-hidden relative h-full flex flex-col bg-white/40 dark:bg-black/40">
 
                                 {/* Visual Area */}
-                                <div className="relative h-48 sm:h-56 bg-neutral-100/50 dark:bg-neutral-900/50 overflow-hidden flex flex-col">
+                                <div className="relative h-56 sm:h-56 bg-neutral-100/50 dark:bg-neutral-900/50 overflow-hidden flex flex-col">
                                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent opacity-50" />
 
                                     <div className="flex-1 p-4 flex flex-col justify-center relative mask-image-linear-to-t">
