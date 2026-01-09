@@ -28,7 +28,7 @@ export function EphemeralFeatureSection() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="relative z-10 text-left lg:col-span-4"
+                        className="relative z-10 text-left lg:col-span-4 flex flex-col items-center lg:items-start"
                     >
                         <div className="flex items-center gap-3 mb-6">
                             <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full glass text-sm font-medium text-orange-600 dark:text-orange-400">
@@ -45,7 +45,7 @@ export function EphemeralFeatureSection() {
                             </span>
                         </h2>
 
-                        <p className="text-lg text-muted-foreground mb-12 leading-relaxed max-w-xl">
+                        <p className="text-lg text-muted-foreground mb-12 leading-relaxed max-w-xl text-center lg:text-left">
                             Experience true digital freedom. Our platform is built on the principle of impermanence live streams, and chats that exist only in the moment and vanish without a trace.
                         </p>
                     </motion.div>
