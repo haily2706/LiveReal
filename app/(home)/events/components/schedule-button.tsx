@@ -57,7 +57,8 @@ export function ScheduleButton() {
                     </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 rounded-xl border border-border/50 bg-background/80 backdrop-blur-2xl">
-                    {EventTypes.map((type) => (
+                    {EventTypes.filter(t => t.value !== 5).map((type) => (
+
                         <DropdownMenuItem
                             key={type.value}
                             onClick={() => {

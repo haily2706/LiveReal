@@ -35,36 +35,10 @@ export function UpcomingEvent({
 
     const ThemeIcon = eventConfig?.icon || CalendarIcon;
 
-    const isVideoCall = eventConfig?.value === 5;
-    const invitedUsers = upcomingEvent?.invitedUsers || [];
-    const singleInvitee = isVideoCall && invitedUsers.length === 1 ? invitedUsers[0] : null;
-
-    let title = upcomingEvent?.title;
-    if ((!title || title.trim() === "") && singleInvitee) {
-        title = singleInvitee.name;
-    }
-
+    const title = upcomingEvent?.title;
     const description = upcomingEvent?.description || "";
-    let thumbnailUrl = upcomingEvent?.thumbnailUrl;
-    let isAvatar = false;
-
-    if (!thumbnailUrl && isVideoCall) {
-        if (singleInvitee) {
-            const avatar = toAvatarURL(singleInvitee.id);
-            if (avatar) {
-                thumbnailUrl = avatar;
-                isAvatar = true;
-            }
-        } else if (upcomingEvent?.userId) {
-            const avatar = toAvatarURL(upcomingEvent.userId);
-            if (avatar) {
-                thumbnailUrl = avatar;
-                isAvatar = true;
-            }
-        }
-    }
-
-    const isCompact = isAvatar && !!singleInvitee;
+    const thumbnailUrl = upcomingEvent?.thumbnailUrl;
+    const isCompact = false;
     const eventDate = upcomingEvent?.startTime ? new Date(upcomingEvent.startTime) : undefined;
     const hasEvent = !!upcomingEvent;
 
@@ -105,7 +79,7 @@ export function UpcomingEvent({
                 <div className={cn("flex items-center justify-between", isCompact ? "mb-4" : "mb-6")}>
                     <div className="space-y-1">
                         <h3 className="font-semibold text-lg leading-none tracking-tight flex items-center gap-2">
-                            {isVideoCall ? "Upcoming Call" : "Upcoming Event"}
+                            Upcoming Event
                             {isBirthdayEnabled && <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />}
                         </h3>
                         <p className="text-sm text-muted-foreground">
@@ -117,37 +91,26 @@ export function UpcomingEvent({
                 {hasEvent ? (
                     <div className="flex flex-col md:flex-row gap-4">
                         {/* Thumbnail Section */}
-                        {!isAvatar && (
-                            <div className="w-full md:w-56 aspect-video md:aspect-auto rounded-lg shrink-0 overflow-hidden relative">
-                                {thumbnailUrl ? (
-                                    <img src={thumbnailUrl} alt={title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                                ) : (
-                                    <div className="flex items-center justify-center w-full h-full text-muted-foreground/30">
-                                        <VideoIcon className="h-10 w-10" />
-                                    </div>
-                                )}
-                                {upcomingEvent?.isShort && (
-                                    <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] text-white font-medium uppercase tracking-wider">
-                                        Short
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                        <div className="w-full md:w-56 aspect-video md:aspect-auto rounded-lg shrink-0 overflow-hidden relative">
+                            {thumbnailUrl ? (
+                                <img src={thumbnailUrl} alt={title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                            ) : (
+                                <div className="flex items-center justify-center w-full h-full text-muted-foreground/30">
+                                    <VideoIcon className="h-10 w-10" />
+                                </div>
+                            )}
+                            {upcomingEvent?.isShort && (
+                                <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] text-white font-medium uppercase tracking-wider">
+                                    Short
+                                </div>
+                            )}
+                        </div>
 
                         {/* Content Section */}
                         <div className="flex-1 flex flex-col min-w-0">
                             <div className="space-y-3">
                                 <div className="flex gap-4 items-start">
-                                    {isAvatar && thumbnailUrl && (
-                                        <div className="relative shrink-0">
-                                            <div className="absolute inset-0 bg-primary/20 rounded-full" />
-                                            <img
-                                                src={thumbnailUrl}
-                                                alt={title}
-                                                className="w-14 h-14 rounded-full object-cover border-2 border-background relative z-10 shadow-sm"
-                                            />
-                                        </div>
-                                    )}
+
                                     <div className="min-w-0 flex-1">
                                         <h4 className="font-bold text-xl leading-tight truncate pr-2">{title}</h4>
                                         {isCompact && eventDate && (
@@ -167,34 +130,7 @@ export function UpcomingEvent({
                                     </div>
                                 </div>
 
-                                {isVideoCall && invitedUsers.length > 1 && (
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex -space-x-2 overflow-hidden py-1">
-                                            {invitedUsers.map((user) => {
-                                                const avatar = toAvatarURL(user.id);
-                                                return (
-                                                    <div key={user.id} className="relative group/avatar cursor-help">
-                                                        {avatar ? (
-                                                            <img
-                                                                src={avatar}
-                                                                alt={user.name}
-                                                                className="w-7 h-7 rounded-full border-2 border-background object-cover"
-                                                            />
-                                                        ) : (
-                                                            <div className="w-7 h-7 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[10px] uppercase font-bold text-muted-foreground">
-                                                                {user.name.substring(0, 2)}
-                                                            </div>
-                                                        )}
-                                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/avatar:block bg-popover text-popover-foreground text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap z-50 animate-in fade-in zoom-in-95 duration-200">
-                                                            {user.name}
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                        <span className="text-xs text-muted-foreground">Invited</span>
-                                    </div>
-                                )}
+
                             </div>
 
                             <div className={cn("flex flex-col sm:flex-row sm:items-end justify-between gap-4", isCompact ? "mt-2" : "mt-4")}>
@@ -216,7 +152,7 @@ export function UpcomingEvent({
                                     )}
 
                                     <div className="flex items-center gap-4 text-xs text-muted-foreground pl-1">
-                                        {!isVideoCall && upcomingEvent?.views !== undefined && (
+                                        {upcomingEvent?.views !== undefined && (
                                             <span>{formatCompactNumber(upcomingEvent.views)} views</span>
                                         )}
                                         {upcomingEvent?.lreals !== undefined && upcomingEvent.lreals! > 0 && (
@@ -235,7 +171,7 @@ export function UpcomingEvent({
                                     disabled={isLoading}
                                 >
                                     <VideoIcon className="mr-2 h-4 w-4" />
-                                    {isLoading ? "Starting..." : (isVideoCall ? "Start Video Call" : "Start Live Stream")}
+                                    {isLoading ? "Starting..." : "Start Live Stream"}
                                 </Button>
                             </div>
                         </div>

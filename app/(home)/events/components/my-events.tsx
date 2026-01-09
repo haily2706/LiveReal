@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { format, intervalToDuration, Interval } from "date-fns";
 import { useEvents, Event } from "../use-events";
 import { formatCompactNumber } from "@/lib/utils";
-import { EventTypes, toAvatarURL } from "@/lib/constants";
+import { EventTypes } from "@/lib/constants";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -63,8 +63,7 @@ export function MyEvents({ onEdit }: MyEventsProps) {
     };
 
     const handleStartStream = async (event: Event) => {
-        const isVideoCall = event.type === 5;
-        const actionText = isVideoCall ? "Call" : "Stream";
+        const actionText = "Stream";
         toast.promise(
             async () => {
                 const result = await startStream(event.id);
@@ -112,42 +111,10 @@ export function MyEvents({ onEdit }: MyEventsProps) {
                     </div>
                 ) : (
                     eventList.map((event) => {
-                        const isVideoCall = event.type === 5;
-                        const invitedUsers = event.invitedUsers || [];
-                        const singleInvitee = isVideoCall && invitedUsers.length === 1 ? invitedUsers[0] : null;
-
-                        let title = event.title;
-                        if ((!title || title.trim() === "") && singleInvitee) {
-                            title = singleInvitee.name;
-                        }
-
+                        const title = event.title;
                         let thumbnailUrl = event.thumbnailUrl;
 
-                        if (!thumbnailUrl && isVideoCall) {
-                            if (singleInvitee) {
-                                const avatar = toAvatarURL(singleInvitee.id);
-                                if (avatar) {
-                                    thumbnailUrl = avatar;
-                                }
-                            } else if (event.userId) {
-                                const avatar = toAvatarURL(event.userId);
-                                if (avatar) {
-                                    thumbnailUrl = avatar;
-                                }
-                            }
-                        }
-
-                        // Fallback for non-video-call events if (desired) or keep existing Unsplash fallback
-                        // The user request is about "support video call ... like upcoming-event"
-                        // So for video call, if no thumbnail and no avatar found, we leave it undefined (EventCard will show VideoIcon)
-                        // For others, we might want to keep the unsplash image if that was the preference, BUT
-                        // if we want to be consistent, maybe better to show icon?
-                        // I will preserve the Unsplash fallback for NON-video calls to be safe,
-                        // or just apply it globally if thumbnailUrl is valid.
-                        // However, the previous code applied it to ALL events without thumbnail.
-                        // I will apply it only if NOT video call, to allow the Icon fallback for video calls.
-
-                        if (!thumbnailUrl && !isVideoCall) {
+                        if (!thumbnailUrl) {
                             thumbnailUrl = "https://images.unsplash.com/photo-1540575467063-17e6fc48dee5?q=80&w=1000&auto=format&fit=crop";
                         }
 
@@ -156,9 +123,7 @@ export function MyEvents({ onEdit }: MyEventsProps) {
 
 
                         const dateStr = event.startTime
-                            ? isVideoCall
-                                ? `${format(new Date(event.startTime), "MMM dd")} at ${format(new Date(event.startTime), "h:mm a")}`
-                                : format(new Date(event.startTime), "MMM dd")
+                            ? format(new Date(event.startTime), "MMM dd")
                             : "TBD";
 
                         return (
@@ -166,7 +131,7 @@ export function MyEvents({ onEdit }: MyEventsProps) {
                                 key={event.id}
                                 title={title}
                                 date={dateStr}
-                                isVideoCall={isVideoCall}
+                                isVideoCall={false}
                                 duration={
                                     event.startTime && event.endTime
                                         ? formatDuration({

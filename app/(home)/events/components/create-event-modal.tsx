@@ -102,7 +102,7 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
                 setIsShortStream(false);
                 setThumbnailUrl("");
                 setEventType(initialEventType?.toString() || "1");
-                setVisibility(initialEventType === 5 ? "invited" : "public");
+                setVisibility("public");
                 const now = new Date();
                 // Round up to next 5 minutes
                 const minutes = now.getMinutes();
@@ -253,14 +253,14 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
                                 value={eventType}
                                 onValueChange={(v) => {
                                     setEventType(v);
-                                    setVisibility(v === '5' ? 'invited' : 'public');
+                                    setVisibility('public');
                                 }}
                             >
                                 <SelectTrigger className="bg-background/50">
                                     <SelectValue placeholder="Select event type" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {EventTypes.map((type) => (
+                                    {EventTypes.filter(t => t.value !== 5).map((type) => (
                                         <SelectItem key={type.value} value={type.value.toString()}>
                                             <div className="flex items-center gap-2">
                                                 <type.icon className="h-4 w-4" />
@@ -272,7 +272,7 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
                             </Select>
                         </div>
                     )}
-                    {eventType !== "5" && (
+                    {true && (
                         <div className="flex flex-col md:flex-row gap-6">
                             <div className="flex-1 flex flex-col gap-4">
                                 <div className="grid gap-2">
@@ -471,12 +471,8 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
                                     <SelectValue placeholder="Select visibility" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {eventType !== "5" && (
-                                        <>
-                                            <SelectItem value="public">Public (Everyone)</SelectItem>
-                                            <SelectItem value="private">Private (Only You)</SelectItem>
-                                        </>
-                                    )}
+                                    <SelectItem value="public">Public (Everyone)</SelectItem>
+                                    <SelectItem value="private">Private (Only You)</SelectItem>
                                     <SelectItem value="invited">Invited</SelectItem>
                                 </SelectContent>
                             </Select>
@@ -551,6 +547,8 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
                                 </div>
                             </div>
                         )}
+
+
                     </div>
 
 
@@ -568,6 +566,6 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
                     </Button>
                 </div>
             </DialogContent>
-        </Dialog>
+        </Dialog >
     );
 }
