@@ -288,7 +288,7 @@ function FlyingReactions() {
                         {reaction.type === 'heart' ? (
                             <Heart className="w-5 h-5 text-rose-500 fill-rose-500" />
                         ) : (
-                            <Gift className="w-5 h-5 text-amber-500 fill-amber-500" />
+                            <div className="w-5 h-5">🎁</div>
                         )}
                     </motion.div>
                 ))}
