@@ -20,7 +20,7 @@ export function EphemeralFeatureSection() {
             <div className="absolute inset-0 bg-linear-to-b from-transparent via-orange-500/5 to-transparent pointer-events-none" />
 
             <div className="container mx-auto max-w-6xl">
-                <div className="grid lg:grid-cols-12 gap-12 items-center">
+                <div className="grid lg:grid-cols-12 gap-2 md:gap-12 items-center">
 
                     {/* Text Content */}
                     <motion.div
