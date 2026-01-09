@@ -24,10 +24,10 @@ export function EphemeralFeatureSection() {
 
                     {/* Text Content */}
                     <motion.div
-                        initial={{ opacity: 0, x: -30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        transition={{ duration: 0.6 }}
                         className="relative z-10 text-left lg:col-span-4 flex flex-col items-center lg:items-start"
                     >
                         <div className="flex items-center gap-3 mb-6">
