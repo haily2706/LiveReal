@@ -29,7 +29,7 @@ export function CashInTab({ transactions }: CashInTabProps) {
                 ) : (
                     <div className="divide-y divide-border/20">
                         {transactions.map((tx) => (
-                            <div key={tx.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/10 transition-colors">
+                            <div key={tx.id} className="flex items-center justify-between px-0 py-3 hover:bg-muted/10 transition-colors">
                                 <div className="flex items-center gap-3">
                                     <div className="h-8 w-8 rounded-full bg-muted/50 flex items-center justify-center">
                                         {getStatusIcon(tx.status)}

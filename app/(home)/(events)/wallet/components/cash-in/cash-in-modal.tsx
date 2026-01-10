@@ -21,9 +21,11 @@ import { CASH_IN_PLANS } from "@/app/(home)/(events)/wallet/constants";
 
 interface CashInModalProps {
     children: React.ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
 }
 
-export function CashInModal({ children }: CashInModalProps) {
+export function CashInModal({ children, open, onOpenChange }: CashInModalProps) {
     const [processingPlanId, setProcessingPlanId] = useState<string | null>(null);
 
     const onCheckout = async (planId: string) => {
@@ -43,7 +45,7 @@ export function CashInModal({ children }: CashInModalProps) {
     };
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
@@ -73,10 +75,10 @@ export function CashInModal({ children }: CashInModalProps) {
                                     Popular
                                 </div>
                             )}
-                            <div className={cn("absolute inset-0 opacity-[0.03] bg-gradient-to-br", plan.gradient)} />
+                            <div className={cn("absolute inset-0 opacity-[0.03] bg-linear-to-br", plan.gradient)} />
                             <CardHeader>
                                 <CardTitle>
-                                    <span className={cn("font-bold bg-gradient-to-br bg-clip-text text-transparent", plan.gradient)}>
+                                    <span className={cn("font-bold bg-linear-to-br bg-clip-text text-transparent", plan.gradient)}>
                                         {plan.name}
                                     </span>
                                 </CardTitle>

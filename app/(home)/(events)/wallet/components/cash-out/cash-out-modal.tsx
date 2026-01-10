@@ -30,13 +30,20 @@ interface PaymentMethod {
 interface CashOutModalProps {
     children: React.ReactNode;
     onSuccess?: () => void;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
 }
 
-export function CashOutModal({ children, onSuccess }: CashOutModalProps) {
+export function CashOutModal({ children, onSuccess, open, onOpenChange }: CashOutModalProps) {
     const { walletData } = useWalletStore();
     const balance = walletData ? parseInt(walletData.tokenBalance) : 0;
 
-    const [isOpen, setIsOpen] = useState(false);
+    const [internalValidOpen, setInternalValidOpen] = useState(false);
+    const isValidOpen = open !== undefined ? open : internalValidOpen;
+    const setIsValidOpen = (value: boolean) => {
+        setInternalValidOpen(value);
+        onOpenChange?.(value);
+    };
     const [isLoading, setIsLoading] = useState(false);
     const [amount, setAmount] = useState("");
     const [error, setError] = useState("");
@@ -44,7 +51,7 @@ export function CashOutModal({ children, onSuccess }: CashOutModalProps) {
     const [loadingMethods, setLoadingMethods] = useState(false);
 
     useEffect(() => {
-        if (isOpen) {
+        if (isValidOpen) {
             const fetchMethods = async () => {
                 setLoadingMethods(true);
                 try {
@@ -63,7 +70,7 @@ export function CashOutModal({ children, onSuccess }: CashOutModalProps) {
             setAmount("");
             setError("");
         }
-    }, [isOpen]);
+    }, [isValidOpen]);
 
     // Identify the single linked account
     const linkedAccount = paymentMethods[0];
@@ -109,7 +116,7 @@ export function CashOutModal({ children, onSuccess }: CashOutModalProps) {
 
             if (result.success) {
                 toast.success(`Successfully initiated withdrawal of ${numVal.toLocaleString()} LREAL`);
-                setIsOpen(false);
+                setIsValidOpen(false);
                 setAmount("");
                 onSuccess?.();
             } else {
@@ -126,7 +133,7 @@ export function CashOutModal({ children, onSuccess }: CashOutModalProps) {
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog open={isValidOpen} onOpenChange={setIsValidOpen}>
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
@@ -201,7 +208,7 @@ export function CashOutModal({ children, onSuccess }: CashOutModalProps) {
                     </div>
 
                     <DialogFooter>
-                        <Button variant="ghost" onClick={() => setIsOpen(false)}>Cancel</Button>
+                        <Button variant="ghost" onClick={() => setIsValidOpen(false)}>Cancel</Button>
                         <Button
                             className="bg-red-600 hover:bg-red-700 text-white"
                             onClick={handleCashOut}

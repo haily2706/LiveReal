@@ -24,7 +24,7 @@ export function TransferTab({ transactions, currentUserId }: TransferTabProps) {
                             const otherUser = isSender ? tx.toUser : tx.fromUser;
 
                             return (
-                                <div key={tx.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/10 transition-colors">
+                                <div key={tx.id} className="flex items-center justify-between px-0 py-3 hover:bg-muted/10 transition-colors">
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-9 w-9 border">
                                             <AvatarImage src={mediaClient.getAvatarUrl(otherUser?.id) || ""} />

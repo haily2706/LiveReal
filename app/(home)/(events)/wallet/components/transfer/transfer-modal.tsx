@@ -19,11 +19,29 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Coin } from "@/components/ui/coin";
 import { useWalletStore } from "../../use-wallet-store";
 
-export function TransferModal({ children, onSuccess }: { children: React.ReactNode, onSuccess?: () => void }) {
+interface TransferModalProps {
+    children: React.ReactNode;
+    onSuccess?: () => void;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+}
+
+export function TransferModal({ children, onSuccess, open, onOpenChange }: TransferModalProps) {
     const { walletData } = useWalletStore();
     const balance = walletData ? parseInt(walletData.tokenBalance) : 0;
 
-    const [open, setOpen] = useState(false);
+    const [internalOpen, setInternalOpen] = useState(false);
+
+    // Derived state determining if modal is open (controlled vs uncontrolled)
+    const isModalOpen = open !== undefined ? open : internalOpen;
+
+    // Handler to update state
+    const handleOpenChange = (newOpen: boolean) => {
+        setInternalOpen(newOpen);
+        if (onOpenChange) {
+            onOpenChange(newOpen);
+        }
+    };
     const [amount, setAmount] = useState("");
     const [recipientEmail, setRecipientEmail] = useState("");
     const [loading, setLoading] = useState(false);
@@ -93,7 +111,7 @@ export function TransferModal({ children, onSuccess }: { children: React.ReactNo
 
             if (result.success) {
                 toast.success("Transfer successful");
-                setOpen(false);
+                handleOpenChange(false);
                 setAmount("");
                 setRecipientEmail("");
                 setRecipient(null);
@@ -110,7 +128,7 @@ export function TransferModal({ children, onSuccess }: { children: React.ReactNo
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={isModalOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
@@ -194,7 +212,7 @@ export function TransferModal({ children, onSuccess }: { children: React.ReactNo
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                    <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
                         Cancel
                     </Button>
                     <Button type="button" onClick={handleTransfer} disabled={loading || !recipient || !amount}>

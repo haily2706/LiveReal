@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Wallet, MoreVertical, ArrowDownLeft, ArrowUpRight, ArrowRightLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,12 +24,14 @@ interface WalletBalanceProps {
 export function WalletBalance({ onActionSuccess }: WalletBalanceProps) {
     const { walletData: balanceData, isLoading, fetchBalance } = useWalletStore();
     const usdBalance = balanceData ? parseInt(balanceData.tokenBalance) / 100 : 0;
+    const [mobileAction, setMobileAction] = useState<'cash-in' | 'cash-out' | 'transfer' | null>(null);
 
     const handleActionSuccess = (tab?: string) => {
         fetchBalance(true);
         if (onActionSuccess) {
             onActionSuccess(tab);
         }
+        setMobileAction(null);
     };
 
     return (
@@ -48,26 +50,44 @@ export function WalletBalance({ onActionSuccess }: WalletBalanceProps) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <CashInModal>
-                            <DropdownMenuItem className="cursor-pointer">
-                                <ArrowDownLeft className="mr-2 h-4 w-4 text-green-500" />
-                                <span>Cash In</span>
-                            </DropdownMenuItem>
-                        </CashInModal>
-                        <CashOutModal onSuccess={() => handleActionSuccess('cash-out')}>
-                            <DropdownMenuItem className="cursor-pointer">
-                                <ArrowUpRight className="mr-2 h-4 w-4 text-red-500" />
-                                <span>Cash Out</span>
-                            </DropdownMenuItem>
-                        </CashOutModal>
-                        <TransferModal onSuccess={() => handleActionSuccess('transfers')}>
-                            <DropdownMenuItem className="cursor-pointer">
-                                <ArrowRightLeft className="mr-2 h-4 w-4 text-blue-500" />
-                                <span>Transfer</span>
-                            </DropdownMenuItem>
-                        </TransferModal>
+                        <DropdownMenuItem className="cursor-pointer" onSelect={() => setMobileAction('cash-in')}>
+                            <ArrowDownLeft className="mr-2 h-4 w-4 text-green-500" />
+                            <span>Cash In</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" onSelect={() => setMobileAction('cash-out')}>
+                            <ArrowUpRight className="mr-2 h-4 w-4 text-red-500" />
+                            <span>Cash Out</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" onSelect={() => setMobileAction('transfer')}>
+                            <ArrowRightLeft className="mr-2 h-4 w-4 text-blue-500" />
+                            <span>Transfer</span>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
+
+                {/* Mobile Modals - Rendered outside dropdown to prevent closing issues */}
+                <CashInModal
+                    open={mobileAction === 'cash-in'}
+                    onOpenChange={(open) => !open && setMobileAction(null)}
+                >
+                    <></>
+                </CashInModal>
+
+                <CashOutModal
+                    open={mobileAction === 'cash-out'}
+                    onOpenChange={(open) => !open && setMobileAction(null)}
+                    onSuccess={() => handleActionSuccess('cash-out')}
+                >
+                    <></>
+                </CashOutModal>
+
+                <TransferModal
+                    open={mobileAction === 'transfer'}
+                    onOpenChange={(open) => !open && setMobileAction(null)}
+                    onSuccess={() => handleActionSuccess('transfers')}
+                >
+                    <></>
+                </TransferModal>
             </div>
 
             <CardHeader className="pb-2 relative z-10">
