@@ -265,7 +265,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
     try {
       // Use the manager's leaveStream to handle API call and state cleanup synchronously
       leaveStream(true);
-      router.push("/events/list");
+      router.push("/events");
     } catch (error) {
       console.error("Failed to end stream", error);
     }

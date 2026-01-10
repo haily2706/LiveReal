@@ -207,7 +207,8 @@ export function CashOutModal({ children, onSuccess }: CashOutModalProps) {
                             onClick={handleCashOut}
                             disabled={isLoading || !!error || !amount || !linkedAccount}
                         >
-                            {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Confirm Cash Out"}
+                            {isLoading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                            Confirm Cash Out
                         </Button>
                     </DialogFooter>
                 </div>

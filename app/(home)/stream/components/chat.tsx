@@ -12,6 +12,7 @@ import { RoomMetadata } from "../../../../lib/livekit";
 import { ReactionPicker } from "./reaction-picker";
 import { mediaClient } from "@/lib/media.client";
 import { AnimatePresence, motion } from "framer-motion";
+import { StreamMenu } from "./stream-menu";
 
 
 
@@ -132,9 +133,7 @@ export function Chat({ className, onClose }: ChatProps) {
             <Crown className="h-3.5 w-3.5 text-purple-600 dark:text-[#a855f7]" fill="currentColor" />
             <span className="text-xs font-semibold text-purple-700 dark:text-[#d8b4fe]">Top fans</span>
           </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-black hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-white/10 rounded-full">
-            <MoreVertical className="h-5 w-5" />
-          </Button>
+          <StreamMenu eventId={name} />
           {onClose && (
             <Button onClick={onClose} variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-black hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-white/10 rounded-full">
               <X className="h-5 w-5" />

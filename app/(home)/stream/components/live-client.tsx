@@ -5,20 +5,13 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import {
     ThumbsUp,
     ThumbsDown,
     Share2,
-    MoreHorizontal,
     MessageSquare,
     VideoIcon,
-    Flag,
     Play,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -32,6 +25,7 @@ import { useAuthStore } from "@/components/auth/use-auth-store";
 import { TokenContext } from "./token-context";
 import { StreamPlayer } from "./stream-player";
 import { StreamInviteAlert } from "./stream-invite-alert";
+import { StreamMenu } from "./stream-menu";
 
 import { JoinStreamResponse } from "../../../../lib/livekit";
 import { useTheme } from "next-themes";
@@ -374,19 +368,7 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                                             Share
                                         </Button>
 
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="rounded-full bg-card/80 backdrop-blur-xl border border-border hover:bg-muted text-foreground h-9 w-9 shadow-lg hover:rotate-90 transition-all">
-                                                    <MoreHorizontal className="w-4 h-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer">
-                                                    <Flag className="w-4 h-4 mr-2" />
-                                                    Report
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                        <StreamMenu eventId={eventId} vertical={false} />
                                     </div>
                                 </div>
 
@@ -447,6 +429,8 @@ export function LiveClient({ eventId, initialData, role = 'viewer' }: LiveClient
                     </Sheet>
                 </div>
             </div>
+
+
         </div >
     );
 }
