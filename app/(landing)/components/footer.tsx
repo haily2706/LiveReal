@@ -11,7 +11,7 @@ const XIcon = ({ className }: { className?: string }) => (
 export function Footer() {
     return (
         <footer className="border-t border-border/40 py-12">
-            <div className="container mx-auto px-4">
+            <div className="lg:container mx-auto px-4">
                 <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
                     {/* Copyright */}
                     <div className="flex flex-col items-center md:items-start gap-2">
