@@ -186,9 +186,9 @@ export function Navbar({ }: NavbarProps) {
                             ) : pathname === '/home' ? (
                                 <motion.div
                                     key="category-pills"
-                                    initial={{ opacity: 0, y: 10 }}
+                                    initial={{ opacity: 0, y: 0 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.2 }}
                                     className="flex items-center gap-2 overflow-x-auto no-scrollbar max-w-full mask-gradient px-6"
                                 >
                                     {categories.map((category) => {
