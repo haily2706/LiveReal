@@ -69,25 +69,19 @@ export function WalletBalance({ onActionSuccess }: WalletBalanceProps) {
                 <CashInModal
                     open={mobileAction === 'cash-in'}
                     onOpenChange={(open) => !open && setMobileAction(null)}
-                >
-                    <></>
-                </CashInModal>
+                />
 
                 <CashOutModal
                     open={mobileAction === 'cash-out'}
                     onOpenChange={(open) => !open && setMobileAction(null)}
                     onSuccess={() => handleActionSuccess('cash-out')}
-                >
-                    <></>
-                </CashOutModal>
+                />
 
                 <TransferModal
                     open={mobileAction === 'transfer'}
                     onOpenChange={(open) => !open && setMobileAction(null)}
                     onSuccess={() => handleActionSuccess('transfers')}
-                >
-                    <></>
-                </TransferModal>
+                />
             </div>
 
             <CardHeader className="pb-2 relative z-10">

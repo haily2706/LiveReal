@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { CASH_IN_PLANS } from "@/app/(home)/(events)/wallet/constants";
 
 interface CashInModalProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
 }
@@ -46,9 +46,11 @@ export function CashInModal({ children, open, onOpenChange }: CashInModalProps) 
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogTrigger asChild>
-                {children}
-            </DialogTrigger>
+            {children && (
+                <DialogTrigger asChild>
+                    {children}
+                </DialogTrigger>
+            )}
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-2xl">

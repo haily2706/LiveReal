@@ -19,23 +19,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface PaymentMethod {
-    id: string;
-    type: string;
-    title: string;
-    description: string;
-    last4: string;
-}
 
 interface CashOutModalProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     onSuccess?: () => void;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
 }
 
 export function CashOutModal({ children, onSuccess, open, onOpenChange }: CashOutModalProps) {
-    const { walletData } = useWalletStore();
+    const { walletData, paymentMethods, fetchPaymentMethods } = useWalletStore();
     const balance = walletData ? parseInt(walletData.tokenBalance) : 0;
 
     const [internalValidOpen, setInternalValidOpen] = useState(false);
@@ -47,30 +40,15 @@ export function CashOutModal({ children, onSuccess, open, onOpenChange }: CashOu
     const [isLoading, setIsLoading] = useState(false);
     const [amount, setAmount] = useState("");
     const [error, setError] = useState("");
-    const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-    const [loadingMethods, setLoadingMethods] = useState(false);
 
     useEffect(() => {
         if (isValidOpen) {
-            const fetchMethods = async () => {
-                setLoadingMethods(true);
-                try {
-                    const res = await fetch('/api/wallet/cash-out/cash-out-method');
-                    const data = await res.json();
-                    setPaymentMethods(data.data ? [data.data] : []);
-                } catch (err) {
-                    console.error("Failed to fetch payment methods", err);
-                } finally {
-                    setLoadingMethods(false);
-                }
-            };
-            fetchMethods();
-
+            fetchPaymentMethods();
             // Reset state on open
             setAmount("");
             setError("");
         }
-    }, [isValidOpen]);
+    }, [isValidOpen, fetchPaymentMethods]);
 
     // Identify the single linked account
     const linkedAccount = paymentMethods[0];
@@ -134,9 +112,11 @@ export function CashOutModal({ children, onSuccess, open, onOpenChange }: CashOu
 
     return (
         <Dialog open={isValidOpen} onOpenChange={setIsValidOpen}>
-            <DialogTrigger asChild>
-                {children}
-            </DialogTrigger>
+            {children && (
+                <DialogTrigger asChild>
+                    {children}
+                </DialogTrigger>
+            )}
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-2xl">
@@ -152,9 +132,7 @@ export function CashOutModal({ children, onSuccess, open, onOpenChange }: CashOu
                     {/* CashOut Account Display (Moved to Top) */}
                     <div className="flex flex-col gap-4">
                         <Label>Cash Out To</Label>
-                        {loadingMethods ? (
-                            <div className="h-14 w-full bg-muted rounded animate-pulse"></div>
-                        ) : linkedAccount ? (
+                        {linkedAccount ? (
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="bg-background p-2 rounded-full border">

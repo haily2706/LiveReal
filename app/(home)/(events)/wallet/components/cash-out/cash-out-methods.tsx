@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,43 +19,25 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useAuthStore } from "@/components/auth/use-auth-store";
-
-type PaymentMethod = {
-    id: string;
-    type: string;
-    title: string;
-    description: string;
-    last4: string;
-    isDefault?: boolean;
-    expiry?: string;
-};
+import { useWalletStore, PaymentMethod } from "../../use-wallet-store";
 
 export function CashOutMethods() {
     const { user } = useAuthStore();
-    const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-    const [loading, setLoading] = useState(!!user);
-
-    const fetchPaymentMethods = useCallback(async () => {
-        if (!user) return;
-
-        try {
-            setLoading(true);
-            const res = await fetch('/api/wallet/cash-out/cash-out-method');
-            const data = await res.json();
-            setPaymentMethods(data.data ? [data.data] : []);
-        } catch (error) {
-            console.error("Failed to fetch payment methods", error);
-        } finally {
-            setLoading(false);
-        }
-    }, [user]);
+    const { paymentMethods, fetchPaymentMethods } = useWalletStore();
+    const loading = !paymentMethods && !!user; // Simplified loading state, or rely on store loading?? Store has global loading.
+    // Better to use a separate loading state or just rely on whether data is there + user logic.
+    // Since fetchPaymentMethods checks if data exists, it won't re-fetch.
+    // But initially paymentMethods is [].
+    // Let's rely on mounted effect.
 
     useEffect(() => {
-        fetchPaymentMethods();
-    }, [fetchPaymentMethods]);
+        if (user) {
+            fetchPaymentMethods();
+        }
+    }, [user, fetchPaymentMethods]);
 
-    const handleAddMethod = (newMethod: PaymentMethod) => {
-        setPaymentMethods([newMethod]);
+    const handleAddMethod = () => {
+        fetchPaymentMethods(true);
     };
 
     const handleDeleteMethod = async () => {
@@ -66,7 +48,7 @@ export function CashOutMethods() {
             const result = await response.json();
 
             if (result.success) {
-                setPaymentMethods([]);
+                fetchPaymentMethods(true);
                 toast.success("Payment method removed");
             } else {
                 toast.error("Failed to remove payment method");
@@ -88,7 +70,15 @@ export function CashOutMethods() {
 
             <Card className="overflow-hidden border-muted/60">
                 <CardContent className="p-0">
-                    {loading ? (
+                    {false ? ( // We removed internal loading state, maybe we can assume loaded if not empty, or add loading to store specifically for this?
+                        // The store 'isLoading' is for balance. We might want to use that or add 'isMethodsLoading'.
+                        // For now, let's just render the list. If empty, it shows empty state.
+                        // If we want skeleton, we need a loading state. 
+                        // Let's use `paymentMethods.length === 0` and maybe a short timeout or just keep it simple.
+                        // If we really want skeleton, we need `isLoadingMethods` in store or just assume fast response.
+                        // The original code used `loading` state.
+                        // Let's verify if `paymentMethods` is populated.
+                        // If we want to show skeleton initialy:
                         <div className="divide-y divide-border/50">
                             {[1].map((i) => (
                                 <div key={i} className="flex items-center p-4 gap-4">

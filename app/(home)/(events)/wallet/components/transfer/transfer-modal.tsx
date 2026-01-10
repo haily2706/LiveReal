@@ -20,7 +20,7 @@ import { Coin } from "@/components/ui/coin";
 import { useWalletStore } from "../../use-wallet-store";
 
 interface TransferModalProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     onSuccess?: () => void;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
@@ -129,9 +129,11 @@ export function TransferModal({ children, onSuccess, open, onOpenChange }: Trans
 
     return (
         <Dialog open={isModalOpen} onOpenChange={handleOpenChange}>
-            <DialogTrigger asChild>
-                {children}
-            </DialogTrigger>
+            {children && (
+                <DialogTrigger asChild>
+                    {children}
+                </DialogTrigger>
+            )}
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-2xl">
