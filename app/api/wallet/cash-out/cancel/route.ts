@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
-import { cashOuts } from "@/lib/db/schema";
+import { cashOuts, users } from "@/lib/db/schema";
 import { createClient } from "@/lib/supabase/server";
+import { transferToken } from "@/lib/hedera/client";
 import { eq, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -34,6 +35,31 @@ export async function POST(req: Request) {
 
         if (transaction.status !== 0) {
             return NextResponse.json({ success: false, error: "Cannot cancel this transaction. It may have already been processed." }, { status: 400 });
+        }
+
+        // Get user's wallet info
+        const userRecord = await db.query.users.findFirst({
+            where: eq(users.id, user.id),
+        });
+
+        if (!userRecord || !userRecord.hbarAccountId) {
+            return NextResponse.json({ success: false, error: "User wallet not found" }, { status: 400 });
+        }
+
+        // Refund the amount to user
+        const amountToRefund = Number(transaction.amount);
+        if (isNaN(amountToRefund) || amountToRefund <= 0) {
+            return NextResponse.json({ success: false, error: "Invalid transaction amount" }, { status: 400 });
+        }
+
+        const refundResult = await transferToken(
+            userRecord.hbarAccountId,
+            amountToRefund,
+            "Cashout Cancelled - Refund"
+        );
+
+        if (refundResult !== 'SUCCESS') {
+            return NextResponse.json({ success: false, error: "Failed to refund tokens" }, { status: 500 });
         }
 
         // Update status to 4 (Cancelled)

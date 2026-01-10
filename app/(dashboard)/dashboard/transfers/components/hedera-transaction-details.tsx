@@ -31,7 +31,7 @@ export const HederaTransactionDetails = ({ open, onOpenChange, transactionId }: 
         setLoading(true);
         setError(false);
 
-        fetch(`/api/wallet/hedera/${transactionId}`)
+        fetch(`/api/wallet/transactions/${transactionId}`)
             .then(res => res.json())
             .then(result => {
                 if (mounted) {

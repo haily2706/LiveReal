@@ -4,6 +4,35 @@ import { createClient } from "@/lib/supabase/server";
 import { eq, desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/wallet/cash-in:
+ *   get:
+ *     summary: Get wallet cash-in transactions
+ *     description: Retrieves the list of recent cash-in transactions for the authenticated user's wallet.
+ *     tags:
+ *       - Wallet
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of transactions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal Error
+ */
 export async function GET() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();

@@ -34,11 +34,16 @@ export function TransferModal({ children, onSuccess }: { children: React.ReactNo
         if (!recipientEmail) return;
         setSearching(true);
         try {
-            const response = await fetch(`/api/wallet/user/search?email=${encodeURIComponent(recipientEmail)}`);
+            const response = await fetch(`/api/users/find-one?email=${encodeURIComponent(recipientEmail)}`);
             const result = await response.json();
 
             if (result.success && result.data) {
-                setRecipient(result.data);
+                if (result.data.id === walletData?.userId) {
+                    toast.error("Cannot transfer to self");
+                    setRecipient(null);
+                } else {
+                    setRecipient(result.data);
+                }
             } else {
                 toast.error(result.error || "User not found");
                 setRecipient(null);
@@ -75,7 +80,7 @@ export function TransferModal({ children, onSuccess }: { children: React.ReactNo
         setLoading(true);
 
         try {
-            const response = await fetch('/api/wallet/transfer', {
+            const response = await fetch('/api/wallet/transfers', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

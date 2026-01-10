@@ -7,7 +7,7 @@ import { createUserAccount } from '@/lib/hedera/client';
 
 /**
  * @swagger
- * /api/wallet/init:
+ * /api/wallet:
  *   get:
  *     summary: Initialize User Wallet
  *     description: Checks for existing Hedera wallet or creates a new one for the authenticated user.

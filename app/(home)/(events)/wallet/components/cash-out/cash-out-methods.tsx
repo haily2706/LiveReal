@@ -40,7 +40,7 @@ export function CashOutMethods() {
 
         try {
             setLoading(true);
-            const res = await fetch('/api/wallet/payment-method');
+            const res = await fetch('/api/wallet/cash-out/cash-out-method');
             const data = await res.json();
             setPaymentMethods(data.data ? [data.data] : []);
         } catch (error) {
@@ -60,7 +60,7 @@ export function CashOutMethods() {
 
     const handleDeleteMethod = async () => {
         try {
-            const response = await fetch('/api/wallet/payment-method', {
+            const response = await fetch('/api/wallet/cash-out/cash-out-method', {
                 method: 'DELETE'
             });
             const result = await response.json();

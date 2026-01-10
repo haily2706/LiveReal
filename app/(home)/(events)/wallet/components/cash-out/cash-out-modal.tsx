@@ -48,7 +48,7 @@ export function CashOutModal({ children, onSuccess }: CashOutModalProps) {
             const fetchMethods = async () => {
                 setLoadingMethods(true);
                 try {
-                    const res = await fetch('/api/wallet/payment-method');
+                    const res = await fetch('/api/wallet/cash-out/cash-out-method');
                     const data = await res.json();
                     setPaymentMethods(data.data ? [data.data] : []);
                 } catch (err) {
@@ -99,7 +99,7 @@ export function CashOutModal({ children, onSuccess }: CashOutModalProps) {
         setError("");
 
         try {
-            const response = await fetch('/api/wallet/cashout', {
+            const response = await fetch('/api/wallet/cash-out', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ amount: numVal, paymentMethodId: linkedAccount.id }),

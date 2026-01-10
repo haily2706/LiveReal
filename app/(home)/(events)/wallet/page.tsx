@@ -49,7 +49,12 @@ export default function WalletPage() {
             <CashOutMethods />
 
             {/* Transaction History */}
-            <WalletTransactionHistory key={refreshKey} defaultTab={activeTab} />
+            <WalletTransactionHistory
+                key={refreshKey}
+                defaultTab={activeTab}
+                onActionSuccess={() => handleActionSuccess()}
+                onTabChange={setActiveTab}
+            />
         </div>
     );
 }

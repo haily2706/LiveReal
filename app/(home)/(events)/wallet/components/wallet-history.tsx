@@ -13,9 +13,11 @@ import { useAuthStore } from "@/components/auth/use-auth-store";
 
 interface WalletTransactionHistoryProps {
     defaultTab?: string;
+    onActionSuccess?: () => void;
+    onTabChange?: (value: string) => void;
 }
 
-export function WalletTransactionHistory({ defaultTab = "cash-in" }: WalletTransactionHistoryProps) {
+export function WalletTransactionHistory({ defaultTab = "cash-in", onActionSuccess, onTabChange }: WalletTransactionHistoryProps) {
     const { walletData } = useWalletStore();
     const { user } = useAuthStore();
     const [cashInTransactions, setCashInTransactions] = useState<any[]>([]);
@@ -32,8 +34,8 @@ export function WalletTransactionHistory({ defaultTab = "cash-in" }: WalletTrans
                 cashOutsRes,
                 transfersRes
             ] = await Promise.all([
-                fetch('/api/wallet/transactions/cash-in'),
-                fetch('/api/wallet/transactions/cash-out'),
+                fetch('/api/wallet/cash-in'),
+                fetch('/api/wallet/cash-out'),
                 fetch('/api/wallet/transfers')
             ]);
 
@@ -63,7 +65,7 @@ export function WalletTransactionHistory({ defaultTab = "cash-in" }: WalletTrans
 
     const handleCancelCashOut = async (id: string, amount: string) => {
         try {
-            const response = await fetch('/api/wallet/transactions/cash-out/cancel', {
+            const response = await fetch('/api/wallet/cash-out/cancel', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })
@@ -74,6 +76,7 @@ export function WalletTransactionHistory({ defaultTab = "cash-in" }: WalletTrans
             if (result.success) {
                 toast.success(`Cancelled cash out request for ${parseInt(amount).toLocaleString()} LREAL`);
                 fetchHistory();
+                onActionSuccess?.();
             } else {
                 toast.error(result.error || "Failed to cancel request");
             }
@@ -88,7 +91,7 @@ export function WalletTransactionHistory({ defaultTab = "cash-in" }: WalletTrans
             <div className="flex items-center justify-between">
                 <h4 className="text-base font-semibold">Recent Activity</h4>
             </div>
-            <Tabs defaultValue={defaultTab} className="w-full animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
+            <Tabs defaultValue={defaultTab} onValueChange={onTabChange} className="w-full animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
                 <TabsList className="w-auto flex bg-transparent p-0 gap-6 border-b border-border/40 rounded-none h-auto justify-start">
                     <TabsTrigger
                         value="cash-in"

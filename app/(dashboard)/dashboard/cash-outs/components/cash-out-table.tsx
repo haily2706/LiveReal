@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
     Table,
     TableBody,
@@ -26,7 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Ban, CheckCircle, Check, Play } from "lucide-react";
-import { updateCashOutStatus } from "../actions";
+import { toast } from "sonner";
 
 export interface CashOutData {
     id: string;
@@ -66,12 +67,53 @@ const getStatusLabel = (status: number) => {
 
 export const CashOutTable = ({ cashOuts }: CashOutTableProps) => {
     const [searchQuery, setSearchQuery] = useState("");
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleStatusUpdate = async (id: string, status: number) => {
+        setIsLoading(true);
         try {
-            await updateCashOutStatus(id, status);
+            let endpoint = "";
+            let method = "POST";
+
+            // Map status to API endpoints
+            switch (status) {
+                case 1:
+                    endpoint = "/api/wallet/cash-out/approve";
+                    break;
+                case 2:
+                    endpoint = "/api/wallet/cash-out/reject";
+                    break;
+                case 3:
+                    endpoint = "/api/wallet/cash-out/complete";
+                    break;
+                default:
+                    console.error("Invalid status update");
+                    setIsLoading(false);
+                    return;
+            }
+
+            const response = await fetch(endpoint, {
+                method,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Failed to update status");
+            }
+
+            toast.success("Cash out request updated successfully");
+            router.refresh();
         } catch (error) {
             console.error("Failed to update status", error);
+            toast.error(error instanceof Error ? error.message : "Failed to update status");
+        } finally {
+            setIsLoading(false);
         }
     };
 

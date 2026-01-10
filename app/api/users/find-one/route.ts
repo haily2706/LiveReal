@@ -31,9 +31,7 @@ export async function GET(req: Request) {
             }
         });
 
-        if (foundUser?.id === user.id) {
-            return NextResponse.json({ success: false, error: "Cannot transfer to self" }, { status: 400 });
-        }
+
 
         let userWithAvatar = null;
         if (foundUser) {

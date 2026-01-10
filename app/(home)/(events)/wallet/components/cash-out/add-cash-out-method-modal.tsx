@@ -56,7 +56,7 @@ export function AddCashOutMethodModal({ children, onAddMethod, existingMethod }:
                 expiry: 'Never'
             };
 
-            const response = await fetch('/api/wallet/payment-method', {
+            const response = await fetch('/api/wallet/cash-out/cash-out-method', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newMethod),

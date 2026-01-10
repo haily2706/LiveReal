@@ -42,7 +42,7 @@ export type PaymentMethod = {
 
 /**
  * @swagger
- * /api/wallet/payment-method:
+ * /api/wallet/cash-out/cash-out-method:
  *   get:
  *     summary: Get payment method
  *     description: Retrieves the user's saved payment method for cashouts.
@@ -88,7 +88,7 @@ export async function GET() {
 
 /**
  * @swagger
- * /api/wallet/payment-method:
+ * /api/wallet/cash-out/cash-out-method:
  *   put:
  *     summary: Update payment method
  *     description: Updates or sets the user's payment method for cashouts.
@@ -137,7 +137,7 @@ export async function PUT(req: Request) {
 
 /**
  * @swagger
- * /api/wallet/payment-method:
+ * /api/wallet/cash-out/cash-out-method:
  *   delete:
  *     summary: Delete payment method
  *     description: Removes the user's saved payment method.

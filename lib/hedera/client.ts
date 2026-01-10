@@ -83,7 +83,7 @@ export async function getAccountBalance(accountId: string) {
     };
 }
 
-export async function transferToken(toAccountId: string, amount: number) {
+export async function transferToken(toAccountId: string, amount: number, memo?: string) {
     const client = getClient();
     const tokenId = process.env.LIVEREAL_TOKEN_ID;
     const treasuryId = process.env.HEDERA_ACCOUNT_ID; // Assuming this is treasury
@@ -96,8 +96,13 @@ export async function transferToken(toAccountId: string, amount: number) {
 
     const transaction = await new TransferTransaction()
         .addTokenTransfer(tokenId, treasuryId, -amount)
-        .addTokenTransfer(tokenId, toAccountId, amount)
-        .freezeWith(client);
+        .addTokenTransfer(tokenId, toAccountId, amount);
+
+    if (memo) {
+        transaction.setTransactionMemo(memo);
+    }
+
+    transaction.freezeWith(client);
 
     // Sign with treasury key
     const signTx = await transaction.sign(PrivateKey.fromString(treasuryKey));
@@ -111,7 +116,13 @@ export async function transferToken(toAccountId: string, amount: number) {
     return receipt.status.toString();
 }
 
-export async function transferTokenFromUser(fromAccountId: string, fromPrivateKey: string, toAccountId: string, amount: number) {
+export async function transferTokenFromUser(
+    fromAccountId: string,
+    fromPrivateKey: string,
+    toAccountId: string,
+    amount: number,
+    memo?: string // Added memo parameter
+) {
     const client = getClient();
     const tokenId = process.env.LIVEREAL_TOKEN_ID;
 
@@ -119,10 +130,15 @@ export async function transferTokenFromUser(fromAccountId: string, fromPrivateKe
         throw new Error("Missing LIVEREAL_TOKEN_ID");
     }
 
-    const transaction = await new TransferTransaction()
+    const transaction = new TransferTransaction()
         .addTokenTransfer(tokenId, fromAccountId, -amount)
-        .addTokenTransfer(tokenId, toAccountId, amount)
-        .freezeWith(client);
+        .addTokenTransfer(tokenId, toAccountId, amount);
+
+    if (memo) {
+        transaction.setTransactionMemo(memo);
+    }
+
+    transaction.freezeWith(client);
 
     // Sign with sender key
     const signTx = await transaction.sign(PrivateKey.fromString(fromPrivateKey));
