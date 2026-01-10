@@ -10,7 +10,7 @@ import { cn, safeJsonParse } from "@/lib/utils";
 import { useChat, useLocalParticipant, useRoomInfo, useDataChannel } from "@livekit/components-react";
 import { RoomMetadata } from "../../../../lib/livekit";
 import { ReactionPicker } from "./reaction-picker";
-import { toAvatarURL } from "@/lib/constants";
+import { mediaClient } from "@/lib/media.client";
 import { AnimatePresence, motion } from "framer-motion";
 
 
@@ -161,7 +161,7 @@ export function Chat({ className, onClose }: ChatProps) {
                   className="flex gap-1 items-start group transition-colors"
                 >
                   <Avatar className="h-6 w-6 rounded-full shrink-0 ring-0 ring-transparent">
-                    <AvatarImage src={toAvatarURL(message.from?.identity)} />
+                    <AvatarImage src={mediaClient.getAvatarUrl(message.from?.identity)} />
                     <AvatarFallback className={`text-[10px] font-bold ${nameColor} bg-zinc-100 dark:bg-zinc-800`}>
                       <User className="h-3.5 w-3.5" />
                     </AvatarFallback>
@@ -214,7 +214,7 @@ export function Chat({ className, onClose }: ChatProps) {
             <div className="flex gap-2 items-center bg-zinc-100 dark:bg-[#1e1e1e] rounded-full px-2 py-1.5 focus-within:ring-1 focus-within:ring-black/20 dark:focus-within:ring-white/20 transition-all">
               <div className="h-8 w-8 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center shrink-0">
                 <Avatar className="h-full w-full">
-                  <AvatarImage src={toAvatarURL(localParticipant.identity)} />
+                  <AvatarImage src={mediaClient.getAvatarUrl(localParticipant.identity)} />
                   <AvatarFallback className="text-[10px] bg-zinc-300 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
                     <User className="h-4 w-4" />
                   </AvatarFallback>

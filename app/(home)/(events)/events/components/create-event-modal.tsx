@@ -35,7 +35,8 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { EventTypes, toAvatarURL } from "@/lib/constants";
+import { EventTypes } from "@/lib/constants";
+import { mediaClient } from "@/lib/media.client";
 import { CalendarIcon, Loader2, Video } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -510,7 +511,7 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
                                                             }}
                                                         >
                                                             <Avatar className="h-6 w-6">
-                                                                <AvatarImage src={toAvatarURL(user.id)} />
+                                                                <AvatarImage src={mediaClient.getAvatarUrl(user.id)} />
                                                                 <AvatarFallback>{user.name?.[0] || user.email?.[0]}</AvatarFallback>
                                                             </Avatar>
                                                             <div className="flex-1 text-sm">
@@ -530,7 +531,7 @@ export function CreateEventModal({ isOpen, onClose, initialEventType, eventToEdi
                                             {invitedUsers.map((user) => (
                                                 <div key={user.id} className="flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded-full text-xs box-border border border-transparent">
                                                     <Avatar className="h-4 w-4">
-                                                        <AvatarImage src={toAvatarURL(user.id)} />
+                                                        <AvatarImage src={mediaClient.getAvatarUrl(user.id)} />
                                                         <AvatarFallback className="text-[10px]">{user.name?.[0] || "?"}</AvatarFallback>
                                                     </Avatar>
                                                     <span className="max-w-[100px] truncate">{user.name || user.email}</span>

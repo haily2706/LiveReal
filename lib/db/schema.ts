@@ -5,7 +5,7 @@ export const users = pgTable('users', {
     id: text('id').primaryKey(), // Supabase Auth ID
     email: text('email').notNull(),
     name: text('name'),
-    avatar: text('avatar'),
+    avatar: boolean('avatar').default(false),
     bio: text('bio'),
     location: text('location'),
     hbarAccountId: text('hbar_account_id'),

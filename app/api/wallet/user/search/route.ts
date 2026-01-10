@@ -3,6 +3,7 @@ import { users } from "@/lib/db/schema";
 import { createClient } from "@/lib/supabase/server";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { mediaClient } from "@/lib/media.client";
 
 export async function GET(req: Request) {
     const supabase = await createClient();
@@ -34,7 +35,13 @@ export async function GET(req: Request) {
             return NextResponse.json({ success: false, error: "Cannot transfer to self" }, { status: 400 });
         }
 
-        return NextResponse.json({ success: true, data: foundUser || null });
+        let userWithAvatar = null;
+        if (foundUser) {
+            const avatarUrl = mediaClient.getAvatarUrl(foundUser.id, foundUser.avatar || false);
+            userWithAvatar = { ...foundUser, avatar: avatarUrl };
+        }
+
+        return NextResponse.json({ success: true, data: userWithAvatar });
     } catch (error) {
         console.error("Error searching user:", error);
         return NextResponse.json({ success: false, error: "Failed to search user" }, { status: 500 });

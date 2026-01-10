@@ -27,7 +27,7 @@ import { NAV_LINKS } from "./sidebar";
 import { useAuthStore } from "@/components/auth/use-auth-store";
 import { UserMenu } from "@/components/auth/user-menu";
 import { PublicEventTypes } from "@/lib/constants";
-import { ScheduleButton } from "../events/components/schedule-button";
+import { ScheduleButton } from "@/app/(home)/(events)/events/components/schedule-button";
 
 export const categories = [
     "All",

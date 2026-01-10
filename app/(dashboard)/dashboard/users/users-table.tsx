@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Search, Plus, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { toAvatarURL } from "@/lib/constants";
+import { mediaClient } from "@/lib/media.client";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -117,7 +117,7 @@ export function UsersTable({ users }: UsersTableProps) {
                                         <TableCell>
                                             <div className="flex items-center gap-3">
                                                 <Avatar className="h-9 w-9">
-                                                    <AvatarImage src={toAvatarURL(user.id)} alt={user.name} />
+                                                    <AvatarImage src={mediaClient.getAvatarUrl(user.id)} alt={user.name} />
                                                     <AvatarFallback>{user.name[0]}</AvatarFallback>
                                                 </Avatar>
                                                 <div className="flex flex-col">

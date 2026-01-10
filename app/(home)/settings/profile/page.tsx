@@ -64,7 +64,7 @@ export default function ProfilePage() {
                     name: fullName,
                     location: country,
                     bio,
-                    avatar: avatarUrl,
+                    avatar: !!avatarUrl,
                 }),
             });
             const result = await response.json();

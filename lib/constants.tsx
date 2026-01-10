@@ -104,10 +104,3 @@ export const PLANS = [
     },
 ];
 
-
-export const toAvatarURL = (userId?: string) => {
-    if (!userId) return undefined;
-    if (userId.startsWith('guest-')) return undefined;
-    const id = userId.split("-viewer-")[0].split(" (via OBS")[0];
-    return `https://ujybiburokztfpqtrxcn.supabase.co/storage/v1/object/public/avatars/${id}`;
-};

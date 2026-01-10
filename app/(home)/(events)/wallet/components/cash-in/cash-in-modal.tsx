@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Coins, Loader2 } from "lucide-react";
+import { Coin } from "@/components/ui/coin";
+import { Loader2 } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -16,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { CASH_IN_PLANS } from "@/app/(home)/events/wallet/constants";
+import { CASH_IN_PLANS } from "@/app/(home)/(events)/wallet/constants";
 
 interface CashInModalProps {
     children: React.ReactNode;
@@ -49,7 +50,7 @@ export function CashInModal({ children }: CashInModalProps) {
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-2xl">
-                        <Coins className="h-6 w-6 text-yellow-500" />
+                        <Coin size={28} />
                         Cash In LREAL
                     </DialogTitle>
                     <DialogDescription>
@@ -72,13 +73,12 @@ export function CashInModal({ children }: CashInModalProps) {
                                     Popular
                                 </div>
                             )}
-                            <div className={cn("absolute inset-0 opacity-[0.03] bg-linear-to-br", plan.gradient)} />
+                            <div className={cn("absolute inset-0 opacity-[0.03] bg-gradient-to-br", plan.gradient)} />
                             <CardHeader>
-                                <CardTitle className="flex flex-col gap-2">
-                                    <div className={cn("p-2 w-fit rounded-lg bg-linear-to-br text-white", plan.gradient)}>
-                                        <plan.icon className="h-5 w-5" />
-                                    </div>
-                                    <span>{plan.name}</span>
+                                <CardTitle>
+                                    <span className={cn("font-bold bg-gradient-to-br bg-clip-text text-transparent", plan.gradient)}>
+                                        {plan.name}
+                                    </span>
                                 </CardTitle>
                                 <CardDescription>{plan.description}</CardDescription>
                             </CardHeader>

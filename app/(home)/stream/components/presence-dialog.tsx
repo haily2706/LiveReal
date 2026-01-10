@@ -21,7 +21,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Participant, RoomEvent } from "livekit-client";
 import { useAuthToken } from "./token-context";
-import { toAvatarURL } from "@/lib/constants";
+import { mediaClient } from "@/lib/media.client";
 import { safeJsonParse } from "@/lib/utils";
 
 function ParticipantListItem({
@@ -174,7 +174,7 @@ function ParticipantListItem({
     <div key={participant.sid} className="flex justify-between items-center">
       <div className="flex items-center gap-2">
         <Avatar className="h-6 w-6">
-          <AvatarImage src={toAvatarURL(participant.identity)} />
+          <AvatarImage src={mediaClient.getAvatarUrl(participant.identity)} />
           <AvatarFallback>
             {participant.name?.[0] ?? participant.identity?.[0] ?? <User className="h-4 w-4" />}
           </AvatarFallback>

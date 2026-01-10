@@ -16,7 +16,8 @@ import { Search } from "lucide-react";
 import { formatCurrency, cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toAvatarURL, PLANS } from "@/lib/constants";
+import { PLANS } from "@/lib/constants";
+import { mediaClient } from "@/lib/media.client";
 
 export interface SubscriptionData {
     id: string;
@@ -92,7 +93,7 @@ export const SubscriptionTable = ({ subscriptions }: SubscriptionTableProps) => 
                                     <TableCell>
                                         <div className="flex items-center gap-3">
                                             <Avatar>
-                                                <AvatarImage src={toAvatarURL(sub.user.id)} />
+                                                <AvatarImage src={mediaClient.getAvatarUrl(sub.user.id)} />
                                                 <AvatarFallback>{sub.user.name?.[0]?.toUpperCase() ?? "U"}</AvatarFallback>
                                             </Avatar>
                                             <div className="flex flex-col">

@@ -5,10 +5,10 @@ import { useAuthStore } from "@/components/auth/use-auth-store";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-import { CreateEventModal } from "../components/create-event-modal";
-import { UpcomingEvent } from "../components/upcoming-event";
-import { MyEvents } from "../components/my-events";
-import { useEvents, Event } from "../use-events";
+import { CreateEventModal } from "./components/create-event-modal";
+import { UpcomingEvent } from "./components/upcoming-event";
+import { MyEvents } from "./components/my-events";
+import { useEvents, Event } from "./use-events";
 
 export default function EventsListPage() {
     const { user } = useAuthStore();

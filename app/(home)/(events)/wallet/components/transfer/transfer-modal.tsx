@@ -17,8 +17,12 @@ import { Loader2, ArrowRightLeft, User, Search, Wallet } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Coin } from "@/components/ui/coin";
+import { useWalletStore } from "../../use-wallet-store";
 
-export function TransferModal({ children, balance, onTransferSuccess }: { children: React.ReactNode, balance: number, onTransferSuccess?: () => void }) {
+export function TransferModal({ children, onTransferSuccess }: { children: React.ReactNode, onTransferSuccess?: () => void }) {
+    const { walletData } = useWalletStore();
+    const balance = walletData ? parseInt(walletData.tokenBalance) : 0;
+
     const [open, setOpen] = useState(false);
     const [amount, setAmount] = useState("");
     const [recipientEmail, setRecipientEmail] = useState("");

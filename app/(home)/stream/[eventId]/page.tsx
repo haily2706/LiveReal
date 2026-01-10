@@ -9,6 +9,10 @@ interface PageProps {
     searchParams: Promise<{ role?: string }>;
 }
 
+import { mediaClient } from "@/lib/media.client";
+
+// ...
+
 export default async function LivePage({ params, searchParams }: PageProps) {
     const { eventId } = await params;
     const { role } = await searchParams;
@@ -36,6 +40,8 @@ export default async function LivePage({ params, searchParams }: PageProps) {
         notFound();
     }
 
+    const avatarUrl = mediaClient.getAvatarUrl(event.userId, event.user?.avatar || false);
+
     return (
         <LiveClient
             eventId={event.id}
@@ -47,7 +53,7 @@ export default async function LivePage({ params, searchParams }: PageProps) {
                 streamer: {
                     id: event.userId,
                     name: event.user?.name || "Streamer",
-                    avatar: event.user?.avatar || "",
+                    avatar: avatarUrl || "",
                     username: event.user?.email ? event.user.email.split('@')[0] : "streamer"
                 }
             }}

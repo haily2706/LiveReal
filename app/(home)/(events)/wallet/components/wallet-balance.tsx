@@ -1,14 +1,43 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { Wallet } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Coin } from "@/components/ui/coin";
-
 import { useWalletStore } from "../use-wallet-store";
 
-export function PremiumBalanceCard() {
+export function WalletBalance() {
+    const { walletData: balanceData, isLoading } = useWalletStore();
+    const usdBalance = balanceData ? parseInt(balanceData.tokenBalance) / 100 : 0;
 
+    return (
+        <Card className="col-span-2 overflow-hidden relative border-none bg-linear-to-br from-primary/10 via-primary/5 to-background shadow-xl group">
+            {/* Background Coin */}
+            <div className="absolute -right-5 -bottom-5 opacity-[0.05] group-hover:opacity-15 transition-all duration-500 rotate-15 group-hover:rotate-0 scale-100 group-hover:scale-110 pointer-events-none">
+                <Coin className="w-32 h-32 blur-[1px]" />
+            </div>
+
+            <CardHeader className="pb-2 relative z-10">
+                <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Total Balance</CardTitle>
+            </CardHeader>
+            <CardContent className="relative z-10">
+
+                <div className="flex items-baseline gap-1 mb-1">
+                    <div className="text-3xl font-bold tracking-tighter">
+                        {balanceData ? parseInt(balanceData.tokenBalance).toLocaleString() : "0"}
+                    </div>
+                    <div className="text-sm font-normal text-muted-foreground">LREAL</div>
+                </div>
+                <div className="text-sm font-medium text-muted-foreground">
+                    ≈ {usdBalance.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
+export function WalletSidebarBalance() {
     const { walletData, isLoading, fetchBalance } = useWalletStore();
 
     useEffect(() => {

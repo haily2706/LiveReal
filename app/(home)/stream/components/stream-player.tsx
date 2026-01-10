@@ -35,7 +35,7 @@ import { MediaDeviceSettings } from "./media-device-settings";
 import { CustomStartAudio } from "./custom-start-audio";
 import { PresenceDialog } from "./presence-dialog";
 import { useAuthToken } from "./token-context";
-import { toAvatarURL } from "@/lib/constants";
+import { mediaClient } from "@/lib/media.client";
 import { Coin } from "@/components/ui/coin";
 
 function ActiveStagePlayer({
@@ -64,7 +64,7 @@ function ActiveStagePlayer({
               "border-white/10 shadow-2xl relative z-20",
               large ? "h-24 w-24 sm:h-32 sm:w-32 border-4" : "h-12 w-12 border-2"
             )}>
-              <AvatarImage src={toAvatarURL(localParticipant.identity)} />
+              <AvatarImage src={mediaClient.getAvatarUrl(localParticipant.identity)} />
               <AvatarFallback className={cn(
                 "bg-zinc-900 text-white",
                 large ? "text-4xl" : "text-xl"
@@ -351,7 +351,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
                   <div className="relative">
                     <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
                     <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
-                      <AvatarImage src={toAvatarURL(mainParticipant.identity ?? streamerId)} />
+                      <AvatarImage src={mediaClient.getAvatarUrl(mainParticipant.identity ?? streamerId)} />
                       <AvatarFallback className="text-4xl bg-zinc-900 text-white">
                         {mainParticipant.name?.[0] ?? mainParticipant.identity?.[0] ?? ""}
                       </AvatarFallback>
@@ -392,7 +392,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
               <div className="relative">
                 <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
                 <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
-                  <AvatarImage src={toAvatarURL(streamerId)} />
+                  <AvatarImage src={mediaClient.getAvatarUrl(streamerId)} />
                   <AvatarFallback className="text-4xl bg-zinc-900 text-white">
                     {streamerName?.[0] || ""}
                   </AvatarFallback>
@@ -410,7 +410,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
               <div className="relative">
                 <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
                 <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white/10 shadow-2xl relative z-20">
-                  <AvatarImage src={toAvatarURL(mainParticipant?.identity ?? streamerId)} />
+                  <AvatarImage src={mediaClient.getAvatarUrl(mainParticipant?.identity ?? streamerId)} />
                   <AvatarFallback className="text-4xl bg-zinc-900 text-white">
                     {mainParticipant?.name?.[0] ?? streamerName?.[0] ?? "S"}
                   </AvatarFallback>
@@ -451,7 +451,7 @@ export function StreamPlayer({ isHost = false, thumbnailUrl, streamerId, streame
               {/* Avatar Fallback */}
               <div className="absolute inset-0 flex items-center justify-center bg-zinc-900">
                 <Avatar className="h-10 w-10 border-2 border-white/10 shadow-xl">
-                  <AvatarImage src={toAvatarURL(p.identity)} />
+                  <AvatarImage src={mediaClient.getAvatarUrl(p.identity)} />
                   <AvatarFallback className="text-lg bg-zinc-900 text-white">
                     {p.name?.[0] ?? p.identity?.[0] ?? ""}
                   </AvatarFallback>

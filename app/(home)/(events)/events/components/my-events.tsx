@@ -3,8 +3,9 @@
 
 import { CalendarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { startStream } from "@/app/(home)/events/actions/events";
+import { startStream } from "@/app/(home)/(events)/events/actions/events";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { EventCard } from "./event-card";
 import { toast } from "sonner";
 import { format, intervalToDuration, Interval } from "date-fns";
@@ -82,20 +83,6 @@ export function MyEvents({ onEdit }: MyEventsProps) {
         );
     };
 
-    if (isLoading) {
-        return (
-            <div className="text-card-foreground rounded-xl  space-y-4">
-                <div className="space-y-2">
-                    <h3 className="font-semibold leading-none tracking-tight">Events</h3>
-                    <p className="text-sm text-muted-foreground">Manage your events.</p>
-                </div>
-                <div className="mt-6 text-center text-sm text-muted-foreground py-8">
-                    Loading events...
-                </div>
-            </div>
-        );
-    }
-
     const eventList = ids.map(id => events[id]);
 
     return (
@@ -105,7 +92,26 @@ export function MyEvents({ onEdit }: MyEventsProps) {
                 <p className="text-sm text-muted-foreground">Manage your events.</p>
             </div>
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {eventList.length === 0 ? (
+                {isLoading ? (
+                    [1, 2, 3, 4].map((i) => (
+                        <div key={i} className="flex border rounded-lg overflow-hidden">
+                            <Skeleton className="h-24 w-40 shrink-0" />
+                            <div className="flex flex-col flex-1 px-3 py-2 justify-between min-w-0">
+                                <div className="flex justify-between gap-2">
+                                    <Skeleton className="h-4 w-3/4" />
+                                    <Skeleton className="h-6 w-6 rounded-md" />
+                                </div>
+                                <div className="space-y-2 mt-auto">
+                                    <Skeleton className="h-3 w-1/2" />
+                                    <div className="flex justify-between items-center">
+                                        <Skeleton className="h-3 w-1/3" />
+                                        <Skeleton className="h-3 w-16" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : eventList.length === 0 ? (
                     <div className="col-span-full text-center text-sm text-muted-foreground py-8">
                         No events found. Create one to get started!
                     </div>

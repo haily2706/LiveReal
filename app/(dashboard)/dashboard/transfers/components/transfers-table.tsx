@@ -15,7 +15,7 @@ import { formatCurrency, cn } from "@/lib/utils";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toAvatarURL } from "@/lib/constants";
+import { mediaClient } from "@/lib/media.client";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -168,7 +168,7 @@ export const TransfersTable = ({ transfers }: TransfersTableProps) => {
                                         <TableCell>
                                             <div className="flex items-center gap-3">
                                                 <Avatar className="h-8 w-8">
-                                                    <AvatarImage src={toAvatarURL(tx.fromUser.id)} />
+                                                    <AvatarImage src={mediaClient.getAvatarUrl(tx.fromUser.id)} />
                                                     <AvatarFallback>{tx.fromUser.name?.[0]?.toUpperCase() ?? "U"}</AvatarFallback>
                                                 </Avatar>
                                                 <div className="flex flex-col">
@@ -180,7 +180,7 @@ export const TransfersTable = ({ transfers }: TransfersTableProps) => {
                                         <TableCell>
                                             <div className="flex items-center gap-3">
                                                 <Avatar className="h-8 w-8">
-                                                    <AvatarImage src={toAvatarURL(tx.toUser.id)} />
+                                                    <AvatarImage src={mediaClient.getAvatarUrl(tx.toUser.id)} />
                                                     <AvatarFallback>{tx.toUser.name?.[0]?.toUpperCase() ?? "U"}</AvatarFallback>
                                                 </Avatar>
                                                 <div className="flex flex-col">

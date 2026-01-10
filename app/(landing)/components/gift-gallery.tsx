@@ -20,53 +20,61 @@ const gifts = [
     {
         emoji: "🎈",
         name: "Balloon",
-        coins: 10,
-        value: "$0.10",
+        coins: 50,
+        value: "$0.50",
         color: "from-red-500/30 to-pink-500/20",
         hoverColor: "hover:border-red-400/50",
     },
     {
         emoji: "🎂",
         name: "Birthday Cake",
-        coins: 50,
-        value: "$0.50",
+        coins: 100,
+        value: "$1.00",
         color: "from-yellow-500/20 to-orange-500/20",
         hoverColor: "hover:border-yellow-400/50",
     },
     {
         emoji: "🎁",
         name: "Gift Box",
-        coins: 100,
-        value: "$1.00",
+        coins: 500,
+        value: "$5.00",
         color: "from-blue-500/20 to-cyan-500/20",
         hoverColor: "hover:border-blue-400/50",
     },
     {
         emoji: "🎉",
         name: "Party Popper",
-        coins: 250,
-        value: "$2.50",
+        coins: 1000,
+        value: "$10.00",
         color: "from-purple-500/20 to-pink-500/20",
         hoverColor: "hover:border-purple-400/50",
     },
     {
         emoji: "👑",
         name: "Crown",
-        coins: 500,
-        value: "$5.00",
+        coins: 5000,
+        value: "$50.00",
         color: "from-yellow-500/20 to-amber-500/20",
         hoverColor: "hover:border-yellow-400/50",
     },
     {
         emoji: "💎",
         name: "Diamond",
-        coins: 1000,
-        value: "$10.00",
+        coins: 10000,
+        value: "$100.00",
         color: "from-cyan-500/20 to-blue-500/20",
         hoverColor: "hover:border-cyan-400/50",
     },
 ];
 
+
+
+const formatCoins = (coins: number) => {
+    if (coins >= 1000) {
+        return `${coins / 1000}K`;
+    }
+    return coins;
+};
 
 interface GiftGalleryProps {
     onSelect?: (gift: Gift) => void;
@@ -108,7 +116,7 @@ export function GiftGallery({ onSelect, variant = "landing", isSending = false }
                             <div className="text-4xl mb-2">{gift.emoji}</div>
                             <div className="text-xs font-semibold mb-1 truncate">{gift.name}</div>
                             <div className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-linear-to-r ${gift.color} text-[10px]`}>
-                                <span>{gift.coins}</span>
+                                <span>{formatCoins(gift.coins)}</span>
                                 <Coin className="w-3 h-3" />
                             </div>
                         </motion.div>
@@ -177,7 +185,7 @@ export function GiftGallery({ onSelect, variant = "landing", isSending = false }
 
                                 {/* Value */}
                                 <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-linear-to-r ${gift.color}`}>
-                                    <span className="text-xs font-medium">{gift.coins}</span>
+                                    <span className="text-xs font-medium">{formatCoins(gift.coins)}</span>
                                     <Coin className="w-3.5 h-3.5" />
                                 </div>
 

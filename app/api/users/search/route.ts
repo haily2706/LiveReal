@@ -3,6 +3,7 @@ import { users } from "@/lib/db/schema";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { and, ilike, ne, or } from "drizzle-orm";
+import { mediaClient } from "@/lib/media.client";
 
 export async function GET(req: Request) {
     const supabase = await createClient();
@@ -37,7 +38,15 @@ export async function GET(req: Request) {
             }
         });
 
-        return NextResponse.json({ success: true, data: results });
+        const data = results.map(user => {
+            const avatarUrl = mediaClient.getAvatarUrl(user.id, user.avatar || false);
+            return {
+                ...user,
+                avatar: avatarUrl
+            };
+        });
+
+        return NextResponse.json({ success: true, data });
     } catch (error) {
         console.error("Error searching users:", error);
         return NextResponse.json({ success: false, error: "Failed to search users" }, { status: 500 });

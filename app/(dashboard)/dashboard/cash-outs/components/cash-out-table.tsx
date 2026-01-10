@@ -15,7 +15,18 @@ import { formatCurrency, cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toAvatarURL } from "@/lib/constants";
+import { mediaClient } from "@/lib/media.client";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { MoreHorizontal, Ban, CheckCircle, Check, Play } from "lucide-react";
+import { updateCashOutStatus } from "../actions";
 
 export interface CashOutData {
     id: string;
@@ -56,6 +67,14 @@ const getStatusLabel = (status: number) => {
 export const CashOutTable = ({ cashOuts }: CashOutTableProps) => {
     const [searchQuery, setSearchQuery] = useState("");
 
+    const handleStatusUpdate = async (id: string, status: number) => {
+        try {
+            await updateCashOutStatus(id, status);
+        } catch (error) {
+            console.error("Failed to update status", error);
+        }
+    };
+
     const filteredCashOuts = cashOuts.filter((co) =>
         co.user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         co.id.toLowerCase().includes(searchQuery.toLowerCase())
@@ -90,6 +109,7 @@ export const CashOutTable = ({ cashOuts }: CashOutTableProps) => {
                             <TableHead>Amount</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Date</TableHead>
+                            <TableHead className="w-[50px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -105,7 +125,7 @@ export const CashOutTable = ({ cashOuts }: CashOutTableProps) => {
                                     <TableCell>
                                         <div className="flex items-center gap-3">
                                             <Avatar>
-                                                <AvatarImage src={toAvatarURL(co.user.id)} />
+                                                <AvatarImage src={mediaClient.getAvatarUrl(co.user.id)} />
                                                 <AvatarFallback>{co.user.name?.[0].toUpperCase() ?? "U"}</AvatarFallback>
                                             </Avatar>
                                             <div className="flex flex-col">
@@ -137,6 +157,32 @@ export const CashOutTable = ({ cashOuts }: CashOutTableProps) => {
                                         {co.createdAt
                                             ? formatDistanceToNow(new Date(co.createdAt), { addSuffix: true })
                                             : "N/A"}
+                                    </TableCell>
+                                    <TableCell>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                                    <span className="sr-only">Open menu</span>
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem onClick={() => handleStatusUpdate(co.id, 1)}>
+                                                    <Check className="mr-2 h-4 w-4" />
+                                                    Approve
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleStatusUpdate(co.id, 2)}>
+                                                    <Ban className="mr-2 h-4 w-4 text-red-500" />
+                                                    <span className="text-red-500">Reject</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem onClick={() => handleStatusUpdate(co.id, 3)}>
+                                                    <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                                                    <span className="text-green-500">Mark as Completed</span>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </TableCell>
 
                                 </TableRow>

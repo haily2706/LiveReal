@@ -15,7 +15,7 @@ import { formatCurrency, cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toAvatarURL } from "@/lib/constants";
+import { mediaClient } from "@/lib/media.client";
 
 export interface CashInData {
     id: string;
@@ -86,7 +86,7 @@ export const CashInTable = ({ cashIns }: CashInTableProps) => {
                                     <TableCell>
                                         <div className="flex items-center gap-3">
                                             <Avatar>
-                                                <AvatarImage src={toAvatarURL(ci.user.id)} />
+                                                <AvatarImage src={mediaClient.getAvatarUrl(ci.user.id)} />
                                                 <AvatarFallback>{ci.user.name?.[0].toUpperCase() ?? "U"}</AvatarFallback>
                                             </Avatar>
                                             <div className="flex flex-col">

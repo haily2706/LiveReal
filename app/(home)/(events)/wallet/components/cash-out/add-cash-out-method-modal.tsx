@@ -18,13 +18,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface AddPaymentMethodModalProps {
+interface AddCashOutMethodModalProps {
     children: React.ReactNode;
     onAddMethod: (method: any) => void;
     existingMethod?: any;
 }
 
-export function AddPaymentMethodModal({ children, onAddMethod, existingMethod }: AddPaymentMethodModalProps) {
+export function AddCashOutMethodModal({ children, onAddMethod, existingMethod }: AddCashOutMethodModalProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 

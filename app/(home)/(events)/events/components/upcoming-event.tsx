@@ -2,14 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
-import { EventTypes, toAvatarURL } from "@/lib/constants";
+import { EventTypes } from "@/lib/constants";
 import { CalendarIcon, VideoIcon } from "lucide-react";
 import { useEvents } from "../use-events";
 import { cn, formatCompactNumber } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { startStream } from "@/app/(home)/events/actions/events";
+import { startStream } from "@/app/(home)/(events)/events/actions/events";
 import { toast } from "sonner";
 import { ScheduleButton } from "./schedule-button";
 
@@ -61,6 +62,8 @@ export function UpcomingEvent({
         }
     };
 
+    const isStoreLoading = useEvents(state => state.isLoading);
+
     return (
         <motion.div
             className="overflow-hidden relative group"
@@ -88,7 +91,26 @@ export function UpcomingEvent({
                     </div>
                 </div>
 
-                {hasEvent ? (
+                {isStoreLoading ? (
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <Skeleton className="w-full md:w-56 aspect-video md:aspect-auto rounded-lg" />
+                        <div className="flex-1 flex flex-col min-w-0 space-y-3">
+                            <div className="flex gap-4 items-start">
+                                <div className="space-y-2 w-full">
+                                    <Skeleton className="h-6 w-3/4" />
+                                    <Skeleton className="h-4 w-1/2" />
+                                </div>
+                            </div>
+                            <div className="flex justify-between items-end mt-4">
+                                <div className="space-y-1.5">
+                                    <Skeleton className="h-4 w-32" />
+                                    <Skeleton className="h-3 w-24" />
+                                </div>
+                                <Skeleton className="h-10 w-32" />
+                            </div>
+                        </div>
+                    </div>
+                ) : hasEvent ? (
                     <div className="flex flex-col md:flex-row gap-4">
                         {/* Thumbnail Section */}
                         <div className="w-full md:w-56 aspect-video md:aspect-auto rounded-lg shrink-0 overflow-hidden relative">

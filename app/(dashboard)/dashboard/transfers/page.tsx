@@ -9,8 +9,10 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { DollarSign, Activity, ArrowRightLeft } from "lucide-react";
+import { mediaClient } from "@/lib/media.client";
 
 export default async function TransfersPage() {
+
     // 1. Fetch Stats
     const statsData = await db
         .select({
@@ -56,11 +58,13 @@ export default async function TransfersPage() {
             .where(inArray(users.id, Array.from(userIds)));
 
         usersList.forEach(u => {
+            const avatarUrl = mediaClient.getAvatarUrl(u.id, u.avatar || false);
+
             userMap.set(u.id, {
                 id: u.id,
                 email: u.email,
                 name: u.name || u.email, // Fallback
-                avatar: u.avatar ?? undefined
+                avatar: avatarUrl || undefined
             });
         });
     }

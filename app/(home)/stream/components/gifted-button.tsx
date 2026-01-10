@@ -15,7 +15,7 @@ import { Coin } from "@/components/ui/coin";
 import { cn } from "@/lib/utils";
 
 import { toast } from "sonner";
-import { useWalletStore } from "@/app/(home)/events/wallet/use-wallet-store";
+import { useWalletStore } from "@/app/(home)/(events)/wallet/use-wallet-store";
 
 
 interface GiftedButtonProps {
