@@ -16,10 +16,9 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
     { name: "How it Works", href: "/#how-it-works" }, // Absolute paths for cross-page nav
+    { name: "Gifts", href: "/#gifts" },
     { name: "Features", href: "/#features" },
     { name: "Wallet", href: "/#hbar-wallet" },
-    { name: "Gifts", href: "/#gifts" },
-    { name: "Stories", href: "/#testimonials" },
     { name: "Pricing", href: "/#pricing" },
     { name: "Investors", href: "/investors" },
 ];
