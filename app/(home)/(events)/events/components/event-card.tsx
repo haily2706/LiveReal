@@ -173,17 +173,6 @@ export function EventCard({
                         {lreal || "0"}
                         <img src="/coin.svg" alt="LREAL" className="h-3 w-3" />
                     </span>
-
-                    <div className="pt-0 flex-1 text-right">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="px-0 text-xs text-pink-500 hover:text-pink-600 hover:bg-transparent font-medium p-0 justify-start"
-                            onClick={onGoLive}
-                        >
-                            Go Live &rarr;
-                        </Button>
-                    </div>
                 </div>
 
             </div>
