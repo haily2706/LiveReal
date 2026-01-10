@@ -93,7 +93,7 @@ export function CashOutTab({ transactions, onCancelRequest }: CashOutTabProps) {
                                                         <AlertDialogCancel>No, Keep It</AlertDialogCancel>
                                                         <AlertDialogAction
                                                             onClick={() => onCancelRequest(tx.id, tx.amount)}
-                                                            className="bg-red-600 hover:bg-red-700"
+                                                            className="bg-red-600 hover:bg-red-700 text-white"
                                                         >
                                                             Yes, Cancel Request
                                                         </AlertDialogAction>

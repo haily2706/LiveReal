@@ -2,20 +2,72 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { Wallet } from "lucide-react";
+import { Wallet, MoreVertical, ArrowDownLeft, ArrowUpRight, ArrowRightLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Coin } from "@/components/ui/coin";
 import { useWalletStore } from "../use-wallet-store";
+import { Button } from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { CashInModal } from "./cash-in/cash-in-modal";
+import { CashOutModal } from "./cash-out/cash-out-modal";
+import { TransferModal } from "./transfer/transfer-modal";
 
-export function WalletBalance() {
-    const { walletData: balanceData, isLoading } = useWalletStore();
+interface WalletBalanceProps {
+    onActionSuccess?: (tab?: string) => void;
+}
+
+export function WalletBalance({ onActionSuccess }: WalletBalanceProps) {
+    const { walletData: balanceData, isLoading, fetchBalance } = useWalletStore();
     const usdBalance = balanceData ? parseInt(balanceData.tokenBalance) / 100 : 0;
+
+    const handleActionSuccess = (tab?: string) => {
+        fetchBalance(true);
+        if (onActionSuccess) {
+            onActionSuccess(tab);
+        }
+    };
 
     return (
         <Card className="col-span-2 overflow-hidden relative border-none bg-linear-to-br from-primary/10 via-primary/5 to-background shadow-xl group">
             {/* Background Coin */}
             <div className="absolute -right-5 -bottom-5 opacity-[0.05] group-hover:opacity-15 transition-all duration-500 rotate-15 group-hover:rotate-0 scale-100 group-hover:scale-110 pointer-events-none">
                 <Coin className="w-32 h-32 blur-[1px]" />
+            </div>
+
+            {/* Mobile Action Menu */}
+            <div className="absolute top-4 right-4 z-20 md:hidden">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                            <MoreVertical className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <CashInModal>
+                            <DropdownMenuItem className="cursor-pointer">
+                                <ArrowDownLeft className="mr-2 h-4 w-4 text-green-500" />
+                                <span>Cash In</span>
+                            </DropdownMenuItem>
+                        </CashInModal>
+                        <CashOutModal onSuccess={() => handleActionSuccess('cash-out')}>
+                            <DropdownMenuItem className="cursor-pointer">
+                                <ArrowUpRight className="mr-2 h-4 w-4 text-red-500" />
+                                <span>Cash Out</span>
+                            </DropdownMenuItem>
+                        </CashOutModal>
+                        <TransferModal onSuccess={() => handleActionSuccess('transfers')}>
+                            <DropdownMenuItem className="cursor-pointer">
+                                <ArrowRightLeft className="mr-2 h-4 w-4 text-blue-500" />
+                                <span>Transfer</span>
+                            </DropdownMenuItem>
+                        </TransferModal>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
 
             <CardHeader className="pb-2 relative z-10">

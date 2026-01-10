@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { mediaClient } from "@/lib";
 
 interface TransferTabProps {
     transactions: any[];
@@ -26,7 +27,7 @@ export function TransferTab({ transactions, currentUserId }: TransferTabProps) {
                                 <div key={tx.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/10 transition-colors">
                                     <div className="flex items-center gap-3">
                                         <Avatar className="h-9 w-9 border">
-                                            <AvatarImage src={otherUser?.avatar || ""} />
+                                            <AvatarImage src={mediaClient.getAvatarUrl(otherUser?.id) || ""} />
                                             <AvatarFallback>{otherUser?.name?.[0] || otherUser?.email?.[0] || "?"}</AvatarFallback>
                                         </Avatar>
                                         <div className="overflow-hidden">

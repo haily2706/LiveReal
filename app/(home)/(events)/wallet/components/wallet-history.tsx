@@ -11,7 +11,11 @@ import { useWalletStore } from "../use-wallet-store";
 import { toast } from "sonner";
 import { useAuthStore } from "@/components/auth/use-auth-store";
 
-export function WalletTransactionHistory() {
+interface WalletTransactionHistoryProps {
+    defaultTab?: string;
+}
+
+export function WalletTransactionHistory({ defaultTab = "cash-in" }: WalletTransactionHistoryProps) {
     const { walletData } = useWalletStore();
     const { user } = useAuthStore();
     const [cashInTransactions, setCashInTransactions] = useState<any[]>([]);
@@ -84,7 +88,7 @@ export function WalletTransactionHistory() {
             <div className="flex items-center justify-between">
                 <h4 className="text-base font-semibold">Recent Activity</h4>
             </div>
-            <Tabs defaultValue="cash-in" className="w-full animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
+            <Tabs defaultValue={defaultTab} className="w-full animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
                 <TabsList className="w-auto flex bg-transparent p-0 gap-6 border-b border-border/40 rounded-none h-auto justify-start">
                     <TabsTrigger
                         value="cash-in"

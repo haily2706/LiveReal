@@ -19,7 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Coin } from "@/components/ui/coin";
 import { useWalletStore } from "../../use-wallet-store";
 
-export function TransferModal({ children, onTransferSuccess }: { children: React.ReactNode, onTransferSuccess?: () => void }) {
+export function TransferModal({ children, onSuccess }: { children: React.ReactNode, onSuccess?: () => void }) {
     const { walletData } = useWalletStore();
     const balance = walletData ? parseInt(walletData.tokenBalance) : 0;
 
@@ -92,7 +92,7 @@ export function TransferModal({ children, onTransferSuccess }: { children: React
                 setAmount("");
                 setRecipientEmail("");
                 setRecipient(null);
-                onTransferSuccess?.();
+                onSuccess?.();
             } else {
                 toast.error(result.error || "Transfer failed");
             }

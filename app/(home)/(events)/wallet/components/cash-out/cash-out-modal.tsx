@@ -29,9 +29,10 @@ interface PaymentMethod {
 
 interface CashOutModalProps {
     children: React.ReactNode;
+    onSuccess?: () => void;
 }
 
-export function CashOutModal({ children }: CashOutModalProps) {
+export function CashOutModal({ children, onSuccess }: CashOutModalProps) {
     const { walletData } = useWalletStore();
     const balance = walletData ? parseInt(walletData.tokenBalance) : 0;
 
@@ -110,6 +111,7 @@ export function CashOutModal({ children }: CashOutModalProps) {
                 toast.success(`Successfully initiated withdrawal of ${numVal.toLocaleString()} LREAL`);
                 setIsOpen(false);
                 setAmount("");
+                onSuccess?.();
             } else {
                 setError(result.error || "Failed to process withdrawal");
                 toast.error(result.error || "Failed to process withdrawal");

@@ -12,6 +12,7 @@ export default function WalletPage() {
     const { fetchBalance, setWalletData } = useWalletStore();
     const { user, isLoading: isAuthLoading } = useAuthStore();
     const [refreshKey, setRefreshKey] = useState(0);
+    const [activeTab, setActiveTab] = useState("cash-in");
 
     useEffect(() => {
         if (isAuthLoading) return;
@@ -23,9 +24,10 @@ export default function WalletPage() {
         }
     }, [user, isAuthLoading, fetchBalance, setWalletData]);
 
-    const handleActionSuccess = useCallback(() => {
+    const handleActionSuccess = useCallback((tab?: string) => {
         fetchBalance(true);
         setRefreshKey((prev: number) => prev + 1);
+        if (tab) setActiveTab(tab);
     }, [fetchBalance]);
 
     return (
@@ -39,7 +41,7 @@ export default function WalletPage() {
 
             {/* Balance Section */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-                <WalletBalance />
+                <WalletBalance onActionSuccess={handleActionSuccess} />
                 <WalletActions onActionSuccess={handleActionSuccess} />
             </div>
 
@@ -47,7 +49,7 @@ export default function WalletPage() {
             <CashOutMethods />
 
             {/* Transaction History */}
-            <WalletTransactionHistory key={refreshKey} />
+            <WalletTransactionHistory key={refreshKey} defaultTab={activeTab} />
         </div>
     );
 }

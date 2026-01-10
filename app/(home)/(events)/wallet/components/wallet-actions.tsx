@@ -8,23 +8,23 @@ import { TransferModal } from "./transfer/transfer-modal";
 import { useWalletStore } from "../use-wallet-store";
 
 interface WalletActionsProps {
-    onActionSuccess?: () => void;
+    onActionSuccess?: (tab?: string) => void;
 }
 
 export function WalletActions({ onActionSuccess }: WalletActionsProps) {
     const { fetchBalance } = useWalletStore();
 
-    const handleActionSuccess = () => {
+    const handleActionSuccess = (tab?: string) => {
         fetchBalance(true);
         if (onActionSuccess) {
-            onActionSuccess();
+            onActionSuccess(tab);
         }
     };
 
     return (
         <>
             <CashInModal>
-                <Card className="col-span-1 group flex flex-col justify-center items-center p-4 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/10">
+                <Card className="col-span-1 hidden md:flex group flex-col justify-center items-center p-4 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/10">
                     <div className="h-10 w-10 rounded-full bg-green-500/10 group-hover:scale-110 group-hover:bg-green-500 text-green-500 group-hover:text-white flex items-center justify-center mb-2 transition-all duration-300 shadow-sm">
                         <ArrowDownLeft className="h-5 w-5" />
                     </div>
@@ -33,8 +33,8 @@ export function WalletActions({ onActionSuccess }: WalletActionsProps) {
                 </Card>
             </CashInModal>
 
-            <CashOutModal>
-                <Card className="col-span-1 group flex flex-col justify-center items-center p-4 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-red-500/50 hover:shadow-lg hover:shadow-red-500/10">
+            <CashOutModal onSuccess={() => handleActionSuccess('cash-out')}>
+                <Card className="col-span-1 hidden md:flex group flex-col justify-center items-center p-4 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-red-500/50 hover:shadow-lg hover:shadow-red-500/10">
                     <div className="h-10 w-10 rounded-full bg-red-500/10 group-hover:scale-110 group-hover:bg-red-500 text-red-500 group-hover:text-white flex items-center justify-center mb-2 transition-all duration-300 shadow-sm">
                         <ArrowUpRight className="h-5 w-5" />
                     </div>
@@ -43,9 +43,9 @@ export function WalletActions({ onActionSuccess }: WalletActionsProps) {
                 </Card>
             </CashOutModal>
 
-            <TransferModal onTransferSuccess={handleActionSuccess}>
+            <TransferModal onSuccess={() => handleActionSuccess('transfers')}>
                 <Card
-                    className="col-span-1 group flex flex-col justify-center items-center p-4 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10"
+                    className="col-span-1 hidden md:flex group flex-col justify-center items-center p-4 cursor-pointer bg-background hover:bg-muted/30 transition-all duration-300 border-dashed hover:border-solid hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10"
                 >
                     <div className="h-10 w-10 rounded-full bg-blue-500/10 group-hover:scale-110 group-hover:bg-blue-500 text-blue-500 group-hover:text-white flex items-center justify-center mb-2 transition-all duration-300 shadow-sm">
                         <ArrowRightLeft className="h-5 w-5" />
